@@ -13,7 +13,7 @@
 
 	<script>
 		var last = null;
-		var grid = { nodes: [], edges: [] }
+		var mesh = { nodes: [], edges: [] }
 		var a = document.getElementById("floor");
 		var edges = document.getElementById("edges");
 		var svgDoc;
@@ -36,8 +36,9 @@
 					name = title[0].innerHTML;
 				}
 
-				grid.nodes.push({ element: delta[i], id: name, x: delta[i].cx.baseVal.value, y: delta[i].cx.baseVal.value });
-				delta[i].myNode = grid.nodes.last;
+				var node = { element: delta[i], id: name, x: delta[i].cx.baseVal.value, y: delta[i].cx.baseVal.value, neighbors: []};
+				delta[i].myNode = node;
+				mesh.nodes.push(node);
 
 				/*delta[i].addEventListener("mousedown", function (e) {
 					if (last == null)
@@ -72,7 +73,9 @@
 					var len = parseFloat(parts[2])
 					layer3.appendChild(getNode('line', { x1: a.cx.baseVal.value, y1: a.cy.baseVal.value, x2: b.cx.baseVal.value, y2: b.cy.baseVal.value, style: lineStyle }));
 
-					grid.edges.push({ a: a, b: b, len: len });
+					a.myNode.neighbors.push({ b: b.myNode, len: len });
+					b.myNode.neighbors.push({ b: a.myNode, len: len });
+					mesh.edges.push({ a: a.myNode, b: b.myNode, len: len });
 				}
 			});
 		}

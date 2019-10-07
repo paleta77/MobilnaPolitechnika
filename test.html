@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>CTI NAV</title>
+</head>
+
+<body>
+	<object data="floor.svg" type="image/svg+xml" id="floor" xmlns="http://www.w3.org/2000/svg"
+		xmlns:xlink="http://www.w3.org/1999/xlink"></object>
+	<textarea id="edges" rows="30" cols="30"></textarea>
+	<button onclick="loadMesh()">Load</button>
+
+	<script>
+		var last = null;
+		var grid = { nodes: [], edges: [] }
+		var a = document.getElementById("floor");
+		var edges = document.getElementById("edges");
+		var svgDoc;
+		var layer3;
+
+		var lineStyle = "opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#0000FF;stroke-width:0.6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1";
+
+		a.addEventListener("load", function () {
+
+			svgDoc = a.contentDocument;
+
+			var delta = svgDoc.getElementsByTagName("circle");
+			layer3 = svgDoc.getElementById("layer1");
+
+			for (var i = 0; i < delta.length; i++) {
+				delta[i].style.display = 'none';
+				var title = delta[i].getElementsByTagName("title");
+				var name = null;
+				if (title.length > 0) {
+					name = title[0].innerHTML;
+				}
+
+				grid.nodes.push({ element: delta[i], id: name, x: delta[i].cx.baseVal.value, y: delta[i].cx.baseVal.value });
+				delta[i].myNode = grid.nodes.last;
+
+				/*delta[i].addEventListener("mousedown", function (e) {
+					if (last == null)
+						last = e.target;
+					else {
+						console.log(last.id + " " + e.target.id);
+						console.log(e.target);
+						layer3.appendChild(getNode('line', { x1: last.cx.baseVal.value, y1: last.cy.baseVal.value, x2: e.target.cx.baseVal.value, y2: e.target.cy.baseVal.value, style: lineStyle }));
+						var len = Math.sqrt(Math.pow(last.cx.baseVal.value - e.target.cx.baseVal.value, 2) + Math.pow(last.cy.baseVal.value - e.target.cy.baseVal.value, 2));
+						edges.value += last.id + " " + e.target.id + " " + len + "\n";
+
+						last = null;
+					}
+				}, false);*/
+			}
+		}, false);
+
+		function getNode(n, v) {
+			n = document.createElementNS("http://www.w3.org/2000/svg", n);
+			for (var p in v)
+				n.setAttributeNS(null, p, v[p]);
+			return n
+		}
+
+		function loadMesh() {
+			var lines = edges.value.split(/\n/);
+			lines.forEach(function (el) {
+				var parts = el.split(' ')
+				if (parts.length >= 3) {
+					var a = svgDoc.getElementById(parts[0]);
+					var b = svgDoc.getElementById(parts[1]);
+					var len = parseFloat(parts[2])
+					layer3.appendChild(getNode('line', { x1: a.cx.baseVal.value, y1: a.cy.baseVal.value, x2: b.cx.baseVal.value, y2: b.cy.baseVal.value, style: lineStyle }));
+
+					grid.edges.push({ a: a, b: b, len: len });
+				}
+			});
+		}
+
+
+	</script>
+</body>
+
+</html>

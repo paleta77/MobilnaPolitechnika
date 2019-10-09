@@ -3,6 +3,17 @@
 
 <head>
 	<title>CTI NAV</title>
+	<style>
+	svg #layer5 {
+		transform: perspective(10000px) rotateX(68.4deg) translateZ(-20px);
+	}
+	svg #g5174 {
+		transform: perspective(10000px) rotateX(68.4deg) translateZ(-50px);
+	}
+	svg #g5232 {
+		transform: perspective(10000px) rotateX(68.4deg) translateZ(-50px);
+	}
+	</style>
 </head>
 
 <body>
@@ -44,7 +55,9 @@
 			for (var child = floors_el.firstChild; child !== null; child = child.nextSibling) {
 				if (child.localName == "g") {
 					floors.push(child);
-					child.style.display = "none";
+					//child.style.display = "none";
+					child.style.display = "block";
+					child.style.transform = " perspective(10000px) rotateX(68.4deg) translateZ("+(-70 + 30 * (floors.length - 1))+"px)";
 				}
 			}
 			var slider = document.getElementById("floorSlider");
@@ -207,10 +220,10 @@
 			var slider = document.getElementById("floorSlider");
 			slider.value
 			for (var i = 0; i < floors.length; i++) {
-				if (i == slider.value - 1)
+				/*if (i == slider.value - 1)
 					floors[i].style.display = 'block';
 				else
-					floors[i].style.display = 'none';
+					floors[i].style.display = 'none';*/
 			}
 		}
 

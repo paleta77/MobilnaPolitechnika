@@ -1,0 +1,25 @@
+Brief:
+- Czym dla firmy ma być aplikacja mobilna? Co ma robić? Jaki jest jej cel?
+	W programie będzie możliwa nawigacja do miejsca, w którym odbywają się zajęcia, dodawanie i podgląd wszystkich uzyskanych ocen w toku studiów oraz przeglądanie planu zajęć.
+- Kim jest użytkownik końcowy, jaki jest kontekst użycia?
+	UŻytkownk końcowy to student Politechniki Łódzkiej, obecnie aplikacja obejmie tylko wydział FTIMS.
+- Charakter i główne funkcje aplikacji.
+	Jest to aplikacja użytkowa, pomaga gromadzić i edytować dane oraz nawigować do punktu docelowego.
+- Treść aplikacji.
+- “Aura” doświadczenia użytkownika.
+- Wygląd aplikacji.
+	nowoczesny design, stonowane kolory, uproszczone i intuicyjne menu
+- Budżet i ramy czasowe.
+- Szczegóły techniczne:
+	* Na jakie platformy ma być przygotowana?
+		Android
+	* Z ilu ekranów będzie się składać?
+		z jednego ekranu
+	* Kto odpowiada za projekt graficzny aplikacji?
+		
+	* Skąd pobieramy/jak tworzymy content graficzny?
+		
+	* Jakie rodzaje urządzeń mają być obsługiwane?
+		telefony komórkowe
+	* Jak ma być obsługiwana (ruchy np. Używanie jednego kciuka i jednej ręki itp.)
+		telefon w pozycji wertykalnej, używanie jednej ręki i sterowanie przy pomocy kciuka

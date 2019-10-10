@@ -4,15 +4,6 @@
 <head>
 	<title>CTI NAV</title>
 	<style>
-	svg #layer5 {
-		transform: perspective(10000px) rotateX(68.4deg) translateZ(-20px);
-	}
-	svg #g5174 {
-		transform: perspective(10000px) rotateX(68.4deg) translateZ(-50px);
-	}
-	svg #g5232 {
-		transform: perspective(10000px) rotateX(68.4deg) translateZ(-50px);
-	}
 	</style>
 </head>
 
@@ -38,6 +29,7 @@
 		var background;
 		var floors;
 		var startNode;
+		var path = null;
 
 		var lineStyle = "stroke:#0000FF;stroke-width:0.6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;";
 		var pathStyle = "stroke:#00FF00;stroke-width:0.6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;";
@@ -55,9 +47,9 @@
 			for (var child = floors_el.firstChild; child !== null; child = child.nextSibling) {
 				if (child.localName == "g") {
 					floors.push(child);
-					//child.style.display = "none";
-					child.style.display = "block";
-					child.style.transform = " perspective(10000px) rotateX(68.4deg) translateZ("+(-70 + 30 * (floors.length - 1))+"px)";
+					child.style.display = "none";
+					//child.style.display = "block";
+					//child.style.transform = " perspective(10000px) rotateX(68.4deg) translateZ("+(-70 + 30 * (floors.length - 1))+"px)";
 				}
 			}
 			var slider = document.getElementById("floorSlider");
@@ -193,37 +185,66 @@
 					u = u.prev
 				}
 			}
-
-
+			
+			path = s;
+			//drawPath();
+			framenum = 0;
+			animation();
+		}
+		
+		function drawPath(max = -1)
+		{
 			for (var i = 0; i < floors.length; i++) {
 				var el = getChildWithAttribute(floors[i], "inkscape:label", "mesh");
 				while (el.firstChild) {
 					el.firstChild.remove();
 				}
 			}
+			
+			if(max == -1 || max > path.length - 1)
+				max = path.length - 1;
+			else
+				max = max;
 
-			for (var i = 0; i < s.length - 1; i++) {
-				var a = s[i];
-				var b = s[i + 1];
-				if (a.floor == b.floor) {
+			var last_floor = 0;
+
+			for (var i = 0; i < max; i++) {
+				var a = path[i];
+				var b = path[i + 1];
+				/*if (a.floor == b.floor) {
 					var el = getChildWithAttribute(floors[a.floor], "inkscape:label", "mesh");
 					el.appendChild(getNode('line', { x1: a.x, y1: a.y - 177, x2: b.x, y2: b.y - 177, style: pathStyle }));
+					
 				}
-				else {
+				else {*/
 					var el = getChildWithAttribute(floors[b.floor], "inkscape:label", "mesh");
 					el.appendChild(getNode('line', { x1: a.x, y1: a.y - 177, x2: b.x, y2: b.y - 177, style: pathStyle }));
-				}
+				//}
+				last_floor = b.floor;
 			}
+			var slider = document.getElementById("floorSlider");
+			slider.value = last_floor + 1;
+			changeFloor();
+		}
+
+		var framenum = 0;
+
+		function animation()
+		{
+			drawPath(framenum);
+			framenum++;
+			if(framenum < path.length)
+				setTimeout(animation, 800);
 		}
 
 		function changeFloor() {
 			var slider = document.getElementById("floorSlider");
-			slider.value
+			slider.value;
 			for (var i = 0; i < floors.length; i++) {
-				/*if (i == slider.value - 1)
+				if (i == slider.value - 1)
 					floors[i].style.display = 'block';
 				else
-					floors[i].style.display = 'none';*/
+					floors[i].style.display = 'none';
 			}
 		}
 

@@ -19,20 +19,20 @@
 
 
 	<script>
-		var last = null;
-		var mesh = { nodes: [], edges: [] }
-		var a = document.getElementById("floor");
-		var edges = document.getElementById("edges");
-		var buttons = document.getElementById("buttons");
-		var svgDoc;
-		var foreground;
-		var background;
-		var floors;
-		var startNode;
-		var path = null;
+		let last = null;
+		let mesh = { nodes: [], edges: [] }
+		let a = document.getElementById("floor");
+		let edges = document.getElementById("edges");
+		let buttons = document.getElementById("buttons");
+		let svgDoc;
+		let foreground;
+		let background;
+		let floors;
+		let startNode;
+		let path = null;
 
-		var lineStyle = "stroke:#0000FF;stroke-width:0.6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;";
-		var pathStyle = "stroke:#00FF00;stroke-width:0.6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;";
+		const lineStyle = "stroke:#0000FF;stroke-width:0.6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;";
+		const pathStyle = "stroke:#00FF00;stroke-width:0.6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;";
 
 		a.addEventListener("load", function () {
 
@@ -42,9 +42,9 @@
 			foreground = svgDoc.getElementById("layer4");
 			background = svgDoc.getElementById("layer7");
 			floors = []
-			var floors_el = svgDoc.getElementById("layer6");
+			let floors_el = svgDoc.getElementById("layer6");
 
-			for (var child = floors_el.firstChild; child !== null; child = child.nextSibling) {
+			for (let child = floors_el.firstChild; child !== null; child = child.nextSibling) {
 				if (child.localName == "g") {
 					floors.push(child);
 					child.style.display = "none";
@@ -52,27 +52,27 @@
 					//child.style.transform = " perspective(10000px) rotateX(68.4deg) translateZ("+(-70 + 30 * (floors.length - 1))+"px)";
 				}
 			}
-			var slider = document.getElementById("floorSlider");
+			let slider = document.getElementById("floorSlider");
 			slider.max = floors.length;
 			changeFloor();
 
-			var delta = svgDoc.getElementsByTagName("circle");
-			for (var i = 0; i < delta.length; i++) {
+			let delta = svgDoc.getElementsByTagName("circle");
+			for (let i = 0; i < delta.length; i++) {
 				delta[i].style.display = 'none';
-				var title = delta[i].getElementsByTagName("title");
-				var name = null;
+				let title = delta[i].getElementsByTagName("title");
+				let name = null;
 				if (title.length > 0) {
 					name = title[0].innerHTML;
 				}
 
-				var floor = parseInt(delta[i].parentNode.parentNode.getAttribute("inkscape:label").replace("Floor", ""));
+				let floor = parseInt(delta[i].parentNode.parentNode.getAttribute("inkscape:label").replace("Floor", ""));
 
-				var node = { element: delta[i], id: name, floor: floor, x: delta[i].cx.baseVal.value, y: delta[i].cy.baseVal.value, neighbors: [] };
+				let node = { element: delta[i], id: name, floor: floor, x: delta[i].cx.baseVal.value, y: delta[i].cy.baseVal.value, neighbors: [] };
 				delta[i].myNode = node;
 				mesh.nodes.push(node);
 
 				if (name != null && name != "START") {
-					var btn = document.createElement("button");
+					let btn = document.createElement("button");
 					btn.innerHTML = name;
 					btn.myNode = node;
 					btn.onclick = function (e) { dijkstra(startNode, e.target.myNode) };
@@ -89,9 +89,9 @@
 						last = e.target;
 					else {
 						console.log(last.id + " " + e.target.id);
-						var el = getChildWithAttribute(floors[slider.value - 1], "inkscape:label", "mesh");
+						let el = getChildWithAttribute(floors[slider.value - 1], "inkscape:label", "mesh");
 						el.appendChild(getNode('line', { x1: last.cx.baseVal.value, y1: last.cy.baseVal.value - 177, x2: e.target.cx.baseVal.value, y2: e.target.cy.baseVal.value - 177, style: lineStyle }));
-						var len = Math.sqrt(Math.pow(last.cx.baseVal.value - e.target.cx.baseVal.value, 2) + Math.pow(last.cy.baseVal.value - e.target.cy.baseVal.value, 2));
+						let len = Math.sqrt(Math.pow(last.cx.baseVal.value - e.target.cx.baseVal.value, 2) + Math.pow(last.cy.baseVal.value - e.target.cy.baseVal.value, 2));
 						edges.value += last.id + " " + e.target.id + " " + len + " " + (slider.value - 1) + "\n";
 
 						last = null;
@@ -102,7 +102,7 @@
 
 
 		function getChildWithAttribute(parent, el, name) {
-			for (var child = parent.firstChild; child !== null; child = child.nextSibling) {
+			for (let child = parent.firstChild; child !== null; child = child.nextSibling) {
 				if (child.nodeName != "#text") {
 					if (child.getAttribute(el) == name) {
 						return child;
@@ -114,23 +114,23 @@
 
 		function getNode(n, v) {
 			n = document.createElementNS("http://www.w3.org/2000/svg", n);
-			for (var p in v)
+			for (let p in v)
 				n.setAttributeNS(null, p, v[p]);
 			return n
 		}
 
 		function loadMesh() {
 			buttons.style.display = 'block';
-			var lines = edges.value.split(/\n/);
+			let lines = edges.value.split(/\n/);
 
-			lines.forEach(function (el) {
-				var parts = el.split(' ')
+			for (let el in lines) {
+				let parts = el.split(' ')
 				if (parts.length >= 3) {
-					var a = svgDoc.getElementById(parts[0]);
-					var b = svgDoc.getElementById(parts[1]);
-					var len = parseFloat(parts[2])
-					var layer = parseInt(parts[3])
-					var el = getChildWithAttribute(floors[layer], "inkscape:label", "mesh");
+					let a = svgDoc.getElementById(parts[0]);
+					let b = svgDoc.getElementById(parts[1]);
+					let len = parseFloat(parts[2])
+					let layer = parseInt(parts[3])
+					let el = getChildWithAttribute(floors[layer], "inkscape:label", "mesh");
 					el.appendChild(getNode('line', { x1: a.cx.baseVal.value, y1: a.cy.baseVal.value, x2: b.cx.baseVal.value, y2: b.cy.baseVal.value, style: lineStyle }));
 
 					a.myNode.neighbors.push({ b: b.myNode, len: len });
@@ -141,9 +141,9 @@
 		}
 
 		function smallest(set) {
-			var minimum = 0;
+			let minimum = 0;
 
-			for (var i = 1; i < set.length; i++) {
+			for (let i = 1; i < set.length; i++) {
 				if (set[i].dist < set[minimum].dist)
 					minimum = i;
 			}
@@ -153,8 +153,8 @@
 		function dijkstra(start, end) {
 			q = []
 
-			for (var i = 0; i < mesh.nodes.length; i++) {
-				var node = mesh.nodes[i];
+			for (let i = 0; i < mesh.nodes.length; i++) {
+				let node = mesh.nodes[i];
 				node.dist = Infinity;
 				node.prev = null;
 				q.push(node);
@@ -167,9 +167,9 @@
 				u = q[u_idx];
 				q.splice(u_idx, 1);
 
-				for (var i = 0; i < u.neighbors.length; i++) {
-					var v = u.neighbors[i];
-					var alt = u.dist + v.len;
+				for (let i = 0; i < u.neighbors.length; i++) {
+					let v = u.neighbors[i];
+					let alt = u.dist + v.len;
 					if (alt < v.b.dist) {
 						v.b.dist = alt;
 						v.b.prev = u;
@@ -185,62 +185,60 @@
 					u = u.prev
 				}
 			}
-			
+
 			path = s;
 			//drawPath();
 			framenum = 0;
 			animation();
 		}
-		
-		function drawPath(max = -1)
-		{
-			for (var i = 0; i < floors.length; i++) {
-				var el = getChildWithAttribute(floors[i], "inkscape:label", "mesh");
+
+		function drawPath(max = -1) {
+			for (let i = 0; i < floors.length; i++) {
+				let el = getChildWithAttribute(floors[i], "inkscape:label", "mesh");
 				while (el.firstChild) {
 					el.firstChild.remove();
 				}
 			}
-			
-			if(max == -1 || max > path.length - 1)
+
+			if (max == -1 || max > path.length - 1)
 				max = path.length - 1;
 			else
 				max = max;
 
-			var last_floor = 0;
+			let last_floor = 0;
 
-			for (var i = 0; i < max; i++) {
-				var a = path[i];
-				var b = path[i + 1];
+			for (let i = 0; i < max; i++) {
+				let a = path[i];
+				let b = path[i + 1];
 				/*if (a.floor == b.floor) {
-					var el = getChildWithAttribute(floors[a.floor], "inkscape:label", "mesh");
+					let el = getChildWithAttribute(floors[a.floor], "inkscape:label", "mesh");
 					el.appendChild(getNode('line', { x1: a.x, y1: a.y - 177, x2: b.x, y2: b.y - 177, style: pathStyle }));
 					
 				}
 				else {*/
-					var el = getChildWithAttribute(floors[b.floor], "inkscape:label", "mesh");
-					el.appendChild(getNode('line', { x1: a.x, y1: a.y - 177, x2: b.x, y2: b.y - 177, style: pathStyle }));
+				let el = getChildWithAttribute(floors[b.floor], "inkscape:label", "mesh");
+				el.appendChild(getNode('line', { x1: a.x, y1: a.y - 177, x2: b.x, y2: b.y - 177, style: pathStyle }));
 				//}
 				last_floor = b.floor;
 			}
-			var slider = document.getElementById("floorSlider");
+			let slider = document.getElementById("floorSlider");
 			slider.value = last_floor + 1;
 			changeFloor();
 		}
 
-		var framenum = 0;
+		let framenum = 0;
 
-		function animation()
-		{
+		function animation() {
 			drawPath(framenum);
 			framenum++;
-			if(framenum < path.length)
+			if (framenum < path.length)
 				setTimeout(animation, 800);
 		}
 
 		function changeFloor() {
-			var slider = document.getElementById("floorSlider");
+			let slider = document.getElementById("floorSlider");
 			slider.value;
-			for (var i = 0; i < floors.length; i++) {
+			for (let i = 0; i < floors.length; i++) {
 				if (i == slider.value - 1)
 					floors[i].style.display = 'block';
 				else

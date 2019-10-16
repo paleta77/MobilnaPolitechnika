@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>CTI NAV</title>
+	<meta charset="utf-8">
+	<style>
+	</style>
+</head>
+
+<body>
+	<object data="floor.svg" type="image/svg+xml" id="floor" xmlns="http://www.w3.org/2000/svg"
+		xmlns:xlink="http://www.w3.org/1999/xlink"></object>
+	<div class="slidecontainer">
+		<input type="range" min="1" max="1" value="1" id="floorSlider" onchange="changeFloor()">
+	</div>
+	<div id="buttons"></div>
+	<textarea id="edges" rows="30" cols="30"></textarea>
+	<button onclick="loadMesh()">Load</button>
+
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+</body>
+
+</html>

@@ -9,10 +9,11 @@ let background;
 let floors;
 let startNode;
 let path = null;
+let _3D = true;
 
 const lineStyle = "stroke:#0000FF;stroke-width:0.6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;";
 const pathStyle = "stroke:#00FF00;stroke-width:0.6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;";
-
+console.log("hle?");
 a.addEventListener("load", function () {
 
 	svgDoc = a.contentDocument;
@@ -26,9 +27,14 @@ a.addEventListener("load", function () {
 	for (let child = floors_el.firstChild; child !== null; child = child.nextSibling) {
 		if (child.localName == "g") {
 			floors.push(child);
-			child.style.display = "none";
-			//child.style.display = "block";
-			//child.style.transform = " perspective(10000px) rotateX(68.4deg) translateZ("+(-70 + 30 * (floors.length - 1))+"px)";
+			if (_3D) {
+				child.style.display = "block";
+				child.style.transform = " perspective(10000px) rotateX(68.4deg) translateZ(" + (-70 + 30 * (floors.length - 1)) + "px)";
+			}
+			else {
+				child.style.display = "none";
+			}
+
 		}
 	}
 	let slider = document.getElementById("floorSlider");
@@ -103,7 +109,7 @@ function loadMesh() {
 	let lines = edges.value.split(/\n/);
 
 	for (let el in lines) {
-		let parts = el.split(' ')
+		let parts = lines[el].split(' ')
 		if (parts.length >= 3) {
 			let a = svgDoc.getElementById(parts[0]);
 			let b = svgDoc.getElementById(parts[1]);
@@ -167,9 +173,6 @@ function dijkstra(start, end) {
 
 	path = s;
 	drawPath();
-	console.log("hle");
-	//framenum = 0;
-	//animation();
 }
 
 function drawPath(max = -1) {
@@ -215,13 +218,24 @@ function animation() {
 		setTimeout(animation, 800);
 }
 
+function play() {
+	framenum = 0;
+	animation();
+}
+
 function changeFloor() {
 	let slider = document.getElementById("floorSlider");
 	slider.value;
 	for (let i = 0; i < floors.length; i++) {
-		if (i == slider.value - 1)
-			floors[i].style.display = 'block';
+		if (!_3D) {
+			if (i == slider.value - 1)
+				floors[i].style.display = 'block';
+			else
+				floors[i].style.display = 'none';
+		}
 		else
-			floors[i].style.display = 'none';
+		{
+			// TODO: make floors transparent in 3D
+		}
 	}
 }

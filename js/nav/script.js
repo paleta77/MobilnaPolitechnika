@@ -13,7 +13,7 @@ let _3D = true;
 
 const lineStyle = "stroke:#0000FF;stroke-width:0.6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;";
 const pathStyle = "stroke:#00FF00;stroke-width:0.6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;";
-console.log("hle?");
+
 a.addEventListener("load", function () {
 
 	svgDoc = a.contentDocument;
@@ -116,7 +116,7 @@ function loadMesh() {
 			let len = parseFloat(parts[2])
 			let layer = parseInt(parts[3])
 			let el = getChildWithAttribute(floors[layer], "inkscape:label", "mesh");
-			el.appendChild(getNode('line', { x1: a.cx.baseVal.value, y1: a.cy.baseVal.value, x2: b.cx.baseVal.value, y2: b.cy.baseVal.value, style: lineStyle }));
+			el.appendChild(getNode('line', { x1: a.cx.baseVal.value, y1: a.cy.baseVal.value - 177, x2: b.cx.baseVal.value, y2: b.cy.baseVal.value - 177, style: lineStyle }));
 
 			a.myNode.neighbors.push({ b: b.myNode, len: len });
 			b.myNode.neighbors.push({ b: a.myNode, len: len });
@@ -233,9 +233,12 @@ function changeFloor() {
 			else
 				floors[i].style.display = 'none';
 		}
-		else
-		{
-			// TODO: make floors transparent in 3D
+		else {
+			// make floors transparent in 3D mode
+			if (i == slider.value - 1)
+				floors[i].style.opacity = 1;
+			else
+				floors[i].style.opacity = 0.5;
 		}
 	}
 }

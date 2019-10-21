@@ -1,7 +1,6 @@
 let last = null;
 let mesh = { nodes: [], edges: [] }
-let a = document.getElementById("floor");
-let edges = document.getElementById("edges");
+let mapObject = document.getElementById("mapObject");
 let buttons = document.getElementById("buttons");
 let svgDoc;
 let foreground;
@@ -9,14 +8,23 @@ let background;
 let floors;
 let startNode;
 let path = null;
-let _3D = true;
+let _3D = false;
 
 const lineStyle = "stroke:#0000FF;stroke-width:0.6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;";
 const pathStyle = "stroke:#00FF00;stroke-width:0.6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;";
 
-a.addEventListener("load", function () {
+mapObject.addEventListener("load", function () {
 
-	svgDoc = a.contentDocument;
+	let req = new XMLHttpRequest();
+	req.onreadystatechange = function () {
+		if (this.readyState == 4 && this.status == 200) {
+			loadMesh(this.responseText);
+		}
+	};
+	req.open("GET", "nav.txt", true);
+	req.send();
+
+	svgDoc = mapObject.contentDocument;
 	buttons.style.display = 'none';
 
 	foreground = svgDoc.getElementById("layer4");
@@ -104,9 +112,9 @@ function getNode(n, v) {
 	return n
 }
 
-function loadMesh() {
+function loadMesh(data) {
 	buttons.style.display = 'block';
-	let lines = edges.value.split(/\n/);
+	let lines = data.split(/\n/);
 
 	for (let el in lines) {
 		let parts = lines[el].split(' ')
@@ -225,7 +233,6 @@ function play() {
 
 function changeFloor() {
 	let slider = document.getElementById("floorSlider");
-	slider.value;
 	for (let i = 0; i < floors.length; i++) {
 		if (!_3D) {
 			if (i == slider.value - 1)

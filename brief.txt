@@ -1,25 +1,37 @@
-Brief:
+﻿Brief:
 - Czym dla firmy ma być aplikacja mobilna? Co ma robić? Jaki jest jej cel?
 	W programie będzie możliwa nawigacja do miejsca, w którym odbywają się zajęcia, dodawanie i podgląd wszystkich uzyskanych ocen w toku studiów oraz przeglądanie planu zajęć.
+
 - Kim jest użytkownik końcowy, jaki jest kontekst użycia?
-	UŻytkownk końcowy to student Politechniki Łódzkiej, obecnie aplikacja obejmie tylko wydział FTIMS.
+	Dolcelowy użytkownk końcowy to student Politechniki Łódzkiej, obecnie aplikacja obejmie jedynie wydział FTIMS. Potencjalnymi użytkownikami mogą być również nauczyciele akademiccy oraz kandydaci na studia.
+
 - Charakter i główne funkcje aplikacji.
-	Jest to aplikacja użytkowa, pomaga gromadzić i edytować dane oraz nawigować do punktu docelowego.
+	Jest to aplikacja użytkowa, pomaga gromadzić i edytować dane oraz nawigować do punktu docelowego. Funkcja będzie szczególnie użyteczna dla studentów pierwszego roku, którzy mogą mieć problem z szybkim znalezieniem odpowiedniej sali zajęciowej. Ponadto funkcja dodawania ocen, może być przydatna do monitorowania bieżących osiągnięć studenta oraz wyliczenia średniej wszystkich ocen. Ponadto, użyteczną funkcja jest komponowanie spersonalizowanego planu zajęć. Ta funkcja kreuje przejrzysty plan zajęć, nawet jesli student aktualnie ma zajęcia pochodzące z różnych semestrów programu nauczania.
+
 - Treść aplikacji.
-- “Aura” doświadczenia użytkownika.
+	Aplikacja umożliwia przeglądanie planu zajęć, niezaleznie czy student przynależy do jednej bądź wielu grup zajęciowych. Ponadto można własnoręcznie dodać ocenę do bazy danych konkretnego przedmiotu, policzyć średnią ocen. W przypadku gdy użytkownik znajdzie na planie salę o nieznanej dotychczas lokalizacji, aplikacja wskaże najoptymalniejszą drogę do celu.
+
+- Persona.
+	Maciek - student pierwszego roku Informatyki na FTIMS. Jest rzetelnym studentem i bardzo przykłada się do nauki. Nie lubi się spóźniać. Jest zawsze przygotowany na zajęcia.
+	Motto: “Wybierz pracę, którą kochasz, a nie będziesz musiał pracować nawet przez jeden dzień w swoim życiu.” Konfucjusz
+	
+
 - Wygląd aplikacji.
-	nowoczesny design, stonowane kolory, uproszczone i intuicyjne menu
+	nowoczesny design, stonowane kolory (górny pasek w kolorze bordowym, białe tło), uproszczone i intuicyjne menu
+
 - Budżet i ramy czasowe.
+	Nasz budżet to praca trzech studentów-programistów. Ramy czasowe stanowi harmonogram przedmiotu.
+
 - Szczegóły techniczne:
 	* Na jakie platformy ma być przygotowana?
-		Android
+		Android oraz przeglądarka internetowa
 	* Z ilu ekranów będzie się składać?
-		z jednego ekranu
+		z dwóch ekranów: smartfonu oraz przeglądarki internetowej
 	* Kto odpowiada za projekt graficzny aplikacji?
-		
+		wszyscy członkowie zespołu
 	* Skąd pobieramy/jak tworzymy content graficzny?
-		
+		kontent graficzny będzie pochodził ze źródeł własnych oraz serwisu Pixabay
 	* Jakie rodzaje urządzeń mają być obsługiwane?
-		telefony komórkowe
+		telefony komórkowe, komputery PC
 	* Jak ma być obsługiwana (ruchy np. Używanie jednego kciuka i jednej ręki itp.)
 		telefon w pozycji wertykalnej, używanie jednej ręki i sterowanie przy pomocy kciuka

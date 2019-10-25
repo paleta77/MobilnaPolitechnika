@@ -36,7 +36,7 @@
 	* Na jakie platformy ma być przygotowana?
 		Android oraz przeglądarka internetowa
 	* Z ilu ekranów będzie się składać?
-		z dwóch ekranów: smartfonu oraz przeglądarki internetowej
+		z sześciu ekranów: ekran logowania, profil użytkownika, plan zajęć, oceny, mapa, wyszukiwarka
 	* Kto odpowiada za projekt graficzny aplikacji?
 		wszyscy członkowie zespołu
 	* Skąd pobieramy/jak tworzymy content graficzny?

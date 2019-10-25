@@ -13,8 +13,18 @@
 
 - Persona.
 	Maciek - student pierwszego roku Informatyki na FTIMS. Jest rzetelnym studentem i bardzo przykłada się do nauki. Nie lubi się spóźniać. Jest zawsze przygotowany na zajęcia.
+
 	Motto: “Wybierz pracę, którą kochasz, a nie będziesz musiał pracować nawet przez jeden dzień w swoim życiu.” Konfucjusz
-	
+
+	Końcowy cel: Maciek przy pomocy produktu, chce łatwiej i sprawniej poruszać się po wydziale, bez szukania sal po omacku, mieć wszystkie oceny pod ręką oraz szybko dowiedzieć się jakie ma kolejne zaplanowane zajęcia danego dnia.
+
+	Motywacja: Maciek interesuje się naszą aplikacją, gdyż już kilka razy miał problem ze znalezieniem sali. Ponadto, gdy spieszy się na zajęcia, nie chce wertować kilku planów zajęć, aby odnaleźć przedmiot, z zupełnie innego semestru, na który również chodzi.
+
+	Bariery: Maćka do produktu może zniechęcić potencjalnie bardzo niska jakość jego sprzętu, jednak nawigacja została zoptymalizowana pod kątem wydajności i powinna działać płynnie (nawet na tańszym sprzęcie).
+
+	Szanse: Zainteresowanie naszym produktem może zwiększyć pozytywna rekomendacja znajomego, który będzie zadowolony z działania produktu i często będzie z niego korzystał.
+
+	Wpływ: Aby Maciek regularnie korzystał z produktu, można wysyłać alerty (z rozsądną częstotliwością) z zapytaniem czy nie dostał nowej oceny, którą można zapisać w aplikacji.
 
 - Wygląd aplikacji.
 	nowoczesny design, stonowane kolory (górny pasek w kolorze bordowym, białe tło), uproszczone i intuicyjne menu

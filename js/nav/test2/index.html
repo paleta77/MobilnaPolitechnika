@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Test 2</title>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+		integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+		crossorigin="" />
+	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+		integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+		crossorigin=""></script>
+	<style>
+		#mapid {
+			height: 600px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="mapid"></div>
+
+	<button onclick="minus();">-</button><button onclick="plus();">+</button><br />
+
+	<script>
+		let mymap = L.map('mapid').setView([51.747, 19.455], 17);
+		let bounds = [[51.747 - 0.003, 19.455 - 0.006], [51.747 + 0.003, 19.455 + 0.005]];
+		L.tileLayer('https://c.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+			maxZoom: 18,
+			minZoom: 16,
+			id: 'mapbox.streets',
+			bounds: bounds,
+			//maxBoundsViscosity: 0.5
+		}).addTo(mymap);
+
+		mymap.setMaxBounds(bounds);
+
+		let imageBounds = [[51.74542, 19.45311], [51.74867, 19.45811]];
+
+		var floors = [L.imageOverlay("floor0.png", imageBounds), L.imageOverlay("floor1.png", imageBounds), L.imageOverlay("floor2.png", imageBounds)];
+
+		let floor_idx = 0;
+		floors[floor_idx].addTo(mymap);
+
+		//L.rectangle(bounds).addTo(mymap)
+
+		function plus() {
+
+			mymap.removeLayer(floors[floor_idx]);
+			floor_idx++;
+			if (floor_idx > 2)
+				floor_idx = 2;
+			floors[floor_idx].addTo(mymap);
+		}
+		function minus() {
+			mymap.removeLayer(floors[floor_idx]);
+			floor_idx--;
+			if (floor_idx < 0)
+				floor_idx = 0;
+			floors[floor_idx].addTo(mymap);
+		}
+	</script>
+</body>
+</html>

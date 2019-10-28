@@ -33,6 +33,8 @@
 	</div>
 
 	<script>
+		let showNodes = false;
+		let showEdges = false;
 		let map = L.map('map').setView([51.747, 19.455], 17);
 		let bounds = [[51.747 - 0.003, 19.455 - 0.006], [51.747 + 0.003, 19.455 + 0.005]];
 		L.tileLayer('https://c.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -59,35 +61,42 @@
 		let button_down = L.easyButton('fa-arrow-down', (btn, map) => changefloor(-1));
 		L.easyBar([button_up, button_down]).addTo(map);
 
-		let points = [];
+		let nodes = [];
 		let edges = [];
-		let pointsLayer = L.layerGroup().addTo(map);
+		let nodesLayer = L.layerGroup().addTo(map);
 		let pathLayer = L.layerGroup().addTo(map);
 
 		map.on('click', (e) => {
 			console.log("a");
 			//let circle = L.circle(e.latlng, { radius: 0.5 }).on("click", (e) => { L.DomEvent.stopPropagation(e); console.log(e); });
-			//points.push({ floor: floor_idx, x: e.latlng.lat, y: e.latlng.lng });
-			//pointsLayer.addLayer(circle);
+			//nodes.push({ floor: floor_idx, x: e.latlng.lat, y: e.latlng.lng });
+			//nodesLayer.addLayer(circle);
 		});
 
-		function loadPoints() {
+		function loadNodes() {
 			let request = new XMLHttpRequest();
 			request.responseType = 'text';
 
 			request.open('GET', 'nav.json');
 			request.onload = function () {
 				var data = JSON.parse(request.responseText);
-				console.log(data);
-				points = data.points;
+				//console.log(data);
+				nodes = data.points;
 				edges = data.edges;
+				for (let node of nodes) {
+					node.neighbors = [];
+				}
+				for (let edge of edges) {
+					let a = nodes[edge.a];
+					let b = nodes[edge.b];
+					a.neighbors.push({ b: b, len: 1 });
+					b.neighbors.push({ b: a, len: 1 });
+				}
 			}
 			request.send();
 		}
 
-		loadPoints();
-
-		//L.rectangle(bounds).addTo(mymap)
+		loadNodes();
 
 		let last = null;
 
@@ -98,36 +107,97 @@
 			floor_idx = Math.min(Math.max(floor_idx, 0), 2);
 			floors[floor_idx].addTo(map);
 
-			pointsLayer.clearLayers();
-			for (let idx in points) {
-				let point = points[idx];
-				if (point.floor === floor_idx) {
-					let circle = L.circle([point.x, point.y], { radius: 0.5 });
-					circle.on("click", (e) => {
-						L.DomEvent.stopPropagation(e);
-						if (last === null) {
-							last = e.target.my_idx;
-						}
-						else {
-							edges.push({ a: last, b: e.target.my_idx });
-							last = null;
-							changefloor(0);
-						}
-					});
-					circle.my_idx = idx;
-					pointsLayer.addLayer(circle);
+			if (showNodes) {
+				nodesLayer.clearLayers();
+				for (let idx in nodes) {
+					let point = nodes[idx];
+					if (point.floor === floor_idx) {
+						let circle = L.circle([point.x, point.y], { radius: 0.5 });
+						circle.on("click", (e) => {
+							L.DomEvent.stopPropagation(e);
+							if (last === null) {
+								last = e.target.my_idx;
+							}
+							else {
+								edges.push({ a: last, b: e.target.my_idx });
+								last = null;
+								changefloor(0);
+							}
+						});
+						circle.my_idx = idx;
+						nodesLayer.addLayer(circle);
+					}
 				}
 			}
 
-			pathLayer.clearLayers();
-			for(let idx in edges)
-			{
-				let edge = edges[idx];
-				let a = points[edge.a];
-				let b = points[edge.b];
-				if(a.floor === floor_idx)
-					pathLayer.addLayer(L.polyline([[a.x, a.y], [b.x, b.y]]));
+			if (showEdges) {
+				pathLayer.clearLayers();
+				for (let idx in edges) {
+					let edge = edges[idx];
+					let a = nodes[edge.a];
+					let b = nodes[edge.b];
+					if (a.floor === floor_idx)
+						pathLayer.addLayer(L.polyline([[a.x, a.y], [b.x, b.y]]));
+				}
 			}
+		}
+
+		function smallest(set) {
+			let minimum = 0;
+
+			for (let i = 1; i < set.length; i++) {
+				if (set[i].dist < set[minimum].dist)
+					minimum = i;
+			}
+			return minimum;
+		}
+
+		function dijkstra(start, end) {
+			let q = [];
+
+			for (let i = 0; i < nodes.length; i++) {
+				let node = nodes[i];
+				node.dist = Infinity;
+				node.prev = null;
+				q.push(node);
+			}
+
+			start.dist = 0;
+
+			while (q.length > 0) {
+				u_idx = smallest(q);
+				u = q[u_idx];
+				q.splice(u_idx, 1);
+
+				for (let i = 0; i < u.neighbors.length; i++) {
+					let v = u.neighbors[i];
+					let alt = u.dist + v.len;
+					if (alt < v.b.dist) {
+						v.b.dist = alt;
+						v.b.prev = u;
+					}
+				}
+			}
+
+			s = [];
+			u = end;
+			if (u.prev != null || u === start) {
+				while (u != null) {
+					s.unshift(u)
+					u = u.prev
+				}
+			}
+
+			let path = s;
+			for (let i = 1; i < path.length; i++) {
+				let a = path[i - 1];
+				let b = path[i];
+				L.polyline([[a.x, a.y], [b.x, b.y]]).addTo(map);
+			}
+			L.marker([path[0].x, path[0].y]).addTo(map);
+			L.marker([path[path.length-1].x, path[path.length-1].y]).addTo(map);
+
+			return s;
 		}
 	</script>
 </body>

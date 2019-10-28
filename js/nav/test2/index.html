@@ -9,56 +9,127 @@
 	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
 		integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
 		crossorigin=""></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+	<script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" />
 	<style>
-		#mapid {
-			height: 600px;
+		body {
+			padding: 0;
+			margin: 0;
+		}
+
+		html,
+		body,
+		#map {
+			height: 100%;
+			width: 100%;
 		}
 	</style>
 </head>
 
 <body>
-	<div id="mapid"></div>
-
-	<button onclick="minus();">-</button><button onclick="plus();">+</button><br />
+	<div id="map">
+	</div>
 
 	<script>
-		let mymap = L.map('mapid').setView([51.747, 19.455], 17);
+		let map = L.map('map').setView([51.747, 19.455], 17);
 		let bounds = [[51.747 - 0.003, 19.455 - 0.006], [51.747 + 0.003, 19.455 + 0.005]];
 		L.tileLayer('https://c.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-			maxZoom: 18,
-			minZoom: 16,
+			maxNativeZoom: 19,
+			maxZoom: 22,
+			minZoom: 18,
 			id: 'mapbox.streets',
 			bounds: bounds,
-			//maxBoundsViscosity: 0.5
-		}).addTo(mymap);
+		}).addTo(map);
 
-		mymap.setMaxBounds(bounds);
+		map.setMaxBounds(bounds);
 
 		let imageBounds = [[51.74542, 19.45311], [51.74867, 19.45811]];
 
 		var floors = [L.imageOverlay("floor0.png", imageBounds), L.imageOverlay("floor1.png", imageBounds), L.imageOverlay("floor2.png", imageBounds)];
 
-		let floor_idx = 0;
-		floors[floor_idx].addTo(mymap);
+		let floor_idx = 2;
+		floors[0].addTo(map);
+		floors[1].addTo(map);
+		floors[2].addTo(map);
+
+		let button_up = L.easyButton('fa-arrow-up', (btn, map) => changefloor(1));
+		let button_down = L.easyButton('fa-arrow-down', (btn, map) => changefloor(-1));
+		L.easyBar([button_up, button_down]).addTo(map);
+
+		let points = [];
+		let edges = [];
+		let pointsLayer = L.layerGroup().addTo(map);
+		let pathLayer = L.layerGroup().addTo(map);
+
+		map.on('click', (e) => {
+			console.log("a");
+			//let circle = L.circle(e.latlng, { radius: 0.5 }).on("click", (e) => { L.DomEvent.stopPropagation(e); console.log(e); });
+			//points.push({ floor: floor_idx, x: e.latlng.lat, y: e.latlng.lng });
+			//pointsLayer.addLayer(circle);
+		});
+
+		function loadPoints() {
+			let request = new XMLHttpRequest();
+			request.responseType = 'text';
+
+			request.open('GET', 'nav.json');
+			request.onload = function () {
+				var data = JSON.parse(request.responseText);
+				console.log(data);
+				points = data.points;
+				edges = data.edges;
+			}
+			request.send();
+		}
+
+		loadPoints();
 
 		//L.rectangle(bounds).addTo(mymap)
 
-		function plus() {
+		let last = null;
 
-			mymap.removeLayer(floors[floor_idx]);
-			floor_idx++;
-			if (floor_idx > 2)
-				floor_idx = 2;
-			floors[floor_idx].addTo(mymap);
-		}
-		function minus() {
-			mymap.removeLayer(floors[floor_idx]);
-			floor_idx--;
-			if (floor_idx < 0)
-				floor_idx = 0;
-			floors[floor_idx].addTo(mymap);
+		function changefloor(change) {
+
+			map.removeLayer(floors[floor_idx]);
+			floor_idx += change;
+			floor_idx = Math.min(Math.max(floor_idx, 0), 2);
+			floors[floor_idx].addTo(map);
+
+			pointsLayer.clearLayers();
+			for (let idx in points) {
+				let point = points[idx];
+				if (point.floor === floor_idx) {
+					let circle = L.circle([point.x, point.y], { radius: 0.5 });
+					circle.on("click", (e) => {
+						L.DomEvent.stopPropagation(e);
+						if (last === null) {
+							last = e.target.my_idx;
+						}
+						else {
+							edges.push({ a: last, b: e.target.my_idx });
+							last = null;
+							changefloor(0);
+						}
+					});
+					circle.my_idx = idx;
+					pointsLayer.addLayer(circle);
+				}
+			}
+
+			pathLayer.clearLayers();
+			for(let idx in edges)
+			{
+				let edge = edges[idx];
+				let a = points[edge.a];
+				let b = points[edge.b];
+				if(a.floor === floor_idx)
+					pathLayer.addLayer(L.polyline([[a.x, a.y], [b.x, b.y]]));
+			}
 		}
 	</script>
 </body>
+
 </html>

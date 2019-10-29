@@ -4,50 +4,58 @@ import 'package:mobilna_politechnika/Map.dart';
 
 import 'Profil.dart';
 
-class MyDrawer extends StatelessWidget{
-
+class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
         child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('Witaj Imię Nazwisko', style: TextStyle(color: Colors.white),),
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 128, 1, 0),
-              ),
-            ),
-            ListTile(
-              title: Text('Profil'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, new MaterialPageRoute(builder: (context) => new Profile()));
-                },
-            ),
-            ListTile(
-              title: Text('Oceny'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, new MaterialPageRoute(builder: (context) => new Oceny()));
-              },
-            ),
-            ListTile(
-              title: Text('Mapa'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, new MaterialPageRoute(builder: (context) => new Map()));
-              },
-            ),
-            ListTile(
-              title: Text('Wyloguj'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
-              },
-            ),
-          ],
-        )
-    );
+      padding: EdgeInsets.zero,
+      children: <Widget>[
+        UserAccountsDrawerHeader(
+          accountName: Text("Student Student"),
+          accountEmail: Text("11111@edu.p.lodz.pl"),
+          currentAccountPicture: new CircleAvatar(
+            backgroundColor: Color.fromARGB(255, 0, 0, 0),
+          ),
+        ),
+        ListTile(
+          title: Text('Profil'),
+          leading: Icon(Icons.account_circle),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.push(context,
+                new MaterialPageRoute(builder: (context) => new Profile()));
+          },
+        ),
+        ListTile(
+          title: Text('Oceny'),
+          leading: Icon(Icons.format_list_numbered),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.push(context,
+                new MaterialPageRoute(builder: (context) => new Oceny()));
+          },
+        ),
+        ListTile(
+          title: Text('Mapa'),
+          leading: Icon(Icons.map),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.push(context,
+                new MaterialPageRoute(builder: (context) => new Map()));
+          },
+        ),
+        Divider(),
+        ListTile(
+          title: Text('Wyloguj'),
+          leading: Icon(Icons.arrow_back),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+          },
+        ),
+      ],
+    ));
   }
 }

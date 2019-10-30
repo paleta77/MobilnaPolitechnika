@@ -1,18 +1,27 @@
 const express = require('express');
-const session = require('express-session');
+//const session = require('express-session');
+const crypto = require("crypto");
 const mongoose = require('mongoose');
+const config = require('./config.js');
+
 const app = express();
 
-mongoose.connect('mongodb://db/', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(config.mongodb, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const user = require('./user.js');
+let auth = {};
 
-app.use(express.urlencoded({ extended: false }))
-app.use(session({
-  resave: false,
-  saveUninitialized: false,
-  secret: '12345'
-}));
+app.use(express.json());
+app.use(function (req, res, next) {
+  req.session = {};
+  if (req.body.token) {
+    let _user = auth[req.body.token];
+    if (_user) {
+      req.session.user = _user; // recreate user session
+    }
+  }
+  next();
+});
 
 function restrict(req, res, next) {
   if (req.session.user) {
@@ -23,6 +32,10 @@ function restrict(req, res, next) {
 }
 
 app.get('/', (req, res) => {
+    res.json({ msg: "Server up and running :)"});
+});
+
+app.post('/', (req, res) => {
   if (!req.session.user) {
     res.json({ msg: "Please login" });
   } else {
@@ -30,11 +43,11 @@ app.get('/', (req, res) => {
   }
 });
 
-app.get('/restricted', restrict, (req, res) => {
+app.post('/restricted', restrict, (req, res) => {
   res.json({ msg: "Secret here :)" });
 });
 
-app.get('/logout', (req, res) => {
+app.post('/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/');
   });
@@ -42,8 +55,7 @@ app.get('/logout', (req, res) => {
 
 app.post('/login', (req, res) => {
   user.findOne({ 'name': req.body.username }, 'name password', (err, _user) => {
-    if (err || !_user) 
-    {
+    if (err || !_user) {
       res.json({ msg: "Error occurs!" });
       return;
     }
@@ -53,13 +65,12 @@ app.post('/login', (req, res) => {
       return;
     }
 
-    req.session.regenerate(() => {
-      req.session.user = _user;
-      res.json({ msg: "OK" });
-    });
+    let id = crypto.randomBytes(16).toString("hex"); // generate auth token
+    auth[id] = _user;
+    res.json({ msg: "OK", token: id });
   });
 });
 
-app.listen(8000, () => {
-  console.log('Server listening on port 8000!');
+app.listen(8080, () => {
+  console.log('Server listening on port 8080!');
 });

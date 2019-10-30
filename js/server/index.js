@@ -1,5 +1,4 @@
 const express = require('express');
-//const session = require('express-session');
 const crypto = require("crypto");
 const mongoose = require('mongoose');
 const config = require('./config.js');
@@ -11,6 +10,7 @@ mongoose.connect(config.mongodb, { useNewUrlParser: true, useUnifiedTopology: tr
 const user = require('./user.js');
 let auth = {};
 
+app.use(express.static('public'));
 app.use(express.json());
 app.use(function (req, res, next) {
   req.session = {};
@@ -31,26 +31,13 @@ function restrict(req, res, next) {
   }
 }
 
-app.get('/', (req, res) => {
-    res.json({ msg: "Server up and running :)"});
-});
-
-app.post('/', (req, res) => {
-  if (!req.session.user) {
-    res.json({ msg: "Please login" });
-  } else {
-    res.json({ msg: "You are logged Sir :)" });
-  }
-});
-
 app.post('/restricted', restrict, (req, res) => {
   res.json({ msg: "Secret here :)" });
 });
 
 app.post('/logout', (req, res) => {
-  req.session.destroy(() => {
-    res.redirect('/');
-  });
+  req.session = {};
+  res.json({ msg: "OK"});
 });
 
 app.post('/login', (req, res) => {

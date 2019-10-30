@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PŁ</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        .login-form {
+            width: 340px;
+            margin: 50px auto;
+        }
+
+        .login-form form {
+            margin-bottom: 15px;
+            background: #f7f7f7;
+            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+        }
+
+        .login-form h2 {
+            margin: 0 0 15px;
+        }
+
+        .form-control,
+        .btn {
+            min-height: 38px;
+            border-radius: 2px;
+        }
+
+        .btn {
+            font-size: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-form" id="notlogged">
+        <form action="#">
+            <h2 class="text-center">Log in</h2>
+            <div class="form-group">
+                <input id="username" type="text" class="form-control" placeholder="Username" required="required">
+            </div>
+            <div class="form-group">
+                <input id="password" type="password" class="form-control" placeholder="Password" required="required">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary btn-block" onclick="login()">Log in</button>
+            </div>
+            <!--<div class="clearfix">
+                <label class="pull-left checkbox-inline"><input type="checkbox"> Remember me</label>
+                <a href="#" class="pull-right">Forgot Password?</a>
+            </div>-->
+        </form>
+        <!--<p class="text-center"><a href="#">Create an Account</a></p>-->
+    </div>
+
+    <div id="logged">
+        <button class="btn btn-primary" onclick="logout();">Logout</button>
+        <h4 class="text-center">You're logged in :)</h4>
+    </div>
+
+    <script>
+        document.getElementById("logged").style.display = 'none';
+
+        let token = null;
+
+        async function login() {
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+            try {
+                const data = await postData('http://localhost:8080/login', { username: username, password: password });
+                console.log(JSON.stringify(data));
+                if (data.msg == 'OK') {
+                    token = data.token;
+                    document.getElementById("logged").style.display = 'block';
+                    document.getElementById("notlogged").style.display = 'none';
+                }
+                else {
+                    alert(data.msg);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        async function logout() {
+            try {
+                const data = await postData('http://localhost:8080/logout', { token: token });
+                console.log(JSON.stringify(data));
+                document.getElementById("logged").style.display = 'none';
+                document.getElementById("notlogged").style.display = 'block';
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        async function postData(url, data = {}) {
+            const response = await fetch(url, {
+                method: 'POST',
+                cache: 'no-cache', 
+                headers: {  'Content-Type': 'application/json' },
+                referrer: 'no-referrer',
+                body: JSON.stringify(data)
+            });
+            return await response.json();
+        }
+    </script>
+</body>
+
+</html>

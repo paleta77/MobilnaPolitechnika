@@ -1,6 +1,11 @@
 const express = require('express');
-var session = require('express-session');
+const session = require('express-session');
+const mongoose = require('mongoose');
 const app = express();
+
+mongoose.connect('mongodb://db/', { useNewUrlParser: true, useUnifiedTopology: true });
+
+const user = require('./user.js');
 
 app.use(express.urlencoded({ extended: false }))
 app.use(session({
@@ -8,9 +13,6 @@ app.use(session({
   saveUninitialized: false,
   secret: '12345'
 }));
-
-// users database, temporary here :/ 
-let users = { "admin": { name: "admin:", password: "1234" } };
 
 function restrict(req, res, next) {
   if (req.session.user) {
@@ -39,19 +41,22 @@ app.get('/logout', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  let user = users[req.body.username];
-  if (!user) {
-    res.json({ msg: "No such user!" });
-    return;
-  }
-  if (user.password !== req.body.password) {
-    res.json({ msg: "Wrong password!" });
-    return;
-  }
+  user.findOne({ 'name': req.body.username }, 'name password', (err, _user) => {
+    if (err || !_user) 
+    {
+      res.json({ msg: "Error occurs!" });
+      return;
+    }
 
-  req.session.regenerate(() => {
-    req.session.user = user;
-    res.json({msg:"OK"});
+    if (_user.password !== req.body.password) {
+      res.json({ msg: "Wrong password!" });
+      return;
+    }
+
+    req.session.regenerate(() => {
+      req.session.user = _user;
+      res.json({ msg: "OK" });
+    });
   });
 });
 

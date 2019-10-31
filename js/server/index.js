@@ -14,10 +14,15 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(function (req, res, next) {
   req.session = {};
-  if (req.body.token) {
-    let _user = auth[req.body.token];
-    if (_user) {
-      req.session.user = _user; // recreate user session
+  let http_auth = req.get('authorization');
+  if (http_auth) {
+    let token = http_auth.split(' ')[1];
+    if (token) {
+      let _user = auth[token];
+      if (_user) {
+        req.session.user = _user; // recreate user session
+        req.session.id = token;
+      }
     }
   }
   next();
@@ -31,13 +36,14 @@ function restrict(req, res, next) {
   }
 }
 
-app.post('/restricted', restrict, (req, res) => {
+app.get('/restricted', restrict, (req, res) => {
   res.json({ msg: "Secret here :)" });
 });
 
-app.post('/logout', (req, res) => {
+app.get('/logout', (req, res) => {
+  delete auth[req.session.id];
   req.session = {};
-  res.json({ msg: "OK"});
+  res.json({ msg: "OK" });
 });
 
 app.post('/login', (req, res) => {

@@ -60,18 +60,28 @@
         <!--<p class="text-center"><a href="#">Create an Account</a></p>-->
     </div>
 
-    <div id="logged">
-        <button class="btn btn-primary" onclick="logout();">Logout</button>
-        <h4 class="text-center">You're logged in :)</h4>
-    </div>
+    <div class="container">
+        <div id="logged" class="row">
+            <button class="btn btn-primary" onclick="logout();">Logout</button>
+            <h4 class="text-center" id="welcomeText">You're logged in :)</h4>
 
+            <table class="table border" id="gradesTable">
+                <tr>
+                    <th>#</th>
+                    <th>Subject</th>
+                    <th>Grade</th>
+                </tr>
+            </table>
+        </div>
+    </div>
     <script>
         document.getElementById("logged").style.display = 'none';
 
         let token = null;
+        let username = null;
 
         async function login() {
-            let username = document.getElementById("username").value;
+            username = document.getElementById("username").value;
             let password = document.getElementById("password").value;
             try {
                 const data = await postData('login', { username: username, password: password });
@@ -80,6 +90,8 @@
                     token = data.token;
                     document.getElementById("logged").style.display = 'block';
                     document.getElementById("notlogged").style.display = 'none';
+                    document.getElementById("welcomeText").innerText = `Welcome ${username} :)`;
+                    loadGrades();
                 }
                 else {
                     alert(data.msg);
@@ -100,11 +112,38 @@
             }
         };
 
+        async function loadGrades() {
+            let grades = await getData(`grades/${username}`);
+            console.log(JSON.stringify(grades));
+            let gradesTable = document.getElementById("gradesTable");
+
+            for (let i = 1; i < gradesTable.rows.length;) {
+                gradesTable.deleteRow(i);
+            }
+
+            let i = 1;
+            for (let grade of grades) {
+
+                let row = gradesTable.insertRow(i);
+                row.insertCell(0).innerText = i;
+                row.insertCell(1).innerText = grade.subject
+                row.insertCell(2).innerText = grade.value;
+
+                i++;
+            }
+
+            if (i == 1) {
+                let cell = gradesTable.insertRow(i).insertCell(0);
+                cell.innerText = "None";
+                cell.colSpan = "3";
+            }
+        }
+
         async function postData(url, data = {}) {
             const response = await fetch(url, {
                 method: 'POST',
-                cache: 'no-cache', 
-                headers: {  'Content-Type': 'application/json', "Authorization": "Bearer " + (token ? token:"0")  },
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json', "Authorization": "Bearer " + (token ? token : "0") },
                 referrer: 'no-referrer',
                 body: JSON.stringify(data)
             });
@@ -113,8 +152,8 @@
 
         async function getData(url) {
             const response = await fetch(url, {
-                cache: 'no-cache', 
-                headers: {  'Content-Type': 'application/json', "Authorization": "Bearer " + (token ? token:"0")  },
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json', "Authorization": "Bearer " + (token ? token : "0") },
                 referrer: 'no-referrer'
             });
             return await response.json();

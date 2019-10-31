@@ -8,6 +8,7 @@ const app = express();
 mongoose.connect(config.mongodb, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const user = require('./user.js');
+const grade = require('./grade.js');
 let auth = {};
 
 app.use(express.static('public'));
@@ -62,6 +63,10 @@ app.post('/login', (req, res) => {
     auth[id] = _user;
     res.json({ msg: "OK", token: id });
   });
+});
+
+app.get('/grades/:user', (req, res) => {
+  grade.getAll(req.params['user'], res);
 });
 
 app.listen(8080, () => {

@@ -3,6 +3,7 @@ import 'package:mobilna_politechnika/Oceny.dart';
 import 'package:mobilna_politechnika/Map.dart';
 
 import 'Profil.dart';
+import 'api.dart';
 
 class MyDrawer extends StatelessWidget {
   @override
@@ -51,6 +52,7 @@ class MyDrawer extends StatelessWidget {
           leading: Icon(Icons.arrow_back),
           onTap: () {
             Navigator.pop(context);
+            API.logout();
             Navigator.of(context)
                 .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
           },

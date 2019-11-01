@@ -66,31 +66,35 @@
             <h4 class="text-center" id="welcomeText">You're logged in :)</h4>
 
             <table class="table border" id="gradesTable">
+                <thead>
                 <tr>
                     <th>#</th>
                     <th>Subject</th>
                     <th>Grade</th>
                 </tr>
+            </thead>
+            <tbody>
+            </tbody>
             </table>
         </div>
     </div>
     <script>
-        document.getElementById("logged").style.display = 'none';
+        $("#logged").hide();
 
         let token = null;
         let username = null;
 
         async function login() {
-            username = document.getElementById("username").value;
-            let password = document.getElementById("password").value;
+            username = $("#username").val();
+            let password = $("#password").val();
             try {
                 const data = await postData('login', { username: username, password: password });
                 console.log(JSON.stringify(data));
                 if (data.msg == 'OK') {
                     token = data.token;
-                    document.getElementById("logged").style.display = 'block';
-                    document.getElementById("notlogged").style.display = 'none';
-                    document.getElementById("welcomeText").innerText = `Welcome ${username} :)`;
+                    $("#logged").show();
+                    $("#notlogged").hide();
+                    $("#welcomeText").text(`Welcome ${username} :)`);
                     loadGrades();
                 }
                 else {
@@ -105,8 +109,8 @@
             try {
                 const data = await getData('logout');
                 console.log(JSON.stringify(data));
-                document.getElementById("logged").style.display = 'none';
-                document.getElementById("notlogged").style.display = 'block';
+                $("#logged").hide();
+                $("#notlogged").show();
             } catch (error) {
                 console.error(error);
             }
@@ -115,27 +119,17 @@
         async function loadGrades() {
             let grades = await getData(`grades/${username}`);
             console.log(JSON.stringify(grades));
-            let gradesTable = document.getElementById("gradesTable");
-
-            for (let i = 1; i < gradesTable.rows.length;) {
-                gradesTable.deleteRow(i);
-            }
+            
+            $('#gradesTable tbody').empty();
 
             let i = 1;
             for (let grade of grades) {
-
-                let row = gradesTable.insertRow(i);
-                row.insertCell(0).innerText = i;
-                row.insertCell(1).innerText = grade.subject
-                row.insertCell(2).innerText = grade.value;
-
+                $('#gradesTable tbody').append(`<tr><td>${i}</td><td>${grade.subject}</td><td>${grade.value}</td></tr>`);
                 i++;
             }
 
             if (i == 1) {
-                let cell = gradesTable.insertRow(i).insertCell(0);
-                cell.innerText = "None";
-                cell.colSpan = "3";
+                $('#gradesTable tbody').append(`<tr><td span="3">None</td></tr>`);
             }
         }
 

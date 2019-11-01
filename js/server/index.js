@@ -69,6 +69,14 @@ app.get('/grades/:user', (req, res) => {
   grade.getAll(req.params['user'], res);
 });
 
+app.put('/grades', (req, res) => {
+  grade.add(req.body.user, req.body.subject, req.body.value, res);
+});
+
+app.delete('/grades', (req,res) => {
+  grade.del(req.body.user, req.body.subject, res);
+});
+
 app.listen(8080, () => {
   console.log('Server listening on port 8080!');
 });

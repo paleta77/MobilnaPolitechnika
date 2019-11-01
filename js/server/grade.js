@@ -9,19 +9,32 @@ function getAll(user, res) {
     });
 }
 
-function add() {
-
+function add(user, subject, value, res) {
+    console.log("%s %s %s", user, subject, value);
+    if (!user || !subject || !value) {
+        res.json({ msg: "Field cannot be empty!" });
+        return;
+    }
+    if (value > 5 || value < 2) {
+        res.json({ msg: "Value outside 2 and 5!" });
+        return;
+    }
+    grade.create({ 'user': user, 'subject': subject, 'value': value }, function (err) {
+        if (err) return handleError(err);
+        res.json({ msg: "OK" });
+    });
 }
 
-function del(user, subject) {
+function del(user, subject, res) {
     grade.deleteOne({ 'user': user, 'subject': subject }, function (err) {
         if (err) return handleError(err);
-      });
+        res.json({ msg: "OK" });
+    });
 }
 
 module.exports = {
-   'model': grade,
-   'getAll': getAll,
-   'add': add,
-   'del': del
+    'model': grade,
+    'getAll': getAll,
+    'add': add,
+    'del': del
 };

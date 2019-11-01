@@ -67,22 +67,34 @@
 
             <table class="table border" id="gradesTable">
                 <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Subject</th>
-                    <th>Grade</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
+                    <tr>
+                        <th>#</th>
+                        <th>Subject</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
             </table>
         </div>
     </div>
     <script>
-        $("#logged").hide();
+        let token = localStorage.getItem('token');
+        let username = localStorage.getItem('username');
+        showHide();
 
-        let token = null;
-        let username = null;
+        function showHide() {
+            if (token) {
+                $("#logged").show();
+                $("#notlogged").hide();
+                $("#welcomeText").text(`Welcome ${username} :)`);
+                loadGrades();
+            }
+            else {
+                $("#logged").hide();
+                $("#notlogged").show();
+            }
+        }
 
         async function login() {
             username = $("#username").val();
@@ -92,10 +104,9 @@
                 console.log(JSON.stringify(data));
                 if (data.msg == 'OK') {
                     token = data.token;
-                    $("#logged").show();
-                    $("#notlogged").hide();
-                    $("#welcomeText").text(`Welcome ${username} :)`);
-                    loadGrades();
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('username', username);
+                    showHide();
                 }
                 else {
                     alert(data.msg);
@@ -109,8 +120,9 @@
             try {
                 const data = await getData('logout');
                 console.log(JSON.stringify(data));
-                $("#logged").hide();
-                $("#notlogged").show();
+                localStorage.clear();
+                token = username = null;
+                showHide();
             } catch (error) {
                 console.error(error);
             }
@@ -119,7 +131,7 @@
         async function loadGrades() {
             let grades = await getData(`grades/${username}`);
             console.log(JSON.stringify(grades));
-            
+
             $('#gradesTable tbody').empty();
 
             let i = 1;

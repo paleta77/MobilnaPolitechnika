@@ -83,8 +83,8 @@ class MyCustomFormState extends State<MyCustomForm> {
 
                   var isLogged = await API.login(
                       loginController.text, passwordController.text);
-
-                  Scaffold.of(context).hideCurrentSnackBar();
+                  await API.getGrades('admin');
+                  //Scaffold.of(context).hideCurrentSnackBar();
 
                   if (isLogged) {
                     Navigator.of(context).pushNamedAndRemoveUntil(

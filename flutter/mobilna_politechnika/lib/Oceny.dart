@@ -5,13 +5,7 @@ import 'api.dart';
 class Oceny extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Oceny"),
-      ),
-      drawer: MyDrawer(),
-      body: Center(child: DisplayGrade()),
-    );
+    return DisplayGrade();
   }
 }
 
@@ -32,13 +26,17 @@ class DisplayGrade extends StatefulWidget {
   }
 }
 
+var sum = 0;
+
 class _DisplayGradeState extends State {
   List GradeModelData = [];
+  String average = " ";
 
   void loadGrades() async {
     var grades = await API.getGrades(API.username);
     print(grades.length);
     GradeModelData.clear();
+    sum = 0;
     for (int i = 0; i < grades.length; i++) {
       print(grades[i]['subject']);
       setState(() {
@@ -46,7 +44,12 @@ class _DisplayGradeState extends State {
             subject: grades[i]['subject'],
             value: grades[i]['value'].toString()));
       });
+      print(grades[i]['value']);
+      sum += grades[i]['value'];
     }
+    setState(() {
+      average = (sum / grades.length).toString();
+    });
   }
 
   @override
@@ -57,21 +60,40 @@ class _DisplayGradeState extends State {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: GradeModelData.length,
-      itemBuilder: (context, int i) => Column(
-        children: [
-          new ListTile(
-            title: new Text(GradeModelData[i].subject),
-            subtitle: new Text(GradeModelData[i].value),
-            onTap: () {},
-            onLongPress: () {
-              print(
-                Text("Long Pressed"),
-              );
-            },
-          ),
-        ],
+    return Scaffold(
+      //  appBar: AppBar(
+      //    title: Text("Oceny"),
+      //  ),
+
+      appBar: AppBar(title: const Text('Oceny')),
+      drawer: MyDrawer(),
+      body: Center(
+          child: ListView.builder(
+        itemCount: GradeModelData.length,
+        itemBuilder: (context, int i) => Column(
+          children: [
+            new ListTile(
+              title: new Text(GradeModelData[i].subject),
+              subtitle: new Text(GradeModelData[i].value),
+              onTap: () {},
+              onLongPress: () {
+                print(
+                  Text("Long Pressed"),
+                );
+              },
+            ),
+          ],
+        ),
+      )),
+      bottomNavigationBar: BottomAppBar(
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            //IconButton(icon: Icon(Icons.menu), onPressed: () {},),
+            Text(average)
+          ],
+        ),
       ),
     );
   }

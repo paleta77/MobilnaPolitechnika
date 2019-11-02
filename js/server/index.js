@@ -65,6 +65,20 @@ app.post('/login', (req, res) => {
   });
 });
 
+app.post('/register', (req, res) => {
+  user.findOne({ 'name': req.body.username }, 'name', (err, _user) => {
+    if (err) return res.json({ msg: err });
+    if (!_user) {
+      user.create({ name: req.body.username, password: req.body.password }, function (err, _user2) {
+        if (err) return res.json({ msg: err });
+        res.json({ msg: "OK" });
+      });
+      return;
+    }
+    res.json({ msg: "Username already taken!" });
+  });
+});
+
 app.get('/grades/:user', (req, res) => {
   grade.getAll(req.params['user'], res);
 });
@@ -73,7 +87,7 @@ app.put('/grades', (req, res) => {
   grade.add(req.body.user, req.body.subject, req.body.value, res);
 });
 
-app.delete('/grades', (req,res) => {
+app.delete('/grades', (req, res) => {
   grade.del(req.body.user, req.body.subject, res);
 });
 

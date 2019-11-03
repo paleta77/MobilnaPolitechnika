@@ -52,4 +52,20 @@ class API {
 
     return null;
   }
+  static Future<dynamic> getGroup(String username) async {
+    final response = await http.get('$URL/group/$username', headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token"
+    });
+    print(response.body);
+
+    var body = json.decode(response.body);
+    if (response.statusCode == 200) {
+      return body;
+    }
+
+    return null;
+  }
+
+
 }

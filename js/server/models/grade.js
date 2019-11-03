@@ -10,7 +10,6 @@ function getAll(user, res) {
 }
 
 function add(user, subject, value, res) {
-    console.log("%s %s %s", user, subject, value);
     if (!user || !subject || !value) {
         res.json({ msg: "Field cannot be empty!" });
         return;

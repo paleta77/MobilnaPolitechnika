@@ -3,12 +3,12 @@ const crypto = require("crypto");
 const mongoose = require('mongoose');
 const config = require('./config.js');
 
-const app = express();
-
 mongoose.connect(config.mongodb, { useNewUrlParser: true, useUnifiedTopology: true });
+const user = require('./models/user.js');
+const grade = require('./models/grade.js');
+const group = require('./models/group.js');
 
-const user = require('./user.js');
-const grade = require('./grade.js');
+const app = express();
 let auth = {};
 
 app.use(express.static('public'));
@@ -37,10 +37,6 @@ function restrict(req, res, next) {
   }
 }
 
-app.get('/restricted', restrict, (req, res) => {
-  res.json({ msg: "Secret here :)" });
-});
-
 app.get('/logout', (req, res) => {
   delete auth[req.session.id];
   req.session = {};
@@ -49,15 +45,9 @@ app.get('/logout', (req, res) => {
 
 app.post('/login', (req, res) => {
   user.findOne({ 'name': req.body.username }, 'name password', (err, _user) => {
-    if (err || !_user) {
-      res.json({ msg: "Error occurs!" });
-      return;
-    }
+    if (err || !_user) return res.json({ msg: "Error occurs!" });
 
-    if (_user.password !== req.body.password) {
-      res.json({ msg: "Wrong password!" });
-      return;
-    }
+    if (_user.password !== req.body.password) return res.json({ msg: "Wrong password!" });
 
     let id = crypto.randomBytes(16).toString("hex"); // generate auth token
     auth[id] = _user;
@@ -89,6 +79,20 @@ app.put('/grades', (req, res) => {
 
 app.delete('/grades', (req, res) => {
   grade.del(req.body.user, req.body.subject, res);
+});
+
+app.get('/group/:user', (req, res) => {
+  user.findOne({ 'name': req.params['user'] }, 'group', (err, _user) => {
+    if (err) return res.json({ msg: err });
+    if (_user) {
+      group.findOne({ '_id': _user.group }, (err, _group) => {
+        if (err) return res.json({ msg: err });
+        res.json({ msg: "OK", group: _group });
+      });
+      return;
+    }
+    res.json({ msg: "No user" });
+  });
 });
 
 app.listen(8080, () => {

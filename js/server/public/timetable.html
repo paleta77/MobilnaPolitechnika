@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Timetable</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <style>
+        body {
+            margin: 0 0;
+            font-family: sans-serif;
+        }
+
+        .card {
+            border: 5px solid rgb(0, 128, 192);
+            outline-offset: -5px;
+            position: absolute;
+            width: 400px;
+            background-color: white;
+        }
+
+        .card .header {
+            background-color: rgb(244, 244, 244);
+        }
+
+        #grid .hour {
+            border-top: 1px solid black;
+            height: 159px;
+        }
+        #header {
+            height: 30px;
+            padding-left: 100px;
+        }
+        #header h3{
+            margin: 0 0;
+            display: inline-block;
+            width: 430px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="timetable">
+    </div>
+    <div id="header"><h3>Sobota</h3><h3>Niedziela</h3></div>
+    <div id="grid">
+        <div class="hour">08:00</div>
+        <div class="hour">10:00</div>
+        <div class="hour">12:00</div>
+        <div class="hour">14:00</div>
+        <div class="hour">16:00</div>
+        <div class="hour">18:00</div>
+        <div class="hour">20:00</div>
+    </div>
+    <script>
+        let searchParams = new URLSearchParams(window.location.search);
+        let username = searchParams.get('user') || 'admin';
+        loadTimetable();
+
+        function zero2(number) {
+            return ("" + number).padStart(2, '0');
+        }
+
+        async function loadTimetable() {
+            let timetable = await getData(`group/${username}`);
+            console.log(JSON.stringify(timetable));
+
+            if (timetable.msg != 'OK') {
+                return alert(timetable.msg);
+            }
+
+            $('#timetable').empty();
+
+            if (timetable.group.mode == "Niestacjonarne") {
+            }
+            else {
+            }
+
+            let i = 1;
+            for (let el of timetable.group.timetable) {
+                let start = [el.hour | 0, ((el.hour % 1) * 100) | 0];
+                let end = [start[0] + ((start[1] + el.length) / 60) | 0, ((start[1] + el.length) % 60) | 0];
+                //if (el.day == "Sobota")
+                let x = (el.day == "Sobota" ? 0 : 430) + 100;
+                let y = 80 * (start[0] + (start[1]/60) - 8) + 30;
+                let height = (8 * el.length) / 6 - 10;
+                $('#timetable').append(`
+                    <div class="card" style="top:${y}px;left:${x}px;min-height:${height}px">
+                        <div class="header">${zero2(start[0])}:${zero2(start[1])} - ${zero2(end[0])}:${zero2(end[1])}</div>
+                        ${el.subject}
+                        <br/>
+                        <b>${el.lecturer ? el.lecturer : ""}</b>
+                        <br />
+                        <b>${el.classroom}</b> 
+                    </div>`);
+                i++;
+            }
+        }
+
+        async function getData(url) {
+            const response = await fetch(url, {
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                referrer: 'no-referrer'
+            });
+            return await response.json();
+        }
+    </script>
+</body>
+
+</html>

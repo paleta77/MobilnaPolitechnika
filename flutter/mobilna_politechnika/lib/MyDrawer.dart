@@ -53,7 +53,7 @@ class MyDrawer extends StatelessWidget {
           onTap: () {
             Navigator.pop(context);
             Navigator.push(context,
-                new MaterialPageRoute(builder: (context) => new Group()));
+                new MaterialPageRoute(builder: (context) => new GroupTimetable()));
           },
         ),
         Divider(),

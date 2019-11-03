@@ -64,8 +64,5 @@ class API {
       return body;
     }
 
-    return null;
   }
-
-
 }

@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:mobilna_politechnika/MyDrawer.dart';
-import 'package:mobilna_politechnika/Oceny.dart';
 import 'api.dart';
 
 class GroupTimetable extends StatelessWidget {
@@ -20,24 +17,39 @@ class DisplayGroups extends StatefulWidget {
 }
 
 class _DisplayGroupsState extends State{
-  List groupModelData = [];
+  var groupModel;
   void loadGroups() async {
     var groups = await API.getGroup(API.username);
-    var groupModel = GroupModel.fromJson(groups);
-    print(groupModel.group.timetable.length);
-    groupModelData.clear();
-    for(int i = 0; i<groupModel.group.timetable.length; i++){
-      print(groups['group']['timetable'][i]['day']);
-      print(groups['group']['timetable'][i]['hour']);
-      print(groups['group']['timetable'][i]['length']);
-      print(groups['group']['timetable'][i]['subject']);
-      print(groups['group']['timetable'][i]['classroom']);
-      print("");
+    setState(() {
+      groupModel = GroupModel.fromJson(groups);
+    });
+    for(int i = 0; i<groupModel.group.timetable.length; i++) {
+      print(groupModel.group.timetable
+          .elementAt(i)
+          .day);
+      print(groupModel.group.timetable
+          .elementAt(i)
+          .hour);
+      print(groupModel.group.timetable
+          .elementAt(i)
+          .length);
+      print(groupModel.group.timetable
+          .elementAt(i)
+          .subject);
+      print(groupModel.group.timetable
+          .elementAt(i)
+          .classroom);
+      print(groupModel.group.timetable
+          .elementAt(i)
+          .lecturer);
     }
-
-
   }
 
+  @override
+  void initState() {
+    super.initState();
+    loadGroups();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +57,23 @@ class _DisplayGroupsState extends State{
     return Scaffold(
         appBar: AppBar(title: const Text('Plan zajęć')),
         drawer: MyDrawer(),
-        body: Center(
-          child: FlatButton(
-            child: Text("test"),
-            onPressed: loadGroups,
-          )
+        body: Center(child: ListView.builder(
+             itemCount: groupModel.group.timetable.length,
+             itemBuilder: (context, int i) => Column(
+               children: [
+                  new ListTile(
+                    title: new Text(groupModel.group.timetable.elementAt(i).subject),
+                    subtitle: new Text(groupModel.group.timetable.elementAt(i).classroom),
+                    onTap: () {},
+                    onLongPress: () {
+                      print(
+                        Text("Long Pressed"),
+                      );
+                      },
+                  ),
+               ],
+             ),
+        )
         )
     );
   }

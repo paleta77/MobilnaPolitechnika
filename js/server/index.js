@@ -37,7 +37,16 @@ function restrict(req, res, next) {
   }
 }
 
-app.get('/logout', (req, res) => {
+app.get('/logged', (req, res) => {
+  if (req.session.user) {
+    res.json({ msg: "YES" });
+  }
+  else {
+    res.json({ msg: "NO" });
+  }
+});
+
+app.get('/logout', restrict, (req, res) => {
   delete auth[req.session.id];
   req.session = {};
   res.json({ msg: "OK" });
@@ -69,19 +78,35 @@ app.post('/register', (req, res) => {
   });
 });
 
-app.get('/grades/:user', (req, res) => {
-  grade.getAll(req.params['user'], res);
+app.get('/grades/:user', restrict, (req, res) => {
+  grade.find({ 'user': req.params['user'] }, 'value subject user', (err, grades) => {
+    if (err) return handleError(err);
+    res.json(grades);
+  });
 });
 
-app.put('/grades', (req, res) => {
-  grade.add(req.body.user, req.body.subject, req.body.value, res);
+app.put('/grades', restrict, (req, res) => {
+  let { user, subject, value } = [req.body.user, req.body.subject, req.body.value];
+  if (!user || !subject || !value) {
+    return res.json({ msg: "Field cannot be empty!" });
+  }
+  if (value > 5 || value < 2) {
+    return res.json({ msg: "Value outside 2 and 5!" });
+  }
+  grade.create({ 'user': user, 'subject': subject, 'value': value }, function (err) {
+    if (err) return handleError(err);
+    res.json({ msg: "OK" });
+  });
 });
 
-app.delete('/grades', (req, res) => {
-  grade.del(req.body.user, req.body.subject, res);
+app.delete('/grades', restrict, (req, res) => {
+  grade.deleteOne({ 'user': req.body.user, 'subject': req.body.subject }, function (err) {
+    if (err) return handleError(err);
+    res.json({ msg: "OK" });
+  });
 });
 
-app.get('/group/:user', (req, res) => {
+app.get('/group/:user', restrict, (req, res) => {
   user.findOne({ 'name': req.params['user'] }, 'group', (err, _user) => {
     if (err) return res.json({ msg: err });
     if (_user) {

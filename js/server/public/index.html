@@ -100,13 +100,24 @@
                 <tbody>
                 </tbody>
             </table>
-            <iframe src="timetable.html"></iframe>
+            <iframe id="timetableframe"></iframe>
         </div>
     </div>
     <script>
         let token = localStorage.getItem('token');
         let username = localStorage.getItem('username');
+        isLogged();
+
+        async function isLogged()
+        {
+            const logged = await getData('logged');
+            if(logged.msg != "YES"){
+                localStorage.removeItem('token');
+                localStorage.removeItem('username');
+                token = username = null;
+            }
         showHide();
+        }
 
         function showHide() {
             if (token) {
@@ -114,6 +125,7 @@
                 $("#notlogged").hide();
                 $("#welcomeText").text(`Welcome ${username} :)`);
                 loadGrades();
+                $("#timetableframe").attr('src', `timetable.html?user=${username}&token=${token}`);
             }
             else {
                 $("#logged").hide();

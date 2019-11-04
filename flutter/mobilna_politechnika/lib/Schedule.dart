@@ -2,11 +2,180 @@ import 'package:flutter/material.dart';
 import 'package:mobilna_politechnika/MyDrawer.dart';
 import 'api.dart';
 import 'package:calendar_views/calendar_views.dart';
+import 'package:calendar_views/day_view.dart';
+//displaying it as calendar view
+class DayView extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() => new _DayViewState();
+}
 
+class _DayViewState extends State<DayView>{
+  DateTime _day0;
+  DateTime _day1;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _day0 = new DateTime.now();
+    _day1 = _day0.toUtc().add(new Duration(days: 1)).toLocal();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("Plan zajęć"),
+      ),
+      body: new DayViewEssentials(
+          properties: new DayViewProperties(days: <DateTime>[
+            _day0,
+            _day1,
+          ]),
+          child: new Column(
+            children: <Widget>[
+              new Container(
+                color: Colors.grey[200],
+                child: new DayViewDaysHeader(headerItemBuilder: _headerItemBuilder),
+              ),
+              new Expanded(
+                  child: new SingleChildScrollView(
+                    child: new DayViewSchedule(
+                        heightPerMinute: 1.0,
+                        components: <ScheduleComponent>[
+                          new TimeIndicationComponent.intervalGenerated(
+                          generatedTimeIndicatorBuilder:
+                              _generatedTimeIndicatorBuilder),
+                          new SupportLineComponent.intervalGenerated(
+                            generatedSupportLineBuilder: _generatedSupportLineBuilder,
+                          ),
+                          new DaySeparationComponent(
+                            generatedDaySeparatorBuilder:
+                            _generatedDaySeparatorBuilder,
+                          ),
+//                          new EventViewComponent(
+//                            getEventsOfDay: _getEventsOfDay,
+//                          ),
+                    ]),
+                  ))
+            ],
+          )),
+    );
+  }
+
+  String _minuteOfDayToHourMinuteString(int minuteOfDay) {
+    return "${(minuteOfDay ~/ 60).toString().padLeft(2, "0")}"
+        ":"
+        "${(minuteOfDay % 60).toString().padLeft(2, "0")}";
+  }
+
+  //Hours display
+  Positioned _generatedTimeIndicatorBuilder(
+      BuildContext context,
+      ItemPosition itemPosition,
+      ItemSize itemSize,
+      int minuteOfDay,
+      ) {
+    return new Positioned(
+      top: itemPosition.top,
+      left: itemPosition.left,
+      width: itemSize.width,
+      height: itemSize.height,
+      child: new Container(
+        child: new Center(
+          child: new Text(_minuteOfDayToHourMinuteString(minuteOfDay)),
+        ),
+      ),
+    );
+  }
+
+  //Day header
+  Widget _headerItemBuilder(BuildContext context, DateTime day){
+    return new Container(
+      color: Colors.grey[300],
+      padding: new EdgeInsets.symmetric(vertical: 8.0),
+      child: new Column(
+        children: <Widget>[
+          new Text(weekdayToAbbreviatedString(day.weekday)),
+        ],
+      ),
+    );
+  }
+
+  weekdayToAbbreviatedString(int weekday) {
+    switch(weekday){
+      case 1:
+        return "Sobota";
+        break;
+      case 2:
+        return "Niedziela";
+        break;
+      case 3:
+        return "Poniedziałek";
+        break;
+      case 4:
+        return "Wtorek";
+        break;
+      case 5:
+        return "Sroda";
+        break;
+      case 6:
+        return "Czwartek";
+        break;
+      case 7:
+        return "Piątek";
+        break;
+      default:
+        return "Error";
+    }
+  }
+
+}
+
+//lines separating days
+Positioned _generatedDaySeparatorBuilder(
+    BuildContext context,
+    ItemPosition itemPosition,
+    ItemSize itemSize,
+    int daySeparatorNumber,
+    ) {
+  return new Positioned(
+    top: itemPosition.top,
+    left: itemPosition.left,
+    width: itemSize.width,
+    height: itemSize.height,
+    child: new Center(
+      child: new Container(
+        width: 0.7,
+        color: Colors.grey,
+      ),
+    ),
+  );
+}
+
+//Lines separating each event
+Positioned _generatedSupportLineBuilder(
+    BuildContext context,
+    ItemPosition itemPosition,
+    double itemWidth,
+    int minuteOfDay,
+    ) {
+  return new Positioned(
+    top: itemPosition.top,
+    left: itemPosition.left,
+    width: itemWidth,
+    child: new Container(
+      height: 0.7,
+      color: Colors.grey[700],
+    ),
+  );
+}
+
+//displaying it as list
 class GroupTimetable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return DisplayGroups();
+    return DayView();
   }
 }
 
@@ -60,29 +229,29 @@ class _DisplayGroupsState extends State{
         drawer: MyDrawer(),
         body: Center(
             child: ListView.builder(
-          itemCount: groupModel != null
-              ? groupModel.group.timetable.length
-              : 0, // this fixes ugly red screen when groupModel is not loaded yet
-             itemBuilder: (context, int i) => Column(
-               children: [
-                  new ListTile(
-                    title: new Text(groupModel.group.timetable.elementAt(i).subject),
-                    subtitle: new Text(groupModel.group.timetable.elementAt(i).classroom),
-                    onTap: () {},
-                    onLongPress: () {
-                      print(
-                        Text("Long Pressed"),
-                      );
-                      },
-                  ),
-               ],
-             ),
-        )
+              itemCount: groupModel != null
+                  ? groupModel.group.timetable.length
+                  : 0, // this fixes ugly red screen when groupModel is not loaded yet
+                 itemBuilder: (context, int i) => Column(
+                 children: [
+                      new ListTile(
+                        title: new Text(groupModel.group.timetable.elementAt(i).subject),
+                        subtitle: new Text(groupModel.group.timetable.elementAt(i).classroom),
+                        onTap: () {},
+                        onLongPress: () {
+                          print(Text("Long Pressed"),
+                          );
+                          },
+                      ),
+                 ],
+                 ),
+            )
         )
     );
   }
 }
 
+//Classes for conversion
 class GroupModel {
   String msg;
   Group group;

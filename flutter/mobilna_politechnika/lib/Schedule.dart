@@ -57,8 +57,11 @@ class _DisplayGroupsState extends State{
     return Scaffold(
         appBar: AppBar(title: const Text('Plan zajęć')),
         drawer: MyDrawer(),
-        body: Center(child: ListView.builder(
-             itemCount: groupModel.group.timetable.length,
+        body: Center(
+            child: ListView.builder(
+          itemCount: groupModel != null
+              ? groupModel.group.timetable.length
+              : 0, // this fixes ugly red screen when groupModel is not loaded yet
              itemBuilder: (context, int i) => Column(
                children: [
                   new ListTile(

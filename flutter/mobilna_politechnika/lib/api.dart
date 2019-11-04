@@ -11,8 +11,8 @@ class API {
         headers: {"Content-Type": "application/json"},
         body: json.encode({'username': username, 'password': password}));
 
-    var body = json.decode(response.body);
     if (response.statusCode == 200) {
+      var body = json.decode(response.body);
       if (body['msg'] == 'OK') {
         token = body['token']; // save auth token
         API.username = username;
@@ -27,9 +27,9 @@ class API {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token"
     });
-    print(response.body);
-    var body = json.decode(response.body);
+
     if (response.statusCode == 200) {
+      var body = json.decode(response.body);
       if (body['msg'] == 'OK') {
         token = null;
         return true;
@@ -43,26 +43,24 @@ class API {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token"
     });
-    print(response.body);
 
-    var body = json.decode(response.body);
     if (response.statusCode == 200) {
+      var body = json.decode(response.body);
       return body;
     }
 
     return null;
   }
+
   static Future<dynamic> getGroup(String username) async {
     final response = await http.get('$URL/group/$username', headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token"
     });
-    print(response.body);
 
-    var body = json.decode(response.body);
     if (response.statusCode == 200) {
+      var body = json.decode(response.body);
       return body;
     }
-
   }
 }

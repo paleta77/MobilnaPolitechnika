@@ -41,8 +41,8 @@ class _DayViewState extends State{
     super.initState();
     loadGroups();
     events = <Event>[];
-    _day0 = new DateTime.now();
-    _day1 = _day0.toUtc().add(new Duration(days: 1)).toLocal();
+    _day0 = new DateTime.utc(2019,1,5);
+    _day1 = new DateTime.utc(2019,1,6);
   }
 
     List<StartDurationItem> _getEventsOfDay(DateTime day) {
@@ -51,17 +51,20 @@ class _DayViewState extends State{
     ];
 
     //loadGroups();
-    if(groupModel!=null){
       for(int i = 0; i<5 ; i++){
-        events.add(new Event(
-            startMinuteOfDay: groupModel.group.timetable
-                .elementAt(i)
-                .hour.round()*60,
-            duration: 90,
-            title: groupModel.group.timetable
-                .elementAt(i)
-                .subject));
+        if(weekdayToAbbreviatedString(day.weekday)==groupModel.group.timetable.elementAt(i).day){
+          events.add(new Event(
+              startMinuteOfDay: groupModel.group.timetable
+                  .elementAt(i)
+                  .hour.round()*60,
+              duration: 90,
+              title: groupModel.group.timetable
+                  .elementAt(i)
+                  .subject));
+        }
+        print("lekcja"+groupModel.group.timetable.elementAt(i).subject + "dzien lekcji"+ groupModel.group.timetable.elementAt(i).day+ "dzien dnia" + day.day.toString());
       }
+    if(groupModel!=null){
     }
 
     return events
@@ -184,25 +187,25 @@ class _DayViewState extends State{
   weekdayToAbbreviatedString(int weekday) {
     switch(weekday){
       case 1:
-        return "Sobota";
-        break;
-      case 2:
-        return "Niedziela";
-        break;
-      case 3:
         return "Poniedziałek";
         break;
-      case 4:
+      case 2:
         return "Wtorek";
         break;
-      case 5:
+      case 3:
         return "Sroda";
         break;
-      case 6:
+      case 4:
         return "Czwartek";
         break;
-      case 7:
+      case 5:
         return "Piątek";
+        break;
+      case 6:
+        return "Sobota";
+        break;
+      case 7:
+        return "Niedziela";
         break;
       default:
         return "Error";

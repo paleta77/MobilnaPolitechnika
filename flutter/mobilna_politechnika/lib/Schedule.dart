@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobilna_politechnika/MyDrawer.dart';
 import 'api.dart';
@@ -50,7 +51,8 @@ class _DayViewState extends State{
       //new Event(startMinuteOfDay: 1 * 60, duration: 90, title: "Sleep Walking"),
     ];
 
-    //loadGroups();
+    //loadGroups()
+    if(groupModel!=null){;
       for(int i = 0; i<5 ; i++){
         if(weekdayToAbbreviatedString(day.weekday)==groupModel.group.timetable.elementAt(i).day){
           events.add(new Event(
@@ -58,13 +60,10 @@ class _DayViewState extends State{
                   .elementAt(i)
                   .hour.round()*60,
               duration: 90,
-              title: groupModel.group.timetable
-                  .elementAt(i)
-                  .subject));
+              title: groupModel.group.timetable.elementAt(i).toString()));
         }
         print("lekcja"+groupModel.group.timetable.elementAt(i).subject + "dzien lekcji"+ groupModel.group.timetable.elementAt(i).day+ "dzien dnia" + day.day.toString());
       }
-    if(groupModel!=null){
     }
 
     return events
@@ -145,8 +144,15 @@ class _DayViewState extends State{
       child: new Container(
         margin: new EdgeInsets.only(left: 1.0, right: 1.0, bottom: 1.0),
         padding: new EdgeInsets.all(3.0),
-        color: Colors.green[200],
-        child: new Text("${event.title}"),
+        child:
+        new Text("${event.title}",),
+        decoration: new BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+            color: Colors.lightBlueAccent, //                   <--- border color
+            width: 5.0,
+          ),
+         ),
       ),
     );
   }
@@ -391,6 +397,12 @@ class Timetable {
   String classroom;
   String lecturer;
 
+
+  @override
+  String toString() {
+    return '$hour\n$classroom\n$subject\n$lecturer';
+  }
+
   Timetable(
       {this.sId,
         this.day,
@@ -420,5 +432,6 @@ class Timetable {
     data['classroom'] = this.classroom;
     data['lecturer'] = this.lecturer;
     return data;
+
   }
 }

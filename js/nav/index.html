@@ -3,6 +3,7 @@
 
 <head>
 	<title>Test 2</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
 		integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
 		crossorigin="" />
@@ -39,6 +40,7 @@
 		let bounds = [[51.747 - 0.003, 19.455 - 0.006], [51.747 + 0.003, 19.455 + 0.005]];
 		L.tileLayer('https://c.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+			attributionControl: false,
 			maxNativeZoom: 19,
 			maxZoom: 22,
 			minZoom: 18,
@@ -50,12 +52,10 @@
 
 		let imageBounds = [[51.74542, 19.45311], [51.74867, 19.45811]];
 
-		var floors = [L.imageOverlay("floor0.png", imageBounds), L.imageOverlay("floor1.png", imageBounds), L.imageOverlay("floor2.png", imageBounds)];
+		var floors = [0, 1, 2].map((i) => L.imageOverlay(`floor${i}.png`, imageBounds));
 
 		let floor_idx = 2;
-		floors[0].addTo(map);
-		floors[1].addTo(map);
-		floors[2].addTo(map);
+		floors.forEach((e) => e.addTo(map));
 
 		let button_up = L.easyButton('fa-arrow-up', (btn, map) => changefloor(1));
 		let button_down = L.easyButton('fa-arrow-down', (btn, map) => changefloor(-1));
@@ -64,7 +64,10 @@
 		let nodes = [];
 		let edges = [];
 		let nodesLayer = L.layerGroup().addTo(map);
+
+		let path = [];
 		let pathLayer = L.layerGroup().addTo(map);
+		let markersLayer = L.layerGroup().addTo(map);
 
 		map.on('click', (e) => {
 			console.log("a");
@@ -93,7 +96,12 @@
 					a.neighbors.push({ b: b, len: len });
 					b.neighbors.push({ b: a, len: len });
 				}
-				dijkstra(nodes[0], nodes[5]);
+				let searchParams = new URLSearchParams(window.location.search);
+				let start = searchParams.get('start') || 59;
+				let end = searchParams.get('end') || 1;
+
+				dijkstra(nodes[start], nodes[end]);
+				changefloor(0);
 			}
 			request.send();
 		}
@@ -109,8 +117,11 @@
 			floor_idx = Math.min(Math.max(floor_idx, 0), 2);
 			floors[floor_idx].addTo(map);
 
+			nodesLayer.clearLayers();
+			pathLayer.clearLayers();
+			markersLayer.clearLayers();
+
 			if (showNodes) {
-				nodesLayer.clearLayers();
 				for (let idx in nodes) {
 					let point = nodes[idx];
 					if (point.floor === floor_idx) {
@@ -133,7 +144,6 @@
 			}
 
 			if (showEdges) {
-				pathLayer.clearLayers();
 				for (let idx in edges) {
 					let edge = edges[idx];
 					let a = nodes[edge.a];
@@ -141,6 +151,18 @@
 					if (a.floor === floor_idx)
 						pathLayer.addLayer(L.polyline([[a.x, a.y], [b.x, b.y]]));
 				}
+			}
+			if (path.length >= 2) {
+				for (let i = 1; i < path.length; i++) {
+					let a = path[i - 1];
+					let b = path[i];
+					if (a.floor === floor_idx || b.floor === floor_idx)
+						pathLayer.addLayer(L.polyline([[a.x, a.y], [b.x, b.y]]));
+				}
+				if (path[0].floor === floor_idx)
+					markersLayer.addLayer(L.marker([path[0].x, path[0].y]));
+				if (path[path.length - 1].floor === floor_idx)
+					markersLayer.addLayer(L.marker([path[path.length - 1].x, path[path.length - 1].y]));
 			}
 		}
 
@@ -190,16 +212,7 @@
 				}
 			}
 
-			let path = s;
-			for (let i = 1; i < path.length; i++) {
-				let a = path[i - 1];
-				let b = path[i];
-				L.polyline([[a.x, a.y], [b.x, b.y]]).addTo(map);
-			}
-			L.marker([path[0].x, path[0].y]).addTo(map);
-			L.marker([path[path.length - 1].x, path[path.length - 1].y]).addTo(map);
-
-			return s;
+			path = s;
 		}
 
 		function distance(start, end) {

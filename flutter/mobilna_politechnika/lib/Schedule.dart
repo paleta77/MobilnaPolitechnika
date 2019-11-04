@@ -1,11 +1,269 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobilna_politechnika/MyDrawer.dart';
 import 'api.dart';
+import 'package:calendar_views/calendar_views.dart';
+import 'package:calendar_views/day_view.dart';
+//displaying it as calendar view
+class DayView extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() => new _DayViewState();
+}
 
+class Event {
+  Event({
+    @required this.startMinuteOfDay,
+    @required this.duration,
+    @required this.title,
+  });
+
+  final int startMinuteOfDay;
+  final int duration;
+
+  final String title;
+}
+
+class _DayViewState extends State{
+  DateTime _day0;
+  DateTime _day1;
+
+  var groupModel;
+  void loadGroups() async {
+    var groups = await API.getGroup(API.username);
+    setState(() {
+      groupModel = GroupModel.fromJson(groups);
+    });
+  }
+
+  List<Event> events;
+
+  @override
+  void initState() {
+    super.initState();
+    loadGroups();
+    events = <Event>[];
+    _day0 = new DateTime.utc(2019,1,5);
+    _day1 = new DateTime.utc(2019,1,6);
+  }
+
+    List<StartDurationItem> _getEventsOfDay(DateTime day) {
+    events = <Event>[
+      //new Event(startMinuteOfDay: 1 * 60, duration: 90, title: "Sleep Walking"),
+    ];
+
+    //loadGroups()
+    if(groupModel!=null){;
+      for(int i = 0; i<5 ; i++){
+        if(weekdayToAbbreviatedString(day.weekday)==groupModel.group.timetable.elementAt(i).day){
+          events.add(new Event(
+              startMinuteOfDay: groupModel.group.timetable
+                  .elementAt(i)
+                  .hour.round()*60,
+              duration: 90,
+              title: groupModel.group.timetable.elementAt(i).toString()));
+        }
+        print("lekcja"+groupModel.group.timetable.elementAt(i).subject + "dzien lekcji"+ groupModel.group.timetable.elementAt(i).day+ "dzien dnia" + day.day.toString());
+      }
+    }
+
+    return events
+        .map(
+          (event) => new StartDurationItem(
+        startMinuteOfDay: event.startMinuteOfDay,
+        duration: event.duration,
+        builder: (context, itemPosition, itemSize) => _eventBuilder(
+          context,
+          itemPosition,
+          itemSize,
+          event,
+        ),
+      ),
+    )
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("Plan zajęć"),
+      ),
+      body: new DayViewEssentials(
+          properties: new DayViewProperties(days: <DateTime>[
+            _day0,
+            _day1,
+          ]),
+          child: new Column(
+            children: <Widget>[
+              new Container(
+                color: Colors.grey[200],
+                child: new DayViewDaysHeader(headerItemBuilder: _headerItemBuilder),
+              ),
+              new Expanded(
+                  child: new SingleChildScrollView(
+                    child: new DayViewSchedule(
+                        heightPerMinute: 1.0,
+                        components: <ScheduleComponent>[
+                          new TimeIndicationComponent.intervalGenerated(
+                          generatedTimeIndicatorBuilder:
+                              _generatedTimeIndicatorBuilder),
+                          new SupportLineComponent.intervalGenerated(
+                            generatedSupportLineBuilder: _generatedSupportLineBuilder,
+                          ),
+                          new DaySeparationComponent(
+                            generatedDaySeparatorBuilder:
+                            _generatedDaySeparatorBuilder,
+                          ),
+                          new EventViewComponent(
+                            getEventsOfDay: _getEventsOfDay,
+                          ),
+                    ]),
+                  ))
+            ],
+          )),
+    );
+  }
+
+  String _minuteOfDayToHourMinuteString(int minuteOfDay) {
+    return "${(minuteOfDay ~/ 60).toString().padLeft(2, "0")}"
+        ":"
+        "${(minuteOfDay % 60).toString().padLeft(2, "0")}";
+  }
+
+  Positioned _eventBuilder(
+      BuildContext context,
+      ItemPosition itemPosition,
+      ItemSize itemSize,
+      Event event,
+      ) {
+    return new Positioned(
+      top: itemPosition.top,
+      left: itemPosition.left,
+      width: itemSize.width,
+      height: itemSize.height,
+      child: new Container(
+        margin: new EdgeInsets.only(left: 1.0, right: 1.0, bottom: 1.0),
+        padding: new EdgeInsets.all(3.0),
+        child:
+        new Text("${event.title}",),
+        decoration: new BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+            color: Colors.lightBlueAccent, //                   <--- border color
+            width: 5.0,
+          ),
+         ),
+      ),
+    );
+  }
+
+  //Hours display
+  Positioned _generatedTimeIndicatorBuilder(
+      BuildContext context,
+      ItemPosition itemPosition,
+      ItemSize itemSize,
+      int minuteOfDay,
+      ) {
+    return new Positioned(
+      top: itemPosition.top,
+      left: itemPosition.left,
+      width: itemSize.width,
+      height: itemSize.height,
+      child: new Container(
+        child: new Center(
+          child: new Text(_minuteOfDayToHourMinuteString(minuteOfDay)),
+        ),
+      ),
+    );
+  }
+
+  //Day header
+  Widget _headerItemBuilder(BuildContext context, DateTime day){
+    return new Container(
+      color: Colors.grey[300],
+      padding: new EdgeInsets.symmetric(vertical: 8.0),
+      child: new Column(
+        children: <Widget>[
+          new Text(weekdayToAbbreviatedString(day.weekday)),
+        ],
+      ),
+    );
+  }
+
+  weekdayToAbbreviatedString(int weekday) {
+    switch(weekday){
+      case 1:
+        return "Poniedziałek";
+        break;
+      case 2:
+        return "Wtorek";
+        break;
+      case 3:
+        return "Sroda";
+        break;
+      case 4:
+        return "Czwartek";
+        break;
+      case 5:
+        return "Piątek";
+        break;
+      case 6:
+        return "Sobota";
+        break;
+      case 7:
+        return "Niedziela";
+        break;
+      default:
+        return "Error";
+    }
+  }
+
+}
+
+//lines separating days
+Positioned _generatedDaySeparatorBuilder(
+    BuildContext context,
+    ItemPosition itemPosition,
+    ItemSize itemSize,
+    int daySeparatorNumber,
+    ) {
+  return new Positioned(
+    top: itemPosition.top,
+    left: itemPosition.left,
+    width: itemSize.width,
+    height: itemSize.height,
+    child: new Center(
+      child: new Container(
+        width: 0.7,
+        color: Colors.grey,
+      ),
+    ),
+  );
+}
+
+//Lines separating each event
+Positioned _generatedSupportLineBuilder(
+    BuildContext context,
+    ItemPosition itemPosition,
+    double itemWidth,
+    int minuteOfDay,
+    ) {
+  return new Positioned(
+    top: itemPosition.top,
+    left: itemPosition.left,
+    width: itemWidth,
+    child: new Container(
+      height: 0.7,
+      color: Colors.grey[700],
+    ),
+  );
+}
+
+//displaying it as list
 class GroupTimetable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return DisplayGroups();
+    return DayView();
   }
 }
 
@@ -58,30 +316,13 @@ class _DisplayGroupsState extends State{
         appBar: AppBar(title: const Text('Plan zajęć')),
         drawer: MyDrawer(),
         body: Center(
-            child: ListView.builder(
-          itemCount: groupModel != null
-              ? groupModel.group.timetable.length
-              : 0, // this fixes ugly red screen when groupModel is not loaded yet
-             itemBuilder: (context, int i) => Column(
-               children: [
-                  new ListTile(
-                    title: new Text(groupModel.group.timetable.elementAt(i).subject),
-                    subtitle: new Text(groupModel.group.timetable.elementAt(i).classroom),
-                    onTap: () {},
-                    onLongPress: () {
-                      print(
-                        Text("Long Pressed"),
-                      );
-                      },
-                  ),
-               ],
-             ),
-        )
+            child: DayView(),
         )
     );
   }
 }
 
+//Classes for conversion
 class GroupModel {
   String msg;
   Group group;
@@ -156,6 +397,12 @@ class Timetable {
   String classroom;
   String lecturer;
 
+
+  @override
+  String toString() {
+    return '$hour\n$classroom\n$subject\n$lecturer';
+  }
+
   Timetable(
       {this.sId,
         this.day,
@@ -185,5 +432,6 @@ class Timetable {
     data['classroom'] = this.classroom;
     data['lecturer'] = this.lecturer;
     return data;
+
   }
 }

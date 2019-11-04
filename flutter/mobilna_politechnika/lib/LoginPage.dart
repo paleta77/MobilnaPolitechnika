@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
 import 'api.dart';
 
@@ -6,56 +8,52 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        resizeToAvoidBottomPadding: false,
-        body: SingleChildScrollView(
-            reverse: true,
-            child: Padding(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: Center(
-                  child: Column(children: <Widget>[
-                    Container(
-                        padding: EdgeInsets.symmetric(vertical: 40),
-                        margin: EdgeInsets.only(bottom: 20),
-                        width: double.infinity,
-                        color: Color.fromARGB(255, 128, 1, 0),
-                        child: Text(
-                          'PŁ',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 125, color: Colors.white),
-                        )),
-                    /*Container(
-                        child: Text(
-                      'Witamy w aplikacji \nMobilna Politechnika',
+        body: Column(children: <Widget>[
+      Expanded(
+          child: Container(
+              width: double.infinity,
+              color: Color.fromARGB(255, 128, 1, 0),
+              height: double.infinity,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'PŁ',
                       textAlign: TextAlign.center,
-                    )),*/
-                    MyCustomForm()
-                  ]),
-                ))));
+                      style: TextStyle(fontSize: 125, color: Colors.white),
+                    )
+                  ]))),
+      Expanded(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Container(
+            margin: new EdgeInsets.symmetric(horizontal: 16.0),
+            child: LoginForm())
+      ])),
+    ]));
   }
 }
 
-class MyCustomForm extends StatefulWidget {
+class LoginForm extends StatefulWidget {
   @override
-  MyCustomFormState createState() {
-    // TODO: implement createState
-    return MyCustomFormState();
+  LoginFormState createState() {
+    return LoginFormState();
   }
 }
 
-class MyCustomFormState extends State<MyCustomForm> {
+class LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  final loginController = TextEditingController(text: 'Login');
-  final passwordController = TextEditingController(text: "Haslo");
+  final loginController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Form(
         key: _formKey,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             TextFormField(
+              decoration: InputDecoration(hintText: "Login"),
               controller: loginController,
               validator: (value) {
                 if (value.isEmpty) {
@@ -65,6 +63,7 @@ class MyCustomFormState extends State<MyCustomForm> {
               },
             ),
             TextFormField(
+              decoration: InputDecoration(hintText: "Hasło"),
               controller: passwordController,
               obscureText: true,
               validator: (value) {
@@ -75,6 +74,8 @@ class MyCustomFormState extends State<MyCustomForm> {
               },
             ),
             RaisedButton(
+              color: Color.fromARGB(255, 128, 1, 0),
+              textColor: Colors.white,
               onPressed: () async {
                 if (_formKey.currentState.validate()) {
                   Scaffold.of(context).showSnackBar(SnackBar(

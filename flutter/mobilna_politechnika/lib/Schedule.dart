@@ -9,16 +9,75 @@ class DayView extends StatefulWidget{
   State<StatefulWidget> createState() => new _DayViewState();
 }
 
-class _DayViewState extends State<DayView>{
+class Event {
+  Event({
+    @required this.startMinuteOfDay,
+    @required this.duration,
+    @required this.title,
+  });
+
+  final int startMinuteOfDay;
+  final int duration;
+
+  final String title;
+}
+
+class _DayViewState extends State{
   DateTime _day0;
   DateTime _day1;
+
+  var groupModel;
+  void loadGroups() async {
+    var groups = await API.getGroup(API.username);
+    setState(() {
+      groupModel = GroupModel.fromJson(groups);
+    });
+  }
+
+  List<Event> events;
 
   @override
   void initState() {
     super.initState();
-
+    loadGroups();
+    events = <Event>[];
     _day0 = new DateTime.now();
     _day1 = _day0.toUtc().add(new Duration(days: 1)).toLocal();
+  }
+
+    List<StartDurationItem> _getEventsOfDay(DateTime day) {
+    events = <Event>[
+      //new Event(startMinuteOfDay: 1 * 60, duration: 90, title: "Sleep Walking"),
+    ];
+
+    //loadGroups();
+    if(groupModel!=null){
+      for(int i = 0; i<5 ; i++){
+        events.add(new Event(
+            startMinuteOfDay: groupModel.group.timetable
+                .elementAt(i)
+                .hour.round()*60,
+            duration: 90,
+            title: groupModel.group.timetable
+                .elementAt(i)
+                .subject));
+      }
+    }
+
+    return events
+        .map(
+          (event) => new StartDurationItem(
+        startMinuteOfDay: event.startMinuteOfDay,
+        duration: event.duration,
+        builder: (context, itemPosition, itemSize) => _eventBuilder(
+          context,
+          itemPosition,
+          itemSize,
+          event,
+        ),
+      ),
+    )
+        .toList();
   }
 
   @override
@@ -53,9 +112,9 @@ class _DayViewState extends State<DayView>{
                             generatedDaySeparatorBuilder:
                             _generatedDaySeparatorBuilder,
                           ),
-//                          new EventViewComponent(
-//                            getEventsOfDay: _getEventsOfDay,
-//                          ),
+                          new EventViewComponent(
+                            getEventsOfDay: _getEventsOfDay,
+                          ),
                     ]),
                   ))
             ],
@@ -67,6 +126,26 @@ class _DayViewState extends State<DayView>{
     return "${(minuteOfDay ~/ 60).toString().padLeft(2, "0")}"
         ":"
         "${(minuteOfDay % 60).toString().padLeft(2, "0")}";
+  }
+
+  Positioned _eventBuilder(
+      BuildContext context,
+      ItemPosition itemPosition,
+      ItemSize itemSize,
+      Event event,
+      ) {
+    return new Positioned(
+      top: itemPosition.top,
+      left: itemPosition.left,
+      width: itemSize.width,
+      height: itemSize.height,
+      child: new Container(
+        margin: new EdgeInsets.only(left: 1.0, right: 1.0, bottom: 1.0),
+        padding: new EdgeInsets.all(3.0),
+        color: Colors.green[200],
+        child: new Text("${event.title}"),
+      ),
+    );
   }
 
   //Hours display
@@ -228,24 +307,7 @@ class _DisplayGroupsState extends State{
         appBar: AppBar(title: const Text('Plan zajęć')),
         drawer: MyDrawer(),
         body: Center(
-            child: ListView.builder(
-              itemCount: groupModel != null
-                  ? groupModel.group.timetable.length
-                  : 0, // this fixes ugly red screen when groupModel is not loaded yet
-                 itemBuilder: (context, int i) => Column(
-                 children: [
-                      new ListTile(
-                        title: new Text(groupModel.group.timetable.elementAt(i).subject),
-                        subtitle: new Text(groupModel.group.timetable.elementAt(i).classroom),
-                        onTap: () {},
-                        onLongPress: () {
-                          print(Text("Long Pressed"),
-                          );
-                          },
-                      ),
-                 ],
-                 ),
-            )
+            child: DayView(),
         )
     );
   }

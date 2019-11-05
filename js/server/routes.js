@@ -63,7 +63,7 @@ exports = module.exports = function (app) {
 
     // add new grade to user
     app.put('/grades', auth.restrict, (req, res) => {
-        let { user, subject, value } = [req.body.user, req.body.subject, req.body.value];
+        let [ user, subject, value ] = [req.body.user, req.body.subject, req.body.value];
         if (!user || !subject || !value) {
             return res.json({ msg: "Field cannot be empty!" });
         }
@@ -71,6 +71,21 @@ exports = module.exports = function (app) {
             return res.json({ msg: "Value outside 2 and 5!" });
         }
         grade.create({ 'user': user, 'subject': subject, 'value': value }, function (err) {
+            if (err) return handleError(err);
+            res.json({ msg: "OK" });
+        });
+    });
+
+    //update grade
+    app.post('/grades', auth.restrict, (req, res) => {
+        let [ user, subject, value ] = [req.body.user, req.body.subject, req.body.value];
+        if (!user || !subject || !value) {
+            return res.json({ msg: "Field cannot be empty!" });
+        }
+        if (value > 5 || value < 2) {
+            return res.json({ msg: "Value outside 2 and 5!" });
+        }
+        grade.updateOne({ 'user': user, 'subject': subject }, { $set: {'value': value} }, function (err) {
             if (err) return handleError(err);
             res.json({ msg: "OK" });
         });

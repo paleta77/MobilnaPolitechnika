@@ -6,46 +6,28 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <style type="text/css">
-        .login-form {
-            width: 340px;
-            margin: 50px auto;
-        }
-
-        .login-form form {
-            margin-bottom: 15px;
-            background: #f7f7f7;
-            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-            padding: 30px;
-        }
-
-        .login-form h2 {
-            margin: 0 0 15px;
-        }
-
-        .form-control,
-        .btn {
-            min-height: 38px;
-            border-radius: 2px;
-        }
-
-        .btn {
-            font-size: 15px;
-            font-weight: bold;
-        }
-
-        iframe {
-            width: 100%;
-            height: 500px;
-            border: none;
-        }
-    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <div id="loading">
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
     <div class="login-form" id="notlogged">
         <form action="#">
             <h2 class="text-center">Log in</h2>
@@ -56,7 +38,7 @@
                 <input id="password" type="password" class="form-control" placeholder="Password" required="required">
             </div>
             <div class="form-group">
-                <button class="btn btn-primary btn-block" onclick="login()">Log in</button>
+                <button class="btn btn-primary btn-block font-weight-bold" onclick="login()">Log in</button>
             </div>
             <!--<div class="clearfix">
                 <label class="pull-left checkbox-inline"><input type="checkbox"> Remember me</label>
@@ -66,12 +48,17 @@
         <p class="text-center"><a href="/register.html">Create an Account</a></p>
     </div>
 
-    <div class="container">
-        <div id="logged" class="row">
+    <div id="logged" class="container">
+        <div>
             <button class="btn btn-primary" onclick="logout();">Logout</button>
-            <h4 class="text-center" id="welcomeText">You're logged in :)</h4>
+        </div>
 
-            <form>
+        <div>
+            <h4 class="text-center" id="welcomeText">You're logged in :)</h4>
+        </div>
+
+        <div>
+            <form class="border mb-2 p-3">
                 <div class="form-group">
                     <label for="subjectInput">Subject</label>
                     <input type="text" class="form-control" id="subjectInput" placeholder="Enter subject">
@@ -87,14 +74,16 @@
                 </div>
                 <button type="submit" class="btn btn-primary" onclick="addGrade();">Add</button>
             </form>
+        </div>
 
+        <div>
             <table class="table border" id="gradesTable">
                 <thead>
                     <tr>
                         <th>#</th>
                         <th>Subject</th>
                         <th>Grade</th>
-                        <th>Delete</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -103,20 +92,58 @@
             <iframe id="timetableframe"></iframe>
         </div>
     </div>
+    <div class="modal fade" id="changeGradeModal" tabindex="-1" role="dialog" aria-labelledby="changeGradeModalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Change grade</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="subjectInputChange">Subject</label>
+                            <input type="text" class="form-control" id="subjectInputChange" placeholder="Enter subject">
+                        </div>
+                        <div class="form-group">
+                            <label for="valueInputChange">Value</label>
+                            <select class="form-control" id="valueInputChange">
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="changeGrade();">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
+        $("#loading").show();
+        $("#logged").hide();
+        $("#notlogged").hide();
+
         let token = localStorage.getItem('token');
         let username = localStorage.getItem('username');
         isLogged();
 
-        async function isLogged()
-        {
+        async function isLogged() {
             const logged = await getData('logged');
-            if(logged.msg != "YES"){
+            if (logged.msg != "YES") {
                 localStorage.removeItem('token');
                 localStorage.removeItem('username');
                 token = username = null;
             }
-        showHide();
+            showHide();
+            $("#loading").hide();
         }
 
         function showHide() {
@@ -134,6 +161,7 @@
         }
 
         async function login() {
+            $("#loading").show();
             username = $("#username").val();
             let password = $("#password").val();
             try {
@@ -151,9 +179,11 @@
             } catch (error) {
                 console.error(error);
             }
+            $("#loading").hide();
         };
 
         async function logout() {
+            $("#loading").show();
             try {
                 const data = await getData('logout');
                 console.log(JSON.stringify(data));
@@ -163,6 +193,7 @@
             } catch (error) {
                 console.error(error);
             }
+            $("#loading").hide();
         };
 
         async function loadGrades() {
@@ -174,16 +205,25 @@
             let sum = 0;
             let i = 1;
             for (let grade of grades) {
-                $('#gradesTable tbody').append(`<tr><td>${i}</td><td>${grade.subject}</td><td>${grade.value}</td><td><button class="btn btn-primary" onclick="deleteGrade('${grade.subject}');">Del</button></td></tr>`);
+                $('#gradesTable tbody').append(`
+                <tr>
+                    <td>${i}</td>
+                    <td>${grade.subject}</td>
+                    <td>${grade.value}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="openChangeGrade('${grade.subject}', ${grade.value});">✎</button>
+                        <button class="btn btn-primary" onclick="deleteGrade('${grade.subject}');">🗑</button>
+                    </td>
+                </tr>`);
                 i++;
                 sum += grade.value;
             }
 
             if (i == 1) {
-                $('#gradesTable tbody').append(`<tr><td span="4">None</td></tr>`);
+                $('#gradesTable tbody').append(`<tr><td colspan="4">None</td></tr>`);
             } else {
                 let average = sum / (i - 1);
-                $('#gradesTable tbody').append(`<tr><td span="4">average: ${average}</td></tr>`);
+                $('#gradesTable tbody').append(`<tr><td colspan="4">average: ${average}</td></tr>`);
             }
         }
 
@@ -204,7 +244,7 @@
 
         async function addGrade() {
             let subject = $('#subjectInput').val();
-            let value = $('#valueInput').val();
+            let value = parseFloat($('#valueInput').val());
             try {
                 const data = await putData('/grades', { user: username, subject: subject, value: value });
                 console.log(JSON.stringify(data));
@@ -217,6 +257,19 @@
             } catch (error) {
                 console.error(error);
             }
+        }
+
+        function openChangeGrade(subject, value) {
+            $('#changeGradeModal').modal('show');
+            $('#subjectInputChange').val(subject);
+            $('#valueInputChange').val(value);
+        }
+
+        async function changeGrade() {
+            // todo: call update api
+            alert("Not implemented :(");
+            $('#changeGradeModal').modal('hide');
+            loadGrades();
         }
 
         async function postData(url, data = {}) {

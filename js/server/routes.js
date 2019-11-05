@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const user = require('./models/user.js');
 const grade = require('./models/grade.js');
@@ -30,11 +31,16 @@ exports = module.exports = function (app) {
         user.findOne({ 'name': req.body.username }, 'name password', (err, _user) => {
             if (err || !_user) return res.json({ msg: "Error occurs!" });
 
-            if (_user.password !== req.body.password) return res.json({ msg: "Wrong password!" });
-
-            let id = auth.genToken(); // generate auth token
-            auth.sessions[id] = _user;
-            res.json({ msg: "OK", token: id });
+            bcrypt.compare(req.body.password, _user.password, (herr, _res) => {
+                if (_res) {
+                    // Passwords match
+                    let id = auth.genToken(); // generate auth token
+                    auth.sessions[id] = _user;
+                    res.json({ msg: "OK", token: id });
+                } else {
+                    return res.json({ msg: "Wrong password!" });
+                }
+            });
         });
     });
 
@@ -43,13 +49,17 @@ exports = module.exports = function (app) {
         user.findOne({ 'name': req.body.username }, 'name', (err, _user) => {
             if (err) return res.json({ msg: err });
             if (!_user) {
-                user.create({ name: req.body.username, password: req.body.password }, function (err, _user2) {
+                bcrypt.hash(req.body.password, 10, function (err, hash) {
                     if (err) return res.json({ msg: err });
-                    res.json({ msg: "OK" });
+                    user.create({ name: req.body.username, password: hash }, function (err, _user2) {
+                        if (err) return res.json({ msg: err });
+                        res.json({ msg: "OK" });
+                    });
                 });
-                return;
             }
-            res.json({ msg: "Username already taken!" });
+            else {
+                res.json({ msg: "Username already taken!" });
+            }
         });
     });
 
@@ -63,7 +73,7 @@ exports = module.exports = function (app) {
 
     // add new grade to user
     app.put('/grades', auth.restrict, (req, res) => {
-        let [ user, subject, value ] = [req.body.user, req.body.subject, req.body.value];
+        let [user, subject, value] = [req.body.user, req.body.subject, req.body.value];
         if (!user || !subject || !value) {
             return res.json({ msg: "Field cannot be empty!" });
         }
@@ -78,14 +88,14 @@ exports = module.exports = function (app) {
 
     //update grade
     app.post('/grades', auth.restrict, (req, res) => {
-        let [ user, subject, value ] = [req.body.user, req.body.subject, req.body.value];
+        let [user, subject, value] = [req.body.user, req.body.subject, req.body.value];
         if (!user || !subject || !value) {
             return res.json({ msg: "Field cannot be empty!" });
         }
         if (value > 5 || value < 2) {
             return res.json({ msg: "Value outside 2 and 5!" });
         }
-        grade.updateOne({ 'user': user, 'subject': subject }, { $set: {'value': value} }, function (err) {
+        grade.updateOne({ 'user': user, 'subject': subject }, { $set: { 'value': value } }, function (err) {
             if (err) return handleError(err);
             res.json({ msg: "OK" });
         });

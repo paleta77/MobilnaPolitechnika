@@ -55,10 +55,13 @@ class _DayViewState extends State{
     if(groupModel!=null){;
       for(int i = 0; i<5 ; i++){
         if(weekdayToAbbreviatedString(day.weekday)==groupModel.group.timetable.elementAt(i).day){
+          int hours = groupModel.group.timetable[i].hour.toInt();
+          int minuts =
+              ((groupModel.group.timetable[i].hour - hours.toDouble()) * 100)
+                  .toInt();
+
           events.add(new Event(
-              startMinuteOfDay: groupModel.group.timetable
-                  .elementAt(i)
-                  .hour.round()*60,
+              startMinuteOfDay: hours * 60 + minuts,
               duration: 90,
               title: groupModel.group.timetable.elementAt(i).toString()));
         }

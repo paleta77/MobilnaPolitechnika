@@ -18,6 +18,7 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
+    <script type="module" src="http.js"></script>
 </head>
 
 <body>
@@ -127,33 +128,33 @@
             </div>
         </div>
     </div>
-    <script>
+    <script type="module">
+        import * as http from "./http.js";
+        import * as api from "./api.js";
+
         $("#loading").show();
         $("#logged").hide();
         $("#notlogged").hide();
 
-        let token = localStorage.getItem('token');
         let username = localStorage.getItem('username');
         isLogged();
 
         async function isLogged() {
-            const logged = await getData('logged');
-            if (logged.msg != "YES") {
-                localStorage.removeItem('token');
+            if (!(await api.logged())) {
                 localStorage.removeItem('username');
-                token = username = null;
+                username = null;
             }
             showHide();
             $("#loading").hide();
         }
 
         function showHide() {
-            if (token) {
+            if (api.token != null) {
                 $("#logged").show();
                 $("#notlogged").hide();
                 $("#welcomeText").text(`Welcome ${username} :)`);
                 loadGrades();
-                $("#timetableframe").attr('src', `timetable.html?user=${username}&token=${token}`);
+                $("#timetableframe").attr('src', `timetable.html?user=${username}&token=${api.token}`);
             }
             else {
                 $("#logged").hide();
@@ -163,43 +164,35 @@
 
         async function login() {
             $("#loading").show();
+
             username = $("#username").val();
-            let password = $("#password").val();
-            try {
-                const data = await postData('login', { username: username, password: password });
-                console.log(JSON.stringify(data));
-                if (data.msg == 'OK') {
-                    token = data.token;
-                    localStorage.setItem('token', token);
-                    localStorage.setItem('username', username);
-                    showHide();
-                }
-                else {
-                    alert(data.msg);
-                }
-            } catch (error) {
-                console.error(error);
+
+            if (await api.login(username, $("#password").val())) {
+                localStorage.setItem('username', username);
+                showHide();
             }
+            else {
+                alert(data.msg);
+            }
+
             $("#loading").hide();
         };
+        window.login = login;
 
         async function logout() {
             $("#loading").show();
-            try {
-                const data = await getData('logout');
-                console.log(JSON.stringify(data));
-                localStorage.clear();
-                token = username = null;
-                showHide();
-            } catch (error) {
-                console.error(error);
-            }
+
+            await api.logout();
+            localStorage.removeItem('username');
+            username = null;
+            showHide();
+
             $("#loading").hide();
         };
+        window.logout = logout;
 
         async function loadGrades() {
-            let grades = await getData(`grades/${username}`);
-            console.log(JSON.stringify(grades));
+            let grades = await api.getGrades(username);
 
             $('#gradesTable tbody').empty();
 
@@ -229,99 +222,32 @@
         }
 
         async function deleteGrade(subject) {
-            try {
-                const data = await delData('/grades', { user: username, subject: subject });
-                console.log(JSON.stringify(data));
-                if (data.msg == 'OK') {
-                    loadGrades();
-                }
-                else {
-                    alert(data.msg);
-                }
-            } catch (error) {
-                console.error(error);
-            }
+            await api.deleteGrade(username, subject);
+            loadGrades();
         }
+        window.deleteGrade = deleteGrade;
 
         async function addGrade() {
             let subject = $('#subjectInput').val();
             let value = parseFloat($('#valueInput').val());
-            try {
-                const data = await putData('/grades', { user: username, subject: subject, value: value });
-                console.log(JSON.stringify(data));
-                if (data.msg == 'OK') {
-                    loadGrades();
-                }
-                else {
-                    alert(data.msg);
-                }
-            } catch (error) {
-                console.error(error);
-            }
+            await api.addGrade(username, subject, value);
+            loadGrades();
         }
+        window.addGrade = addGrade;
 
         function openChangeGrade(subject, value) {
             $('#changeGradeModal').modal('show');
             $('#subjectInputChange').val(subject);
             $('#valueInputChange').val(value);
         }
+        window.openChangeGrade = openChangeGrade;
 
         async function changeGrade() {
-            try {
-                const data = await postData('/grades', { user: username, subject: $('#subjectInputChange').val(), value: $('#valueInputChange').val() });
-                console.log(JSON.stringify(data));
-                if (data.msg != 'OK') {
-                    alert(data.msg);
-                }
-            } catch (error) {
-                console.error(error);
-            }
+            await api.changeGrade(username, $('#subjectInputChange').val(), $('#valueInputChange').val());    
             $('#changeGradeModal').modal('hide');
             loadGrades();
         }
-
-        async function postData(url, data = {}) {
-            const response = await fetch(url, {
-                method: 'POST',
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json', "Authorization": "Bearer " + (token ? token : "0") },
-                referrer: 'no-referrer',
-                body: JSON.stringify(data)
-            });
-            return await response.json();
-        }
-
-        async function getData(url) {
-            const response = await fetch(url, {
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json', "Authorization": "Bearer " + (token ? token : "0") },
-                referrer: 'no-referrer'
-            });
-            return await response.json();
-        }
-
-        async function delData(url, data = {}) {
-            const response = await fetch(url, {
-                method: 'DELETE',
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json', "Authorization": "Bearer " + (token ? token : "0") },
-                referrer: 'no-referrer',
-                body: JSON.stringify(data)
-            });
-            return await response.json();
-        }
-
-        async function putData(url, data = {}) {
-            const response = await fetch(url, {
-                method: 'PUT',
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json', "Authorization": "Bearer " + (token ? token : "0") },
-                referrer: 'no-referrer',
-                body: JSON.stringify(data)
-            });
-            return await response.json();
-        }
-
+        window.changeGrade = changeGrade;
     </script>
 </body>
 

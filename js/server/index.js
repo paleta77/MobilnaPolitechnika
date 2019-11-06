@@ -4,6 +4,7 @@ const config = require('./config.js');
 const auth = require('./auth.js');
 
 mongoose.connect(config.mongodb, { useNewUrlParser: true, useUnifiedTopology: true });
+delete config;
 
 const app = express();
 

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mobilna_politechnika/MyDrawer.dart';
 import 'api.dart';
 
-class Oceny extends StatelessWidget {
+class Oceny extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return DisplayGrade();
+  _DisplayGradeState createState() {
+    return _DisplayGradeState();
   }
 }
 
@@ -17,13 +17,6 @@ class GradeModel {
     this.subject,
     this.value,
   });
-}
-
-class DisplayGrade extends StatefulWidget {
-  @override
-  _DisplayGradeState createState() {
-    return _DisplayGradeState();
-  }
 }
 
 class _DisplayGradeState extends State {
@@ -58,36 +51,27 @@ class _DisplayGradeState extends State {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Oceny')),
-      drawer: MyDrawer(),
-      body: Center(
-          child: ListView.builder(
-        itemCount: gradeModelData.length,
-        itemBuilder: (context, int i) => Column(
-          children: [
-            new ListTile(
-              title: new Text(gradeModelData[i].subject),
-              subtitle: new Text(gradeModelData[i].value),
-              onTap: () {},
-              onLongPress: () {
-                print(
-                  Text("Long Pressed"),
-                );
-              },
+        appBar: AppBar(title: const Text('Oceny')),
+        drawer: MyDrawer(),
+        body: Column(children: <Widget>[
+          Expanded(
+              child: ListView.builder(
+            itemCount: gradeModelData.length,
+            itemBuilder: (context, int i) => Column(
+              children: [
+                new ListTile(
+                  title: new Text(gradeModelData[i].subject),
+                  subtitle: new Text(gradeModelData[i].value),
+                  onTap: () {},
+                  onLongPress: () {},
+                ),
+              ],
             ),
-          ],
-        ),
-      )),
-      bottomNavigationBar: BottomAppBar(
-        child: new Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            //IconButton(icon: Icon(Icons.menu), onPressed: () {},),
-            Text("Średnia: $average")
-          ],
-        ),
-      ),
-    );
+          )),
+          Container(
+              height: 25,
+              color: Color.fromARGB(255, 230, 230, 230),
+              child: Center(child: Text("Średnia: $average")))
+        ]));
   }
 }

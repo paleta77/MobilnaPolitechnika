@@ -13,6 +13,10 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
 	<script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
 
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+		crossorigin="anonymous"></script>
+
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" />
 	<style>
 		body {
@@ -26,6 +30,15 @@
 			height: 100%;
 			width: 100%;
 		}
+
+		#search {
+			position: absolute;
+			top: 20px;
+			left: 100px;
+			background-color: white;
+			border: 1px solid gray;
+			z-index: 1001;
+		}
 	</style>
 </head>
 
@@ -33,10 +46,18 @@
 	<div id="map">
 	</div>
 
+	<div id="search">
+		<input id="search-field" type="text" onkeyup="search();" />
+		<div id="search-result">
+		</div>
+	</div>
+
 	<script>
 		let showNodes = false;
 		let showEdges = false;
-		let map = L.map('map').setView([51.747, 19.455], 17);
+		let setName = false;
+
+		let map = L.map('map').setView([51.747, 19.455], 19);
 		let bounds = [[51.747 - 0.003, 19.455 - 0.006], [51.747 + 0.003, 19.455 + 0.005]];
 		L.tileLayer('https://c.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
@@ -69,11 +90,13 @@
 		let pathLayer = L.layerGroup().addTo(map);
 		let markersLayer = L.layerGroup().addTo(map);
 
+		let target = null;
+
 		map.on('click', (e) => {
-			console.log("a");
-			//let circle = L.circle(e.latlng, { radius: 0.5 }).on("click", (e) => { L.DomEvent.stopPropagation(e); console.log(e); });
-			//nodes.push({ floor: floor_idx, x: e.latlng.lat, y: e.latlng.lng });
-			//nodesLayer.addLayer(circle);
+			if (showNodes) {
+				nodes.push({ floor: floor_idx, x: e.latlng.lat, y: e.latlng.lng });
+				changefloor(0);
+			}
 		});
 
 		function loadNodes() {
@@ -86,6 +109,7 @@
 				//console.log(data);
 				nodes = data.points;
 				edges = data.edges;
+				rooms = data.rooms;
 				for (let node of nodes) {
 					node.neighbors = [];
 				}
@@ -100,7 +124,7 @@
 				let start = searchParams.get('start') || 59;
 				let end = searchParams.get('end') || 1;
 
-				dijkstra(nodes[start], nodes[end]);
+				//dijkstra(nodes[start], nodes[end]);
 				changefloor(0);
 			}
 			request.send();
@@ -109,6 +133,28 @@
 		loadNodes();
 
 		let last = null;
+		let rooms = {};
+
+		function nodeClick(e) {
+			L.DomEvent.stopPropagation(e);
+			if (setName) {
+				let name = prompt("Please enter node name", nodes[e.target.my_idx].name || "");
+				if (!(name == '' || name == null)) {
+					nodes[e.target.my_idx].name = name;
+					rooms[name] = e.target.my_idx;
+				}
+			}
+			else {
+				if (last === null) {
+					last = e.target.my_idx;
+				}
+				else {
+					edges.push({ a: last, b: e.target.my_idx });
+					last = null;
+					changefloor(0);
+				}
+			}
+		}
 
 		function changefloor(change) {
 
@@ -126,17 +172,7 @@
 					let point = nodes[idx];
 					if (point.floor === floor_idx) {
 						let circle = L.circle([point.x, point.y], { radius: 0.5 });
-						circle.on("click", (e) => {
-							L.DomEvent.stopPropagation(e);
-							if (last === null) {
-								last = e.target.my_idx;
-							}
-							else {
-								edges.push({ a: last, b: e.target.my_idx });
-								last = null;
-								changefloor(0);
-							}
-						});
+						circle.on("click", nodeClick);
 						circle.my_idx = idx;
 						nodesLayer.addLayer(circle);
 					}
@@ -163,6 +199,12 @@
 					markersLayer.addLayer(L.marker([path[0].x, path[0].y]));
 				if (path[path.length - 1].floor === floor_idx)
 					markersLayer.addLayer(L.marker([path[path.length - 1].x, path[path.length - 1].y]));
+			}
+
+			if(target) {
+				let node = nodes[target];
+				if(node.floor === floor_idx)
+					markersLayer.addLayer(L.marker([node.x, node.y]));
 			}
 		}
 
@@ -223,6 +265,27 @@
 				(1 - c((end.y - start.y) * p)) / 2;
 
 			return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
+		}
+
+		function search() {
+			let input = $("#search-field").val();
+			$("#search-result").empty();
+			let i = 0;
+			for (let room in rooms) {
+				if (i > 10) break;
+				if (room.includes(input)) {
+					i++;
+					$("#search-result").append("<div onclick='setTarget(\"" + room + "\")'>" + room + "</div><br />");
+				}
+			}
+		}
+
+		function setTarget(room) {
+			target = rooms[room];
+			let node = nodes[target];
+			map.panTo([node.x, node.y]);
+			console.log(node.floor - floor_idx);
+			changefloor(node.floor - floor_idx);
 		}
 	</script>
 </body>

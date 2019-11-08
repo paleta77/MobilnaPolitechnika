@@ -7,21 +7,14 @@ const grade = require('./models/grade.js');
 const group = require('./models/group.js');
 const auth = require('./auth.js');
 
-const config = require('./config.js');
-const sendgrid = require('@sendgrid/mail');
-sendgrid.setApiKey(config.sendgridkey);
-delete config;
-
 exports = module.exports = function (app) {
 
     // check if user is logged in
     app.get('/logged', (req, res) => {
-        if (req.session.user) {
+        if (req.session.user)
             res.json({ msg: "YES" });
-        }
-        else {
+        else
             res.json({ msg: "NO" });
-        }
     });
 
     // remove user session
@@ -33,20 +26,10 @@ exports = module.exports = function (app) {
 
     // login using username nad password
     app.post('/login', (req, res) => {
-        user.findOne({ 'name': req.body.username }, 'name password', (err, _user) => {
-            if (err || !_user) return res.json({ msg: "Error occurs!" });
-
-            bcrypt.compare(req.body.password, _user.password, (herr, _res) => {
-                if (_res) {
-                    // Passwords match
-                    let id = auth.genToken(); // generate auth token
-                    auth.sessions[id] = _user;
-                    res.json({ msg: "OK", token: id });
-                } else {
-                    return res.json({ msg: "Wrong password!" });
-                }
-            });
-        });
+        user.login(req.body.username, req.body.password, (err, _res) => {
+            if (err) return res.json({ msg: err });
+            res.json({ msg: "OK", token: _res.token });
+        })
     });
 
     // register new user
@@ -54,33 +37,11 @@ exports = module.exports = function (app) {
         if (!req.body.username || !req.body.mail || !req.body.password) {
             return res.json({ msg: "Field cannot be empty!" });
         }
-        user.findOne(
-            { $or: [{ 'name': req.body.username }, { 'mail': req.body.mail }] },
-            'name', 
-            (err, _user) => {
-                if (err) return res.json({ msg: err });
-                if (!_user) {
-                    bcrypt.hash(req.body.password, 10, function (err, hash) {
-                        if (err) return res.json({ msg: err });
-                        user.create({ name: req.body.username, mail: req.body.mail, password: hash }, function (err, _user2) {
-                            if (err) return res.json({ msg: err });
 
-                            const msg = {
-                                to: req.body.mail,
-                                from: 'noreply@mojmegatestkolejny.azurewebsites.net',
-                                subject: 'Welcome to Mobilna Politechnika',
-                                text: `Welcome ${req.body.username} :)`
-                              };
-                              sendgrid.send(msg);
-
-                            res.json({ msg: "OK" });
-                        });
-                    });
-                }
-                else {
-                    res.json({ msg: "Username or email already in use!" });
-                }
-            });
+        user.register(req.body.username, req.body.mail, req.body.password, (err, _res) => {
+            if (err) return res.json({ msg: err });
+            res.json({ msg: "OK" });
+        });
     });
 
     // get all user grades
@@ -131,16 +92,9 @@ exports = module.exports = function (app) {
 
     // get user group with they timetable
     app.get('/group/:user', auth.restrict, (req, res) => {
-        user.findOne({ 'name': req.params['user'] }, 'group', (err, _user) => {
+        req.session.user.getGroup((err, _group) => {
             if (err) return res.json({ msg: err });
-            if (_user) {
-                group.findOne({ '_id': _user.group }, (err, _group) => {
-                    if (err) return res.json({ msg: err });
-                    res.json({ msg: "OK", group: _group });
-                });
-                return;
-            }
-            res.json({ msg: "No user" });
+            res.json({ msg: "OK", group: _group });
         });
     });
 }

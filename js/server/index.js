@@ -1,9 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const config = require('./config.js');
+const sendgrid = require('@sendgrid/mail');
 const auth = require('./auth.js');
 
+const config = require('./config.js');
 mongoose.connect(config.mongodb, { useNewUrlParser: true, useUnifiedTopology: true });
+sendgrid.setApiKey(config.sendgridkey);
 delete config;
 
 const app = express();

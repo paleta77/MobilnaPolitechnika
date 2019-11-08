@@ -2,8 +2,11 @@ import * as http from './http.js';
 
 export let token = localStorage.getItem('token');
 
+export let msg = "";
+
 export async function logged() {
     const logged = await http.get('logged', { "Authorization": `Bearer ${token}` });
+    msg = logged.msg;
     if (logged.msg != 'YES') {
         localStorage.removeItem('token');
         token = null;
@@ -14,6 +17,7 @@ export async function logged() {
 
 export async function login(username, password) {
     const data = await http.post('login', { username: username, password: password });
+    msg = data.msg;
     if (data.msg == 'OK') {
         localStorage.setItem('token', data.token);
         token = data.token;
@@ -24,6 +28,7 @@ export async function login(username, password) {
 
 export async function logout() {
     const data = await http.get('logout', { "Authorization": `Bearer ${token}` });
+    msg = data.msg;
     if (data.msg == 'OK') {
         localStorage.removeItem('token');
         token = null;
@@ -38,6 +43,7 @@ export async function getGrades(username) {
 
 export async function deleteGrade(username, subject) {
     const data = await http.del('/grades', { user: username, subject: subject }, { "Authorization": `Bearer ${token}` });
+    msg = data.msg;
     if (data.msg == 'OK') {
         return true;
     }
@@ -46,6 +52,7 @@ export async function deleteGrade(username, subject) {
 
 export async function addGrade(username, subject, value) {
     const data = await http.put('/grades', { user: username, subject: subject, value: value }, { "Authorization": `Bearer ${token}` });
+    msg = data.msg;
     if (data.msg == 'OK') {
         return true;
     }
@@ -54,6 +61,7 @@ export async function addGrade(username, subject, value) {
 
 export async function changeGrade(username, subject, value) {
     const data = await http.post('/grades', { user: username, subject: subject, value: value }, { "Authorization": `Bearer ${token}` });
+    msg = data.msg;
     if (data.msg == 'OK') {
         return true;
     }

@@ -31,13 +31,23 @@
 			width: 100%;
 		}
 
-		#search {
+		.search {
 			position: absolute;
 			top: 20px;
 			left: 100px;
 			background-color: white;
-			border: 1px solid gray;
+			border: none;
 			z-index: 1001;
+			box-shadow: white;
+		}
+
+		.search-submit {
+			width: 60px;
+			height: 60px;
+		}
+
+		.search-input {
+			border: none;
 		}
 	</style>
 </head>
@@ -46,8 +56,11 @@
 	<div id="map">
 	</div>
 
-	<div id="search">
-		<input id="search-field" type="text" onkeyup="search();" />
+	<div class="search">
+		<form>
+			<input id="search-field" class="search-input" type="search" onkeyup="search();" onclick="search()"
+				onblur="setTimeout(()=>$('#search-result').empty(), 100);" />
+		</form>
 		<div id="search-result">
 		</div>
 	</div>
@@ -123,6 +136,8 @@
 				let searchParams = new URLSearchParams(window.location.search);
 				let start = searchParams.get('start') || 59;
 				let end = searchParams.get('end') || 1;
+				if (searchParams.get('target'))
+					setTarget(searchParams.get('target'))
 
 				//dijkstra(nodes[start], nodes[end]);
 				changefloor(0);
@@ -201,9 +216,9 @@
 					markersLayer.addLayer(L.marker([path[path.length - 1].x, path[path.length - 1].y]));
 			}
 
-			if(target) {
+			if (target) {
 				let node = nodes[target];
-				if(node.floor === floor_idx)
+				if (node.floor === floor_idx)
 					markersLayer.addLayer(L.marker([node.x, node.y]));
 			}
 		}
@@ -269,7 +284,11 @@
 
 		function search() {
 			let input = $("#search-field").val();
+
 			$("#search-result").empty();
+			if (input.length == 0)
+				return;
+
 			let i = 0;
 			for (let room in rooms) {
 				if (i > 10) break;
@@ -281,11 +300,17 @@
 		}
 
 		function setTarget(room) {
-			target = rooms[room];
-			let node = nodes[target];
-			map.panTo([node.x, node.y]);
-			console.log(node.floor - floor_idx);
-			changefloor(node.floor - floor_idx);
+			$("#search-field").val(room);
+			$("#search-result").empty();
+			if (room in rooms) {
+				target = rooms[room];
+				let node = nodes[target];
+				map.panTo([node.x, node.y]);
+				changefloor(node.floor - floor_idx);
+			}
+			else {
+				alert('Cannot find room :(');
+			}
 		}
 	</script>
 </body>

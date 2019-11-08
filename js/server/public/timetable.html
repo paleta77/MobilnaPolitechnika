@@ -17,7 +17,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="style.css">
     <style>
         body {
             margin: 0 0;
@@ -56,6 +56,7 @@
 
         #grid .day {
             display: inline-block;
+            vertical-align: top;
             width: 420px;
             height: 100%;
             border-right: 1px solid black;
@@ -70,7 +71,7 @@
         #header h3 {
             margin: 0 0;
             display: inline-block;
-            width: 416px;
+            width: 416px;    
         }
     </style>
 </head>
@@ -83,103 +84,86 @@
             </div>
         </div>
     </div>
-    <div id="timetable">
-    </div>
-    <div id="header">
-        <h3>Sobota</h3>
-        <h3>Niedziela</h3>
-    </div>
-    <div id="grid">
-        <div class="grow">
-            <div class="hour">08:00</div>
-            <div class="day"></div>
-            <div class="day"></div>
+        <div id="timetable">
         </div>
-        <div class="grow">
-            <div class="hour">10:00</div>
-            <div class="day"></div>
-            <div class="day"></div>
+        <div id="header">
+            <h3>Sobota</h3>
+            <h3>Niedziela</h3>
         </div>
-        <div class="grow">
-            <div class="hour">12:00</div>
-            <div class="day"></div>
-            <div class="day"></div>
+        <div id="grid">
+            <div class="grow"><div class="hour">08:00</div><div class="day">PŁ</div><div class="day"></div></div>
+            <div class="grow"><div class="hour">10:00</div><div class="day">PŁ</div><div class="day"></div></div>
+            <div class="grow"><div class="hour">12:00</div><div class="day">PŁ</div><div class="day"></div></div>
+            <div class="grow"><div class="hour">14:00</div><div class="day">PŁ</div><div class="day"></div></div>
+            <div class="grow"><div class="hour">16:00</div><div class="day">PŁ</div><div class="day"></div></div>
+            <div class="grow"><div class="hour">18:00</div><div class="day">PŁ</div><div class="day"></div></div>
+            <div class="grow"><div class="hour">20:00</div><div class="day">PŁ</div><div class="day"></div></div>
         </div>
-        <div class="grow">
-            <div class="hour">14:00</div>
-            <div class="day"></div>
-            <div class="day"></div>
-        </div>
-        <div class="grow">
-            <div class="hour">16:00</div>
-            <div class="day"></div>
-            <div class="day"></div>
-        </div>
-        <div class="grow">
-            <div class="hour">18:00</div>
-            <div class="day"></div>
-            <div class="day"></div>
-        </div>
-        <div class="grow">
-            <div class="hour">20:00</div>
-            <div class="day"></div>
-            <div class="day"></div>
-        </div>
-    </div>
-    <script>
-        let searchParams = new URLSearchParams(window.location.search);
-        let username = searchParams.get('user') || 'admin';
-        let token = searchParams.get('token');
-        loadTimetable();
+        <script>
+            let searchParams = new URLSearchParams(window.location.search);
+            let username = searchParams.get('user') || 'admin';
+            let token = searchParams.get('token');
+            loadTimetable();
 
-        function zero2(number) {
-            return ("" + number).padStart(2, '0');
-        }
-
-        async function loadTimetable() {
-            $("#loading").show();
-            let timetable = await getData(`group/${username}`);
-            console.log(JSON.stringify(timetable));
-
-            if (timetable.msg != 'OK') {
-                return alert(timetable.msg);
+            function zero2(number) {
+                return ("" + number).padStart(2, '0');
             }
 
-            $('#timetable').empty();
+            function strhour(hour) {
+                return zero2(hour[0]) + ":" + zero2(hour[1]);
+            }
 
-            let i = 1;
-            for (let el of timetable.group.timetable) {
-                //el.length = 120;
-                let start = [el.hour | 0, ((el.hour % 1) * 100) | 0];
-                let end = [start[0] + ((start[1] + el.length) / 60) | 0, ((start[1] + el.length) % 60) | 0];
-                //console.log(end);
-                let x = (el.day == "Sobota" ? 0 : 430) + 100;
-                let y = 80 * (start[0] + (start[1] / 60) - 8) + 12 + 20;
-                let height = (8 * el.length) / 6;
-                $('#timetable').append(`
+            function addMinutes(date, minutes) {
+                return [date[0] + ((date[1] + minutes) / 60) | 0, ((date[1] + minutes) % 60) | 0];
+            }
+
+            function toHour(float) {
+                return [float | 0, ((float % 1) * 100) | 0];
+            }
+
+            async function loadTimetable() {
+                $("#loading").show();
+                let timetable = await getData(`group/${username}`);
+                console.log(JSON.stringify(timetable));
+
+                if (timetable.msg != 'OK') {
+                    return alert(timetable.msg);
+                }
+
+                $('#timetable').empty();
+
+                let i = 1;
+                for (let el of timetable.group.timetable) {
+                    let start = toHour(el.hour);
+                    let end = addMinutes(start, el.length);
+
+                    let x = (el.day == "Sobota" ? 0 : 430) + 100;
+                    let y = 80 * (start[0] + (start[1] / 60) - 8) + 12 + 20;
+                    let height = (8 * el.length) / 6;
+                    $('#timetable').append(`
                     <div class="card" style="top:${y}px;left:${x}px;min-height:${height}px">
-                        <div class="header">${zero2(start[0])}:${zero2(start[1])} - ${zero2(end[0])}:${zero2(end[1])}</div>
+                        <div class="header">${strhour(start)} - ${strhour(end)}</div>
                         ${el.subject}
                         <br/>
                         <b>${el.lecturer ? el.lecturer : ""}</b>
                         <br />
-                        <b>${el.classroom}</b> 
+                        <a href="/nav/?target=${el.classroom}"><b>${el.classroom}</b></a>
                     </div>`);
-                i++;
+                    i++;
+                }
+
+                $("#loading").hide();
             }
 
-            $("#loading").hide();
-        }
-
-        async function getData(url) {
-            const response = await fetch(url, {
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json', "Authorization": "Bearer " + (token ? token : "0") },
-                referrer: 'no-referrer'
-            });
-            return await response.json();
-        }
-    </script>
+            async function getData(url) {
+                const response = await fetch(url, {
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json', "Authorization": "Bearer " + (token ? token : "0") },
+                    referrer: 'no-referrer'
+                });
+                return await response.json();
+            }
+        </script>
 </body>
 
 </html>

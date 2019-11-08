@@ -104,6 +104,8 @@
 		let markersLayer = L.layerGroup().addTo(map);
 
 		let target = null;
+		let a_node = null;
+		let b_node = null;
 
 		map.on('click', (e) => {
 			if (showNodes) {
@@ -218,9 +220,20 @@
 
 			if (target) {
 				let node = nodes[target];
-				if (node.floor === floor_idx)
-					markersLayer.addLayer(L.marker([node.x, node.y]));
+				if (node.floor === floor_idx) {
+					let marker = L.marker([node.x, node.y]);
+					marker.bindPopup("<a href='#' onclick='navto("+target + ");'>Nawiguj do<a/>").openPopup();
+					markersLayer.addLayer(marker);
+				}
 			}
+		}
+
+		function navto(target) {
+			b_node = target;
+			a_node=null;
+			map.closePopup();
+			$("#search-field").val("");
+			$("#search-field").focus();
 		}
 
 		function smallest(set) {
@@ -306,6 +319,24 @@
 				target = rooms[room];
 				let node = nodes[target];
 				map.panTo([node.x, node.y]);
+
+				if (a_node != null && b_node != null) {
+					a_node = null;
+					b_node = null;
+					path = [];
+				}
+
+				if (a_node != null && b_node == null)
+					b_node = target;
+
+				if (b_node != null && a_node == null)
+					a_node = target;
+
+				if (a_node != null && b_node != null) {
+					dijkstra(nodes[a_node], nodes[b_node]);
+					target = null;
+				}
+
 				changefloor(node.floor - floor_idx);
 			}
 			else {

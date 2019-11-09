@@ -17,6 +17,8 @@
 		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
 		crossorigin="anonymous"></script>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.5/fuse.min.js"></script>
+
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" />
 	<style>
 		body {
@@ -49,6 +51,11 @@
 		.search-input {
 			border: none;
 		}
+
+		.search-result {
+			border-top: 1px solid gray;
+			height: 25px;
+		}
 	</style>
 </head>
 
@@ -58,8 +65,8 @@
 
 	<div class="search">
 		<form>
-			<input id="search-field" class="search-input" type="search" onkeyup="search();" onclick="search()"
-				onblur="setTimeout(()=>$('#search-result').empty(), 100);" />
+			<input id="search-field" class="search-input" type="search" autocomplete="off" onkeyup="search();"
+				onclick="search()" onblur="setTimeout(()=>$('#search-result').empty(), 100);" />
 		</form>
 		<div id="search-result">
 		</div>
@@ -222,7 +229,7 @@
 				let node = nodes[target];
 				if (node.floor === floor_idx) {
 					let marker = L.marker([node.x, node.y]);
-					marker.bindPopup("<a href='#' onclick='navto("+target + ");'>Nawiguj do<a/>").openPopup();
+					marker.bindPopup("<a href='#' onclick='navto(" + target + ");'>Nawiguj do<a/>").openPopup();
 					markersLayer.addLayer(marker);
 				}
 			}
@@ -230,7 +237,7 @@
 
 		function navto(target) {
 			b_node = target;
-			a_node=null;
+			a_node = null;
 			map.closePopup();
 			$("#search-field").val("");
 			$("#search-field").focus();
@@ -302,13 +309,24 @@
 			if (input.length == 0)
 				return;
 
-			let i = 0;
+
+			let _rooms = []; // TODO: please don't generate it on every serach :(
 			for (let room in rooms) {
+				_rooms.push({ name: room, idx: rooms[room] });
+			}
+
+			let fuse = new Fuse(_rooms, {
+				keys: ['name'],
+				id: 'name'
+			});
+
+			let result = fuse.search(input);
+
+			let i = 0;
+			for (let room of result) {
 				if (i > 10) break;
-				if (room.includes(input)) {
-					i++;
-					$("#search-result").append("<div onclick='setTarget(\"" + room + "\")'>" + room + "</div><br />");
-				}
+				i++;
+				$("#search-result").append("<div class='search-result' onclick='setTarget(\"" + room + "\")'>" + room + "</div>");
 			}
 		}
 

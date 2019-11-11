@@ -11,20 +11,39 @@
 - Treść aplikacji.
 	Aplikacja umożliwia przeglądanie planu zajęć, niezaleznie czy student przynależy do jednej bądź wielu grup zajęciowych. Ponadto można własnoręcznie dodać ocenę do bazy danych konkretnego przedmiotu, policzyć średnią ocen. W przypadku gdy użytkownik znajdzie na planie salę o nieznanej dotychczas lokalizacji, aplikacja wskaże najoptymalniejszą drogę do celu.
 
-- Persona.
-	Maciek - student pierwszego roku Informatyki na FTIMS. Jest rzetelnym studentem i bardzo przykłada się do nauki. Nie lubi się spóźniać. Jest zawsze przygotowany na zajęcia.
+- Persony.
 
-	Motto: “Wybierz pracę, którą kochasz, a nie będziesz musiał pracować nawet przez jeden dzień w swoim życiu.” Konfucjusz
+	Persona pierwsza:
 
-	Końcowy cel: Maciek przy pomocy produktu, chce łatwiej i sprawniej poruszać się po wydziale, bez szukania sal po omacku, mieć wszystkie oceny pod ręką oraz szybko dowiedzieć się jakie ma kolejne zaplanowane zajęcia danego dnia.
+		Maciek - student pierwszego roku Informatyki na FTIMS. Jest rzetelnym studentem i bardzo przykłada się do nauki. Nie lubi się spóźniać. Jest zawsze przygotowany na zajęcia.
 
-	Motywacja: Maciek interesuje się naszą aplikacją, gdyż już kilka razy miał problem ze znalezieniem sali. Ponadto, gdy spieszy się na zajęcia, nie chce wertować kilku planów zajęć, aby odnaleźć przedmiot, z zupełnie innego semestru, na który również chodzi.
+		Motto: “Wybierz pracę, którą kochasz, a nie będziesz musiał pracować nawet przez jeden dzień w swoim życiu.” Konfucjusz
 
-	Bariery: Maćka do produktu może zniechęcić potencjalnie bardzo niska jakość jego sprzętu, jednak nawigacja została zoptymalizowana pod kątem wydajności i powinna działać płynnie (nawet na tańszym sprzęcie).
+		Końcowy cel: Maciek przy pomocy produktu, chce łatwiej i sprawniej poruszać się po wydziale, bez szukania sal po omacku, mieć wszystkie oceny pod ręką oraz szybko dowiedzieć się jakie ma kolejne zaplanowane zajęcia danego dnia.
 
-	Szanse: Zainteresowanie naszym produktem może zwiększyć pozytywna rekomendacja znajomego, który będzie zadowolony z działania produktu i często będzie z niego korzystał.
+		Motywacja: Maciek interesuje się naszą aplikacją, gdyż już kilka razy miał problem ze znalezieniem sali. Ponadto, gdy spieszy się na zajęcia, nie chce wertować kilku planów zajęć, aby odnaleźć przedmiot, z zupełnie innego semestru, na który również chodzi.
 
-	Wpływ: Aby Maciek regularnie korzystał z produktu, można wysyłać alerty (z rozsądną częstotliwością) z zapytaniem czy nie dostał nowej oceny, którą można zapisać w aplikacji.
+		Bariery: Maćka do produktu może zniechęcić potencjalnie bardzo niska jakość jego sprzętu, jednak nawigacja została zoptymalizowana pod kątem wydajności i powinna działać płynnie (nawet na tańszym sprzęcie).
+
+		Szanse: Zainteresowanie naszym produktem może zwiększyć pozytywna rekomendacja znajomego, który będzie zadowolony z działania produktu i często będzie z niego korzystał.
+
+		Wpływ: Aby Maciek regularnie korzystał z produktu, można wysyłać alerty (z rozsądną częstotliwością) z zapytaniem czy nie dostał nowej oceny, którą można zapisać w aplikacji.
+
+	Persona druga:
+
+		Karol - siedemnastoletni uczeń liceum, który uczestniczy w dniu otwartym oraz warsztatach tematycznych na Politechnice Łódzkiej.
+
+		Motto: "Gdy zmieniamy nasze myślenie, zmieniamy naszą rzeczywistość." Louise L. Hay
+
+		Końcowy cel: Karol za pomocą naszej aplikacji, chce ułatwić sobie szybkie i sprawne poruszanie po uczelni oraz mieć plan wydarzenia ciągle pod ręką.
+	
+		Motywacja: Karol jest po raz pierwszy na terenie kampusu Politechniki Łódzkiej. Uczestniczy w dniu otwartym, który ma zachęcić do rozpoczęcia nauki na tejże uczelni. Program wydarzenia obfituje w różne warsztaty i wykłady rozsiane po całym kampusie. Karol chętnie skorzysta z nawigacji, która wskaże mu gdzie znajduje się szukany budynek. Ponadto w razie wątpliwości może sprawdzić program wydarzenia na planie, który także można znaleźć w aplikacji.
+
+		Bariery: Karol jest bardzo zapracowaną osobą i może mieć mało czasu (ewentualnie zapomnieć), aby wcześniej zainstalować aplikację. Nie jest to jednak przeszkodą, gdyż nasza aplikacja jest bardzo lekka, nie zużywa dużo transferu i instaluje się błyskawicznie.
+	
+		Szanse: Zainteresowanie naszym produktem można zwiększyć poprzez reklamę na stronie głównej uczelni.
+	
+		Wpływ: Jeśli nasza aplikacja przypadnie do gustu potencjalnemu studentowi Politechniki Łódzkiej, to jest duża szansa, że będzie z niej regularnie korzystał także po przyjęciu na uczelnię.
 
 - Wygląd aplikacji.
 	nowoczesny design, stonowane kolory (górny pasek w kolorze bordowym, białe tło), uproszczone i intuicyjne menu

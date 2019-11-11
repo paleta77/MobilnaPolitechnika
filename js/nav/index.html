@@ -38,7 +38,7 @@
 			position: absolute;
 			top: 0px;
 			left: 0px;
-			background-color: rgba(255,255,255, 0.9);
+			background-color: rgba(255, 255, 255, 0.9);
 			z-index: 1001;
 			padding: 10px 20px 10px 10px;
 			margin: 10px 10px;
@@ -78,8 +78,8 @@
 
 	<div class="search">
 		🔍
-		<input id="search-field" class="search-input" type="search" autocomplete="off" onkeyup="search();" placeholder="Znajdź"
-			onclick="search()" onblur="setTimeout(()=>$('#search-result').empty(), 100);" />
+		<input id="search-field" class="search-input" type="search" autocomplete="off" onkeyup="search();"
+			placeholder="Znajdź" onblur="setTimeout(()=>$('#search-result').empty(), 100);" onfocus="search();" />
 		<div id="search-result">
 		</div>
 	</div>
@@ -320,11 +320,11 @@
 			let input = $("#search-field").val();
 
 			$("#search-result").empty();
+
 			if (input.length == 0)
-				return;
+				input = "0"; // hack but it's working :) 
 
-
-			let _rooms = []; // TODO: please don't generate it on every serach :(
+			let _rooms = []; // TODO: please don't generate it on every search :(
 			for (let room in rooms) {
 				_rooms.push({ name: room, idx: rooms[room] });
 			}
@@ -365,8 +365,13 @@
 					a_node = target;
 
 				if (a_node != null && b_node != null) {
-					dijkstra(nodes[a_node], nodes[b_node]);
-					target = null;
+					if (a_node == b_node) {
+						alert("Same room!");
+					}
+					else {
+						dijkstra(nodes[a_node], nodes[b_node]);
+						target = null;
+					}
 				}
 
 				changefloor(node.floor - floor_idx);

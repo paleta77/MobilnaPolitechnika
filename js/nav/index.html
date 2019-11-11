@@ -2,7 +2,8 @@
 <html>
 
 <head>
-	<title>Test 2</title>
+	<meta charset="UTF-8">
+	<title>Mapa Kampusu PŁ</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
 		integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
@@ -35,12 +36,14 @@
 
 		.search {
 			position: absolute;
-			top: 20px;
-			left: 100px;
-			background-color: white;
-			border: none;
+			top: 0px;
+			left: 0px;
+			background-color: rgba(255,255,255, 0.9);
 			z-index: 1001;
-			box-shadow: white;
+			padding: 10px 20px 10px 10px;
+			margin: 10px 10px;
+			border: 2px solid rgba(0, 0, 0, 0.2);
+			border-radius: 4px;
 		}
 
 		.search-submit {
@@ -50,11 +53,21 @@
 
 		.search-input {
 			border: none;
+			width: 200px;
+			margin-left: 5px;
+			background-color: transparent;
 		}
 
-		.search-result {
-			border-top: 1px solid gray;
-			height: 25px;
+		.search-result-row {
+			padding: 10px 25px;
+			margin-top: 5px;
+			margin-left: 5px;
+			border: 2px solid rgba(0, 0, 0, 0.2);
+			border-radius: 4px;
+		}
+
+		.search-result-row:hover {
+			background-color: rgb(244, 244, 244);
 		}
 	</style>
 </head>
@@ -64,10 +77,9 @@
 	</div>
 
 	<div class="search">
-		<form>
-			<input id="search-field" class="search-input" type="search" autocomplete="off" onkeyup="search();"
-				onclick="search()" onblur="setTimeout(()=>$('#search-result').empty(), 100);" />
-		</form>
+		🔍
+		<input id="search-field" class="search-input" type="search" autocomplete="off" onkeyup="search();" placeholder="Znajdź"
+			onclick="search()" onblur="setTimeout(()=>$('#search-result').empty(), 100);" />
 		<div id="search-result">
 		</div>
 	</div>
@@ -89,6 +101,8 @@
 			bounds: bounds,
 		}).addTo(map);
 
+		map.zoomControl.setPosition('bottomright');
+
 		map.setMaxBounds(bounds);
 
 		let imageBounds = [[51.74542, 19.45311], [51.74867, 19.45811]];
@@ -100,7 +114,7 @@
 
 		let button_up = L.easyButton('fa-arrow-up', (btn, map) => changefloor(1));
 		let button_down = L.easyButton('fa-arrow-down', (btn, map) => changefloor(-1));
-		L.easyBar([button_up, button_down]).addTo(map);
+		L.easyBar([button_up, button_down], { position: 'bottomright' }).addTo(map);
 
 		let nodes = [];
 		let edges = [];
@@ -326,7 +340,7 @@
 			for (let room of result) {
 				if (i > 10) break;
 				i++;
-				$("#search-result").append("<div class='search-result' onclick='setTarget(\"" + room + "\")'>" + room + "</div>");
+				$("#search-result").append("<div class='search-result-row' onclick='setTarget(\"" + room + "\")'>" + room + "</div>");
 			}
 		}
 

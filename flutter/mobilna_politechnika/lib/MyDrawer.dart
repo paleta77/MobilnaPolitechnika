@@ -5,6 +5,7 @@ import 'package:mobilna_politechnika/Schedule.dart';
 
 import 'Profil.dart';
 import 'api.dart';
+import 'locale.dart';
 
 class MyDrawer extends StatelessWidget {
   @override
@@ -21,7 +22,7 @@ class MyDrawer extends StatelessWidget {
           ),
         ),
         ListTile(
-          title: Text('Profil'),
+          title: Text(Locale.current['profile']),
           leading: Icon(Icons.account_circle),
           onTap: () {
             Navigator.pop(context);
@@ -30,7 +31,7 @@ class MyDrawer extends StatelessWidget {
           },
         ),
         ListTile(
-          title: Text('Oceny'),
+          title: Text(Locale.current['grades']),
           leading: Icon(Icons.format_list_numbered),
           onTap: () {
             Navigator.pop(context);
@@ -39,7 +40,7 @@ class MyDrawer extends StatelessWidget {
           },
         ),
         ListTile(
-          title: Text('Mapa'),
+          title: Text(Locale.current['map']),
           leading: Icon(Icons.map),
           onTap: () {
             Navigator.pop(context);
@@ -48,7 +49,7 @@ class MyDrawer extends StatelessWidget {
           },
         ),
         ListTile(
-          title: Text('Plan zajęć'),
+          title: Text(Locale.current['schedule']),
           leading: Icon(Icons.calendar_today),
           onTap: () {
             Navigator.pop(context);
@@ -58,7 +59,7 @@ class MyDrawer extends StatelessWidget {
         ),
         Divider(),
         ListTile(
-          title: Text('Wyloguj'),
+          title: Text(Locale.current['logout']),
           leading: Icon(Icons.arrow_back),
           onTap: () {
             Navigator.pop(context);

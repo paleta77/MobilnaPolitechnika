@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobilna_politechnika/MyDrawer.dart';
-import 'api.dart';
 import 'package:calendar_views/calendar_views.dart';
 import 'package:calendar_views/day_view.dart';
+
+import 'api.dart';
+import 'locale.dart';
+
 //displaying it as calendar view
 class DayView extends StatefulWidget{
   @override
@@ -52,7 +55,7 @@ class _DayViewState extends State{
     ];
 
     //loadGroups()
-    if(groupModel!=null){;
+    if(groupModel!=null){
       for(int i = 0; i<5 ; i++){
         if(weekdayToAbbreviatedString(day.weekday)==groupModel.group.timetable.elementAt(i).day){
           int hours = groupModel.group.timetable[i].hour.toInt();
@@ -89,7 +92,7 @@ class _DayViewState extends State{
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Plan zajęć"),
+        title: new Text(Locale.current['schedule']),
       ),
       body: new DayViewEssentials(
           properties: new DayViewProperties(days: <DateTime>[
@@ -196,28 +199,28 @@ class _DayViewState extends State{
   weekdayToAbbreviatedString(int weekday) {
     switch(weekday){
       case 1:
-        return "Poniedziałek";
+        return Locale.current['moday'];
         break;
       case 2:
-        return "Wtorek";
+        return Locale.current['tuesday'];
         break;
       case 3:
-        return "Sroda";
+        return Locale.current['wednesday'];
         break;
       case 4:
-        return "Czwartek";
+        return Locale.current['thursday'];
         break;
       case 5:
-        return "Piątek";
+        return Locale.current['friday'];
         break;
       case 6:
-        return "Sobota";
+        return Locale.current['saturday'];
         break;
       case 7:
-        return "Niedziela";
+        return Locale.current['sunday'];
         break;
       default:
-        return "Error";
+        return Locale.current['error'];;
     }
   }
 
@@ -316,7 +319,7 @@ class _DisplayGroupsState extends State{
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        appBar: AppBar(title: const Text('Plan zajęć')),
+        appBar: AppBar(title: Text(Locale.current['schedule'])),
         drawer: MyDrawer(),
         body: Center(
             child: DayView(),

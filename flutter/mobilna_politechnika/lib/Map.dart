@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobilna_politechnika/MyDrawer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import 'locale.dart';
+
 class Map extends StatefulWidget {
   @override
   _MapState createState() => new _MapState();
@@ -13,7 +15,7 @@ class _MapState extends State<Map> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Mapa"),
+          title: Text(Locale.current['map']),
         ),
         drawer: MyDrawer(),
         body: Container(

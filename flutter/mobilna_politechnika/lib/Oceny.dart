@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobilna_politechnika/MyDrawer.dart';
+
 import 'api.dart';
+import 'locale.dart';
 
 class Oceny extends StatefulWidget {
   @override
@@ -51,7 +53,7 @@ class _DisplayGradeState extends State {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Oceny')),
+        appBar: AppBar(title: Text(Locale.current['grades'])),
         drawer: MyDrawer(),
         body: Column(children: <Widget>[
           Expanded(
@@ -71,7 +73,7 @@ class _DisplayGradeState extends State {
           Container(
               height: 25,
               color: Color.fromARGB(255, 230, 230, 230),
-              child: Center(child: Text("Średnia: $average")))
+              child: Center(child: Text(Locale.current['average'] + average)))
         ]));
   }
 }

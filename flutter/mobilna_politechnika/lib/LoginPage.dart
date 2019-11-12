@@ -3,33 +3,37 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import 'api.dart';
+import 'locale.dart';
 
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomPadding: true,
         body: Column(children: <Widget>[
-      Expanded(
-          child: Container(
-              width: double.infinity,
-              color: Color.fromARGB(255, 128, 1, 0),
-              height: double.infinity,
+          Expanded(
+              child: Container(
+                  width: double.infinity,
+                  color: Color.fromARGB(255, 128, 1, 0),
+                  height: double.infinity,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'PŁ',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 125, color: Colors.white),
+                        )
+                      ]))),
+          Expanded(
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'PŁ',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 125, color: Colors.white),
-                    )
-                  ]))),
-      Expanded(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Container(
-            margin: new EdgeInsets.symmetric(horizontal: 16.0),
-            child: LoginForm())
-      ])),
-    ]));
+                Container(
+                    margin: new EdgeInsets.symmetric(horizontal: 16.0),
+                    child: LoginForm())
+              ])),
+        ]));
   }
 }
 
@@ -53,22 +57,22 @@ class LoginFormState extends State<LoginForm> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             TextFormField(
-              decoration: InputDecoration(hintText: "Login"),
+              decoration: InputDecoration(hintText: Locale.current['login']),
               controller: loginController,
               validator: (value) {
                 if (value.isEmpty) {
-                  return 'Wpisz coś';
+                  return Locale.current['enter_login'];
                 } else
                   return null;
               },
             ),
             TextFormField(
-              decoration: InputDecoration(hintText: "Hasło"),
+              decoration: InputDecoration(hintText: Locale.current['password']),
               controller: passwordController,
               obscureText: true,
               validator: (value) {
                 if (value.isEmpty) {
-                  return 'Wpisz coś';
+                  return Locale.current['enter_password'];
                 } else
                   return null;
               },
@@ -79,7 +83,7 @@ class LoginFormState extends State<LoginForm> {
               onPressed: () async {
                 if (_formKey.currentState.validate()) {
                   Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text('Logowanie'),
+                    content: Text(Locale.current['login_text']),
                   ));
 
                   var isLogged = await API.login(
@@ -93,12 +97,11 @@ class LoginFormState extends State<LoginForm> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: new Text("Błąd"),
-                            content: new Text(
-                                "Wystąpił problem podczas proby zalogowania, sprawdz dane logowania."),
+                            title: new Text(Locale.current['error']),
+                            content: new Text(Locale.current['login_error']),
                             actions: <Widget>[
                               new FlatButton(
-                                child: new Text("Close"),
+                                child: new Text(Locale.current['close']),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -109,7 +112,7 @@ class LoginFormState extends State<LoginForm> {
                   }
                 }
               },
-              child: Text("Zaloguj"),
+              child: Text(Locale.current['login_button']),
             )
           ],
         ));

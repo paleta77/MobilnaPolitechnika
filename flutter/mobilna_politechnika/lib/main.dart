@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobilna_politechnika/LoginPage.dart';
-import 'package:mobilna_politechnika/Profil.dart';
+
+import 'login-page.dart';
+import 'profile.dart';
 
 void main() => runApp(MyApp());
 

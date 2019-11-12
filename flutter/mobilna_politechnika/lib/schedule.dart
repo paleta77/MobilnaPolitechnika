@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mobilna_politechnika/MyDrawer.dart';
 import 'package:calendar_views/calendar_views.dart';
 import 'package:calendar_views/day_view.dart';
 
 import 'api.dart';
 import 'locale.dart';
+import 'side-drawer.dart';
 
 //displaying it as calendar view
 class DayView extends StatefulWidget{
@@ -220,7 +220,7 @@ class _DayViewState extends State{
         return Locale.current['sunday'];
         break;
       default:
-        return Locale.current['error'];;
+        return Locale.current['error'];
     }
   }
 

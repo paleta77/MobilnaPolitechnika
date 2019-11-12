@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mobilna_politechnika/Oceny.dart';
-import 'package:mobilna_politechnika/Map.dart';
-import 'package:mobilna_politechnika/Schedule.dart';
 
-import 'Profil.dart';
 import 'api.dart';
 import 'locale.dart';
+import 'grades.dart';
+import 'map.dart';
+import 'schedule.dart';
+import 'profile.dart';
 
 class MyDrawer extends StatelessWidget {
   @override
@@ -53,8 +53,10 @@ class MyDrawer extends StatelessWidget {
           leading: Icon(Icons.calendar_today),
           onTap: () {
             Navigator.pop(context);
-            Navigator.push(context,
-                new MaterialPageRoute(builder: (context) => new GroupTimetable()));
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (context) => new GroupTimetable()));
           },
         ),
         Divider(),

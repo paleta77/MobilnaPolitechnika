@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobilna_politechnika/MyDrawer.dart';
 
 import 'api.dart';
 import 'locale.dart';
+import 'side-drawer.dart';
 
 class Oceny extends StatefulWidget {
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobilna_politechnika/MyDrawer.dart';
 
 import 'locale.dart';
+import 'side-drawer.dart';
 
 class Profile extends StatelessWidget {
   @override

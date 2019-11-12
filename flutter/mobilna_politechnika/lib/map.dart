@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobilna_politechnika/MyDrawer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'locale.dart';
+import 'side-drawer.dart';
 
 class Map extends StatefulWidget {
   @override

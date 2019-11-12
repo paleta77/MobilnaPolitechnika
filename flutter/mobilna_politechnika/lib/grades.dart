@@ -4,7 +4,7 @@ import 'api.dart';
 import 'locale.dart';
 import 'side-drawer.dart';
 
-class Oceny extends StatefulWidget {
+class Grades extends StatefulWidget {
   @override
   _DisplayGradeState createState() {
     return _DisplayGradeState();
@@ -54,7 +54,7 @@ class _DisplayGradeState extends State {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text(Locale.current['grades'])),
-        drawer: MyDrawer(),
+        drawer: SideDrawer(),
         body: Column(children: <Widget>[
           Expanded(
               child: ListView.builder(

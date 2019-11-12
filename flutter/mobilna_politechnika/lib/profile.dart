@@ -10,7 +10,7 @@ class Profile extends StatelessWidget {
       appBar: AppBar(
         title: Text(Locale.current['profile']),
       ),
-      drawer: MyDrawer(),
+      drawer: SideDrawer(),
       body: Center(
 
       ),

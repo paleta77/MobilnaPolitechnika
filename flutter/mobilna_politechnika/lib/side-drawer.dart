@@ -7,7 +7,7 @@ import 'map.dart';
 import 'schedule.dart';
 import 'profile.dart';
 
-class MyDrawer extends StatelessWidget {
+class SideDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -36,7 +36,7 @@ class MyDrawer extends StatelessWidget {
           onTap: () {
             Navigator.pop(context);
             Navigator.push(context,
-                new MaterialPageRoute(builder: (context) => new Oceny()));
+                new MaterialPageRoute(builder: (context) => new Grades()));
           },
         ),
         ListTile(

@@ -320,7 +320,7 @@ class _DisplayGroupsState extends State{
     // TODO: implement build
     return Scaffold(
         appBar: AppBar(title: Text(Locale.current['schedule'])),
-        drawer: MyDrawer(),
+        drawer: SideDrawer(),
         body: Center(
             child: DayView(),
         )

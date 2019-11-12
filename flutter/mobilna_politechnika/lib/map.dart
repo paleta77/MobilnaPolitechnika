@@ -17,7 +17,7 @@ class _MapState extends State<Map> {
         appBar: AppBar(
           title: Text(Locale.current['map']),
         ),
-        drawer: MyDrawer(),
+        drawer: SideDrawer(),
         body: Container(
           child: Column(
             children: <Widget>[

@@ -38,8 +38,8 @@ class API {
     return false;
   }
 
-  static Future<dynamic> getGrades(String username) async {
-    final response = await http.get('$URL/grades/$username', headers: {
+  static Future<dynamic> getGrades() async {
+    final response = await http.get('$URL/grades', headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token"
     });
@@ -52,8 +52,8 @@ class API {
     return null;
   }
 
-  static Future<dynamic> getGroup(String username) async {
-    final response = await http.get('$URL/group/$username', headers: {
+  static Future<dynamic> getGroup() async {
+    final response = await http.get('$URL/group', headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token"
     });

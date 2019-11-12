@@ -26,7 +26,13 @@ class _DisplayGradeState extends State {
   String average = "";
 
   void loadGrades() async {
-    var grades = await API.getGrades(API.username);
+    var grades = await API.getGrades();
+
+    if (grades['msg'] != 'OK') {
+      // problem :/
+    }
+
+    grades = grades['grades'];
 
     List gradesList = [];
     var sum = 0;

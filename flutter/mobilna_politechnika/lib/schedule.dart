@@ -32,7 +32,7 @@ class _DayViewState extends State{
 
   var groupModel;
   void loadGroups() async {
-    var groups = await API.getGroup(API.username);
+    var groups = await API.getGroup();
     setState(() {
       groupModel = GroupModel.fromJson(groups);
     });
@@ -283,7 +283,7 @@ class DisplayGroups extends StatefulWidget {
 class _DisplayGroupsState extends State{
   var groupModel;
   void loadGroups() async {
-    var groups = await API.getGroup(API.username);
+    var groups = await API.getGroup();
     setState(() {
       groupModel = GroupModel.fromJson(groups);
     });

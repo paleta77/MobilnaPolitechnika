@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const sendgrid = require('@sendgrid/mail');
 const group = require('./group.js');
 const auth = require('../auth.js');
+const grade = require('./grade.js');
 
 const userSchema = new mongoose.Schema({
     name: String,
@@ -30,6 +31,9 @@ class UserClass {
     }
 
     static register(username, mail, password, cb) {
+        if (!username || !mail || !password) {
+            return cb("Field cannot be empty!");
+        }
         this.findOne(
             { $or: [{ 'name': username }, { 'mail': mail }] },
             'name',
@@ -64,6 +68,46 @@ class UserClass {
             cb(null, _group);
         });
         return;
+    }
+
+    getGrades(cb) {
+        grade.find({ 'user': this.name }, 'value subject', (err, grades) => {
+            if (err) cb(err);
+            cb(null, grades);
+        });
+    }
+
+    addGrade(subject, value, cb) {
+        if (!subject || !value) {
+            return cb("Fields cannot be empty!");
+        }
+        if (value > 5 || value < 2) {
+            return cb("Value outside 2 and 5!");
+        }
+        grade.create({ 'user': this.name, 'subject': subject, 'value': value }, function (err) {
+            if (err) cb(err);
+            cb(null, true);
+        });
+    }
+
+    updateGrade(subject, value, cb) {
+        if (!subject || !value) {
+            return cb("Fields cannot be empty!");
+        }
+        if (value > 5 || value < 2) {
+            return cb("Value outside 2 and 5!");
+        }
+        grade.updateOne({ 'user': this.name, 'subject': subject }, { $set: { 'value': value } }, function (err) {
+            if (err) cb(err);
+            cb(null, true);
+        });
+    }
+
+    deleteGrade(subject, cb) {
+        grade.deleteOne({ 'user': this.name, 'subject': subject }, function (err) {
+            if (err) cb(err);
+            cb(null, true);
+        });
     }
 }
 

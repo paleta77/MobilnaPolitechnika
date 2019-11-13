@@ -6,6 +6,9 @@ import 'grades.dart';
 import 'map.dart';
 import 'schedule.dart';
 import 'profile.dart';
+import 'easter.dart';
+
+int taps = 0;
 
 class SideDrawer extends StatelessWidget {
   @override
@@ -17,8 +20,20 @@ class SideDrawer extends StatelessWidget {
         UserAccountsDrawerHeader(
           accountName: Text("Student Student"),
           accountEmail: Text("11111@edu.p.lodz.pl"),
-          currentAccountPicture: new CircleAvatar(
-            backgroundColor: Color.fromARGB(255, 0, 0, 0),
+          currentAccountPicture: GestureDetector(
+            onTap: () {
+              //do what you want here
+              taps++;
+              if (taps >= 8) {
+                taps = 0;
+                Navigator.pop(context);
+                Navigator.push(context,
+                    new MaterialPageRoute(builder: (context) => new Easter()));
+              }
+            },
+            child: new CircleAvatar(
+              backgroundColor: Color.fromARGB(255, 0, 0, 0),
+            ),
           ),
         ),
         ListTile(

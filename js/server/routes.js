@@ -79,4 +79,13 @@ exports = module.exports = function (app) {
             res.json({ msg: "OK", group: _group });
         });
     });
+
+    app.get('/group/search', (req, res) => {
+        group.find({ $text: { $search: req.query.text } }, '_id field semester mode')
+            .limit(10)
+            .exec((err, docs) => {
+                if (err) return res.json({ msg: err });
+                res.json({ msg: "OK", result: docs });
+            });
+    });
 }

@@ -4,7 +4,7 @@ const sendgrid = require('@sendgrid/mail');
 const auth = require('./auth.js');
 
 const config = require('./config.js');
-mongoose.connect(config.mongodb, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(config.mongodb, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true }).catch(error => handleError(error));
 sendgrid.setApiKey(config.sendgridkey);
 delete config;
 

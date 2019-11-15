@@ -72,11 +72,23 @@ exports = module.exports = function (app) {
         });
     });
 
-    // get user group with they timetable
+    // get user group info
     app.get('/group', auth.restrict, (req, res) => {
-        req.session.user.getGroup((err, _group) => {
+        req.session.user.getGroup((err, group) => {
             if (err) return res.json({ msg: err });
-            res.json({ msg: "OK", group: _group });
+            res.json({ msg: "OK", group: group });
+        });
+    });
+
+    // get group timetable
+    app.get('/group/timetable', auth.restrict, (req, res) => {
+        req.session.user.getGroup((err, group) => {
+            if (err) return res.json({ msg: err });
+
+            group.getTimeTable((err, table) => {
+                if (err) return res.json({ msg: err });
+                res.json({ msg: "OK", timetable: table });
+            });
         });
     });
 

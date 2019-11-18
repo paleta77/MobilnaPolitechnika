@@ -92,6 +92,7 @@ exports = module.exports = function (app) {
         });
     });
 
+    // search group by text
     app.get('/group/search', (req, res) => {
         group.find({ $text: { $search: req.query.text } }, '_id field semester mode')
             .limit(10)

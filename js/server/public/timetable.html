@@ -123,8 +123,7 @@
 
             async function loadTimetable() {
                 $("#loading").show();
-                let timetable = await getData('group');
-                console.log(JSON.stringify(timetable));
+                let timetable = await getData('group/timetable');
 
                 if (timetable.msg != 'OK') {
                     return alert(timetable.msg);
@@ -133,7 +132,7 @@
                 $('#timetable').empty();
 
                 let i = 1;
-                for (let el of timetable.group.timetable) {
+                for (let el of timetable.timetable) {
                     let start = toHour(el.hour);
                     let end = addMinutes(start, el.length);
 

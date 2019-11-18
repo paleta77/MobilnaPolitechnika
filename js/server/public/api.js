@@ -37,6 +37,24 @@ export async function logout() {
     return false;
 }
 
+export async function userInfo() {
+    const data = await http.get('user', { "Authorization": `Bearer ${token}` });
+    msg = data.msg;
+    if (data.msg == 'OK') {
+        return data.user;
+    }
+    return null;
+}
+
+export async function userGroup() {
+    const data = await http.get('group', { "Authorization": `Bearer ${token}` });
+    msg = data.msg;
+    if (data.msg == 'OK') {
+        return data.group;
+    }
+    return null;
+}
+
 export async function getGrades(username) {
     const data = await http.get('grades', { "Authorization": `Bearer ${token}` });
     msg = data.msg;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'locale.dart';
 import 'side-drawer.dart';
+import 'user.dart';
 
 class Profile extends StatelessWidget {
   @override
@@ -12,8 +13,12 @@ class Profile extends StatelessWidget {
       ),
       drawer: SideDrawer(),
       body: Center(
-
-      ),
+          child: Text("name: " +
+              User.instance.name +
+              '\nmail: ' +
+              User.instance.mail +
+              '\ngroup: ' +
+              User.instance.group)),
     );
   }
 }

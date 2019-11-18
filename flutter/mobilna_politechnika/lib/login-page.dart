@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 
 import 'api.dart';
 import 'locale.dart';
+import 'user.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -84,11 +85,15 @@ class LoginFormState extends State<LoginForm> {
                   Scaffold.of(context).showSnackBar(SnackBar(
                     content: Text(Locale.current['login_text']),
                   ));
-
                   var isLogged = await API.login(
                       loginController.text, passwordController.text);
 
                   if (isLogged) {
+                    var user = await API.userInfo();
+                    var group = await API.getGroup();
+
+                    User(user['name'], user['mail'], group['field'].toString() + ' ' +  group['semester'].toString() + ' ' + group['mode'].toString());
+
                     Navigator.of(context).pushNamedAndRemoveUntil(
                         '/Profile', (Route<dynamic> route) => false);
                   } else {

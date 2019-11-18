@@ -7,6 +7,7 @@ import 'map.dart';
 import 'schedule.dart';
 import 'profile.dart';
 import 'easter.dart';
+import 'user.dart';
 
 int taps = 0;
 
@@ -18,8 +19,8 @@ class SideDrawer extends StatelessWidget {
       padding: EdgeInsets.zero,
       children: <Widget>[
         UserAccountsDrawerHeader(
-          accountName: Text("Student Student"),
-          accountEmail: Text("11111@edu.p.lodz.pl"),
+          accountName: Text(User.instance.name),
+          accountEmail: Text(User.instance.mail),
           currentAccountPicture: GestureDetector(
             onTap: () {
               //do what you want here

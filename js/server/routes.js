@@ -40,6 +40,13 @@ exports = module.exports = function (app) {
         });
     });
 
+
+    // get user info
+    app.get('/user', auth.restrict, (req, res) => {
+        let user = req.session.user;
+        res.json({ msg: "OK", user: { _id: user._id, name: user.name, mail: user.mail } });
+    });
+
     // get all user grades
     app.get('/grades', auth.restrict, (req, res) => {
         req.session.user.getGrades((err, grades) => {

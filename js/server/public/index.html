@@ -29,7 +29,7 @@
             </div>
         </div>
     </div>
-    <div class="login-form" id="notlogged">
+    <div class="login-form" id="notlogged" style="display: none;">
         <form action="#">
             <h2 class="text-center">Log in</h2>
             <div class="form-group">
@@ -49,16 +49,39 @@
         <p class="text-center"><a href="/register.html">Create an Account</a></p>
     </div>
 
-    <div id="logged" class="container">
-        <div>
-            <button class="btn btn-primary" onclick="logout();">Logout</button>
-        </div>
+    <div id="logged" class="container" style="display: none;">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-1">
+            <a class="navbar-brand">PŁ</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="changePage(0);">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="changePage(1);">Grades</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="changePage(2);">Timetable</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
+                    <button class="btn btn-primary ml-5 my-2 my-sm-0" onclick="logout();">Logout</button>
+                </form>
+        </div>
+        </nav>
+
+        <div id="homePage">
             <h4 class="text-center" id="welcomeText">You're logged in :)</h4>
         </div>
 
-        <div>
+        <div id="gradesPage">
             <form class="border mb-2 p-3">
                 <div class="form-group">
                     <label for="subjectInput">Subject</label>
@@ -75,9 +98,8 @@
                 </div>
                 <button type="submit" class="btn btn-primary" onclick="addGrade();">Add</button>
             </form>
-        </div>
 
-        <div>
+
             <table class="table border" id="gradesTable">
                 <thead>
                     <tr>
@@ -90,7 +112,9 @@
                 <tbody>
                 </tbody>
             </table>
-            <iframe id="timetableframe"></iframe>
+        </div>
+        <div id="tablePage">
+            <iframe id="timetableframe" class="border"></iframe>
         </div>
     </div>
     <div class="modal fade" id="changeGradeModal" tabindex="-1" role="dialog" aria-labelledby="changeGradeModalTitle"
@@ -133,8 +157,6 @@
         import * as api from "./api.js";
 
         $("#loading").show();
-        $("#logged").hide();
-        $("#notlogged").hide();
 
         let username = localStorage.getItem('username');
         isLogged();
@@ -154,6 +176,7 @@
                 $("#notlogged").hide();
                 $("#welcomeText").text(`Welcome ${username} :)`);
                 loadGrades();
+                changePage(0);
                 $("#timetableframe").attr('src', `timetable.html?user=${username}&token=${api.token}`);
             }
             else {
@@ -161,6 +184,21 @@
                 $("#notlogged").show();
             }
         }
+
+        function changePage(idx) {
+            $("#homePage").hide();
+            $("#gradesPage").hide();
+            $("#tablePage").hide();
+
+            if(idx === 0) {
+                $("#homePage").show();
+            } else if(idx===1) {
+                $("#gradesPage").show();
+            } else {
+                $("#tablePage").show();
+            }
+        }
+window.changePage = changePage;
 
         async function login() {
             $("#loading").show();

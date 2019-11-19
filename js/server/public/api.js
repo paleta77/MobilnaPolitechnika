@@ -55,6 +55,15 @@ export async function userGroup() {
     return null;
 }
 
+export async function timetable() {
+    const data = await http.get('group/timetable', { "Authorization": `Bearer ${token}` });
+    msg = data.msg;
+    if (data.msg == 'OK') {
+        return data.timetable;
+    }
+    return null;
+}
+
 export async function getGrades(username) {
     const data = await http.get('grades', { "Authorization": `Bearer ${token}` });
     msg = data.msg;
@@ -89,4 +98,13 @@ export async function changeGrade(username, subject, value) {
         return true;
     }
     return false;
+}
+
+export async function search(text) {
+    const data = await http.get(`search?text=${text}`, { "Authorization": `Bearer ${token}` });
+    msg = data.msg;
+    if (data.msg == 'OK') {
+        return data.result;
+    }
+    return null;
 }

@@ -68,13 +68,16 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="changePage(2);">Timetable</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="changePage(3);">Map</a>
+                    </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
                     <!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
                     <button class="btn btn-primary ml-5 my-2 my-sm-0" onclick="logout();">Logout</button>
                 </form>
-        </div>
+            </div>
         </nav>
 
         <div id="homePage">
@@ -114,7 +117,26 @@
             </table>
         </div>
         <div id="tablePage">
-            <iframe id="timetableframe" class="border"></iframe>
+            <div id="ttable">
+                <div id="timetable">
+                </div>
+                <div id="header">
+                    <h3>Sobota</h3>
+                    <h3>Niedziela</h3>
+                </div>
+                <div id="grid">
+                    <div class="grow"><div class="hour">08:00</div><div class="day"></div><div class="day"></div></div>
+                    <div class="grow"><div class="hour">10:00</div><div class="day"></div><div class="day"></div></div>
+                    <div class="grow"><div class="hour">12:00</div><div class="day"></div><div class="day"></div></div>
+                    <div class="grow"><div class="hour">14:00</div><div class="day"></div><div class="day"></div></div>
+                    <div class="grow"><div class="hour">16:00</div><div class="day"></div><div class="day"></div></div>
+                    <div class="grow"><div class="hour">18:00</div><div class="day"></div><div class="day"></div></div>
+                    <div class="grow"><div class="hour">20:00</div><div class="day"></div><div class="day"></div></div>
+                </div>
+            </div>
+        </div>
+        <div id="mapPage">
+            <iframe id="mapframe" class="border" src="/nav/"></iframe>
         </div>
     </div>
     <div class="modal fade" id="changeGradeModal" tabindex="-1" role="dialog" aria-labelledby="changeGradeModalTitle"
@@ -152,141 +174,7 @@
             </div>
         </div>
     </div>
-    <script type="module">
-        import * as http from "./http.js";
-        import * as api from "./api.js";
-
-        $("#loading").show();
-
-        let username = localStorage.getItem('username');
-        isLogged();
-
-        async function isLogged() {
-            if (!(await api.logged())) {
-                localStorage.removeItem('username');
-                username = null;
-            }
-            showHide();
-            $("#loading").hide();
-        }
-
-        function showHide() {
-            if (api.token != null) {
-                $("#logged").show();
-                $("#notlogged").hide();
-                $("#welcomeText").text(`Welcome ${username} :)`);
-                loadGrades();
-                changePage(0);
-                $("#timetableframe").attr('src', `timetable.html?user=${username}&token=${api.token}`);
-            }
-            else {
-                $("#logged").hide();
-                $("#notlogged").show();
-            }
-        }
-
-        function changePage(idx) {
-            $("#homePage").hide();
-            $("#gradesPage").hide();
-            $("#tablePage").hide();
-
-            if(idx === 0) {
-                $("#homePage").show();
-            } else if(idx===1) {
-                $("#gradesPage").show();
-            } else {
-                $("#tablePage").show();
-            }
-        }
-window.changePage = changePage;
-
-        async function login() {
-            $("#loading").show();
-
-            username = $("#username").val();
-
-            if (await api.login(username, $("#password").val())) {
-                localStorage.setItem('username', username);
-                showHide();
-            }
-            else {
-                alert(api.msg);
-            }
-
-            $("#loading").hide();
-        };
-        window.login = login;
-
-        async function logout() {
-            $("#loading").show();
-
-            await api.logout();
-            localStorage.removeItem('username');
-            username = null;
-            showHide();
-
-            $("#loading").hide();
-        };
-        window.logout = logout;
-
-        async function loadGrades() {
-            let grades = await api.getGrades(username);
-
-            $('#gradesTable tbody').empty();
-
-            let sum = 0;
-            let i = 1;
-            for (let grade of grades) {
-                $('#gradesTable tbody').append(`
-                <tr>
-                    <td>${i}</td>
-                    <td>${grade.subject}</td>
-                    <td>${grade.value}</td>
-                    <td>
-                        <button class="btn btn-primary" onclick="openChangeGrade('${grade.subject}', ${grade.value});">✎</button>
-                        <button class="btn btn-primary" onclick="deleteGrade('${grade.subject}');">🗑</button>
-                    </td>
-                </tr>`);
-                i++;
-                sum += grade.value;
-            }
-
-            if (i == 1) {
-                $('#gradesTable tbody').append(`<tr><td colspan="4">None</td></tr>`);
-            } else {
-                let average = sum / (i - 1);
-                $('#gradesTable tbody').append(`<tr><td colspan="4">average: ${average}</td></tr>`);
-            }
-        }
-
-        async function deleteGrade(subject) {
-            await api.deleteGrade(username, subject);
-            loadGrades();
-        }
-        window.deleteGrade = deleteGrade;
-
-        async function addGrade() {
-            let subject = $('#subjectInput').val();
-            let value = parseFloat($('#valueInput').val());
-            await api.addGrade(username, subject, value);
-            loadGrades();
-        }
-        window.addGrade = addGrade;
-
-        function openChangeGrade(subject, value) {
-            $('#changeGradeModal').modal('show');
-            $('#subjectInputChange').val(subject);
-            $('#valueInputChange').val(value);
-        }
-        window.openChangeGrade = openChangeGrade;
-
-        async function changeGrade() {
-            await api.changeGrade(username, $('#subjectInputChange').val(), $('#valueInputChange').val());    
-            $('#changeGradeModal').modal('hide');
-            loadGrades();
-        }
-        window.changeGrade = changeGrade;
-    </script>
+    <script type="module" src="main.js"></script>
 </body>
 
 </html>

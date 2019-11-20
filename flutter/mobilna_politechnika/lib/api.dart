@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class API {
-  static const String URL = 'https://mojmegatestkolejny.azurewebsites.net';
+  static const String URL = 'http://77.55.208.10:8079';
   static String token;
 
   static Future<bool> login(String username, String password) async {

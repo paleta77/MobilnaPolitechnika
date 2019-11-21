@@ -88,6 +88,7 @@ class _DayViewState extends State{
         .toList();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -97,7 +98,7 @@ class _DayViewState extends State{
       body: new DayViewEssentials(
           properties: new DayViewProperties(days: <DateTime>[
             _day0,
-            _day1,
+            //_day1,
           ]),
           child: new Column(
             children: <Widget>[
@@ -183,15 +184,34 @@ class _DayViewState extends State{
     );
   }
 
+  String dropdownValue = 'Sobota';
   //Day header
   Widget _headerItemBuilder(BuildContext context, DateTime day){
     return new Container(
-      color: Colors.grey[300],
-      padding: new EdgeInsets.symmetric(vertical: 8.0),
-      child: new Column(
-        children: <Widget>[
-          new Text(weekdayToAbbreviatedString(day.weekday)),
-        ],
+      child: new DropdownButton<String>(
+        value: dropdownValue,
+        icon: Icon(Icons.arrow_downward),
+        iconSize: 24,
+        elevation: 16,
+        style: TextStyle(
+          color: Colors.black,
+        ),
+        underline: Container(
+          height: 2,
+          color: Colors.black,
+        ),
+        onChanged: (String newValue) {
+          setState(() {
+            dropdownValue = newValue;
+          });
+        },
+        items: <String>['Sobota', 'Niedziela']
+            .map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
       ),
     );
   }

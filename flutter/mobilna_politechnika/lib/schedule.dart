@@ -18,12 +18,14 @@ class Event {
     @required this.startMinuteOfDay,
     @required this.duration,
     @required this.title,
+    @required this.type,
   });
 
   final int startMinuteOfDay;
   final int duration;
 
   final String title;
+  final String type;
 }
 
 class _DayViewState extends State{
@@ -61,18 +63,22 @@ class _DayViewState extends State{
         //if(weekdayToAbbreviatedString(day.weekday)==groupModel.timetable[i].day){
         if(dropdownValue==groupModel.timetable[i].day){
           int hours = groupModel.timetable[i].hour.toInt();
-          int minuts =
-              ((groupModel.timetable[i].hour - hours.toDouble()) * 100)
-                  .toInt();
+          int minuts = ((groupModel.timetable[i].hour - hours.toDouble()) * 100).toInt();
+          String stringMinuts = minuts.toString();
+          if(stringMinuts=="0") stringMinuts += "0";
 
           events.add(new Event(
               startMinuteOfDay: hours * 60 + minuts,
-              duration: 90,
-              title: groupModel.timetable[i].subject + "\n" +
-                    groupModel.timetable[i].classroom);
+              duration: groupModel.timetable[i].length,
+              type: groupModel.timetable[i].type,
+              title:groupModel.timetable[i].type + ", " + hours.toString() + ":" + stringMinuts + " (" + groupModel.timetable[i].length.toString() + "min)\n" +
+                  groupModel.timetable[i].subject + "\n" +
+                  groupModel.timetable[i].lecturer + "\n" +
+                  groupModel.timetable[i].classroom));
         }
       }
     }
+
 
     return events
         .map(
@@ -138,6 +144,19 @@ class _DayViewState extends State{
         "${(minuteOfDay % 60).toString().padLeft(2, "0")}";
   }
 
+  MaterialColor eventToColor(String eventType){
+    switch (eventType){
+      case "Projekt":
+        return Colors.green;
+      case "Lektorat":
+        return Colors.purple;
+      case "Laboratorium":
+        return Colors.cyan;
+      default:
+        return Colors.indigo;
+    }
+  }
+
   Positioned _eventBuilder(
       BuildContext context,
       ItemPosition itemPosition,
@@ -157,7 +176,7 @@ class _DayViewState extends State{
         decoration: new BoxDecoration(
           color: Colors.white,
           border: Border.all(
-            color: Colors.lightBlueAccent, //                   <--- border color
+            color: eventToColor("${event.type}"), //                   <--- border color
             width: 5.0,
           ),
          ),

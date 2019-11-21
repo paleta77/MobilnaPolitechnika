@@ -74,4 +74,16 @@ class API {
       return body['group'];
     }
   }
+
+  static Future<dynamic> getTimetable() async {
+    final response = await http.get('$URL/group/timetable', headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      var body = json.decode(response.body);
+      return body;
+    }
+  }
 }

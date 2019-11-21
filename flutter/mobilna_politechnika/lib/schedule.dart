@@ -32,9 +32,9 @@ class _DayViewState extends State{
 
   var groupModel;
   void loadGroups() async {
-    var groups = await API.getGroup();
+    var groups = await API.getTimetable();
     setState(() {
-      groupModel = GroupModel.fromJson(groups);
+      groupModel = Timetables.fromJson(groups);
     });
   }
 
@@ -56,19 +56,19 @@ class _DayViewState extends State{
 
     //loadGroups()
     if(groupModel!=null){
-      for(int i = 0; i<5 ; i++){
-        if(weekdayToAbbreviatedString(day.weekday)==groupModel.group.timetable.elementAt(i).day){
-          int hours = groupModel.group.timetable[i].hour.toInt();
+      //print("\n\n" + groupModel.timetable[0].day);
+      for(int i = 0; i<groupModel.timetable.length; i++){
+        if(weekdayToAbbreviatedString(day.weekday)==groupModel.timetable[i].day){
+          int hours = groupModel.timetable[i].hour.toInt();
           int minuts =
-              ((groupModel.group.timetable[i].hour - hours.toDouble()) * 100)
+              ((groupModel.timetable[i].hour - hours.toDouble()) * 100)
                   .toInt();
 
           events.add(new Event(
               startMinuteOfDay: hours * 60 + minuts,
               duration: 90,
-              title: groupModel.group.timetable.elementAt(i).toString()));
+              title: groupModel.timetable[i].subject));
         }
-        print("lekcja"+groupModel.group.timetable.elementAt(i).subject + "dzien lekcji"+ groupModel.group.timetable.elementAt(i).day+ "dzien dnia" + day.day.toString());
       }
     }
 
@@ -283,9 +283,9 @@ class DisplayGroups extends StatefulWidget {
 class _DisplayGroupsState extends State{
   var groupModel;
   void loadGroups() async {
-    var groups = await API.getGroup();
+    var groups = await API.getTimetable();
     setState(() {
-      groupModel = GroupModel.fromJson(groups);
+      groupModel = Timetables.fromJson(groups);
     });
     for(int i = 0; i<groupModel.group.timetable.length; i++) {
       print(groupModel.group.timetable
@@ -329,115 +329,81 @@ class _DisplayGroupsState extends State{
 }
 
 //Classes for conversion
-class GroupModel {
+class Timetables {
   String msg;
-  Group group;
-
-  GroupModel({this.msg, this.group});
-
-  GroupModel.fromJson(Map<String, dynamic> json) {
-    msg = json['msg'];
-    group = json['group'] != null ? new Group.fromJson(json['group']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['msg'] = this.msg;
-    if (this.group != null) {
-      data['group'] = this.group.toJson();
-    }
-    return data;
-  }
-}
-
-class Group {
-  String sId;
-  String field;
-  int semester;
-  String mode;
   List<Timetable> timetable;
-  int iV;
 
-  Group(
-      {this.sId,
-        this.field,
-        this.semester,
-        this.mode,
-        this.timetable,
-        this.iV});
+  Timetables({this.msg, this.timetable});
 
-  Group.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    field = json['field'];
-    semester = json['semester'];
-    mode = json['mode'];
+  Timetables.fromJson(Map<String, dynamic> json) {
+    msg = json['msg'];
     if (json['timetable'] != null) {
       timetable = new List<Timetable>();
       json['timetable'].forEach((v) {
         timetable.add(new Timetable.fromJson(v));
       });
     }
-    iV = json['__v'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['field'] = this.field;
-    data['semester'] = this.semester;
-    data['mode'] = this.mode;
+    data['msg'] = this.msg;
     if (this.timetable != null) {
       data['timetable'] = this.timetable.map((v) => v.toJson()).toList();
     }
-    data['__v'] = this.iV;
     return data;
   }
 }
 
 class Timetable {
   String sId;
+  String group;
   String day;
   double hour;
   int length;
   String subject;
+  String type;
   String classroom;
   String lecturer;
-
-
-  @override
-  String toString() {
-    return '$hour\n$classroom\n$subject\n$lecturer';
-  }
+  int iV;
 
   Timetable(
       {this.sId,
+        this.group,
         this.day,
         this.hour,
         this.length,
         this.subject,
+        this.type,
         this.classroom,
-        this.lecturer});
+        this.lecturer,
+        this.iV});
 
   Timetable.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
+    group = json['group'];
     day = json['day'];
-    hour = json['hour'];
+    hour = json['hour']*1.0;
     length = json['length'];
     subject = json['subject'];
+    type = json['type'];
     classroom = json['classroom'];
     lecturer = json['lecturer'];
+    iV = json['__v'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['_id'] = this.sId;
+    data['group'] = this.group;
     data['day'] = this.day;
     data['hour'] = this.hour;
     data['length'] = this.length;
     data['subject'] = this.subject;
+    data['type'] = this.type;
     data['classroom'] = this.classroom;
     data['lecturer'] = this.lecturer;
+    data['__v'] = this.iV;
     return data;
-
   }
 }

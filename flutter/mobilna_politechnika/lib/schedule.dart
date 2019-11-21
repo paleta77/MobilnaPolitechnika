@@ -63,18 +63,37 @@ class _DayViewState extends State{
         //if(weekdayToAbbreviatedString(day.weekday)==groupModel.timetable[i].day){
         if(dropdownValue==groupModel.timetable[i].day){
           int hours = groupModel.timetable[i].hour.toInt();
-          int minuts = ((groupModel.timetable[i].hour - hours.toDouble()) * 100).toInt();
-          String stringMinuts = minuts.toString();
+          double minuts = ((groupModel.timetable[i].hour - hours) * 100);
+          String stringMinuts = minuts.toStringAsFixed(0);
           if(stringMinuts=="0") stringMinuts += "0";
 
-          events.add(new Event(
-              startMinuteOfDay: hours * 60 + minuts,
-              duration: groupModel.timetable[i].length,
-              type: groupModel.timetable[i].type,
-              title:groupModel.timetable[i].type + ", " + hours.toString() + ":" + stringMinuts + " (" + groupModel.timetable[i].length.toString() + "min)\n" +
-                  groupModel.timetable[i].subject + "\n" +
-                  groupModel.timetable[i].lecturer + "\n" +
-                  groupModel.timetable[i].classroom));
+          Duration startTime = new Duration(hours: hours, minutes: int.parse(stringMinuts));
+          Duration duration = new Duration(minutes: groupModel.timetable[i].length);
+          print(startTime + duration);
+          double durationDouble = duration.inHours.toDouble();
+          if(duration.inMinutes.remainder(60)==60){
+            durationDouble += 1.0;
+          }
+          else {
+            durationDouble += duration.inMinutes.remainder(60).toDouble()/100;
+          }
+          double endTime = durationDouble+groupModel.timetable[i].hour;
+          String endTimeString = endTime.toStringAsFixed(2);
+          if(endTimeString.endsWith("60")){
+            endTime+=0.4;
+            print(endTime);
+          }
+
+
+            events.add(new Event(
+                startMinuteOfDay: hours * 60 + minuts.toInt(),
+                duration: groupModel.timetable[i].length,
+                type: groupModel.timetable[i].type,
+                title:groupModel.timetable[i].type + ", " + hours.toString() + ":" + stringMinuts + "-" + endTime.toStringAsFixed(2) +"\n" +
+                    groupModel.timetable[i].subject + "\n" +
+                    groupModel.timetable[i].lecturer + "\n" +
+                    groupModel.timetable[i].classroom));
+
         }
       }
     }
@@ -99,6 +118,7 @@ class _DayViewState extends State{
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      drawer: SideDrawer(),
       appBar: new AppBar(
         title: new Text(Locale.current['schedule']),
       ),

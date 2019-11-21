@@ -58,7 +58,8 @@ class _DayViewState extends State{
     if(groupModel!=null){
       //print("\n\n" + groupModel.timetable[0].day);
       for(int i = 0; i<groupModel.timetable.length; i++){
-        if(weekdayToAbbreviatedString(day.weekday)==groupModel.timetable[i].day){
+        //if(weekdayToAbbreviatedString(day.weekday)==groupModel.timetable[i].day){
+        if(dropdownValue==groupModel.timetable[i].day){
           int hours = groupModel.timetable[i].hour.toInt();
           int minuts =
               ((groupModel.timetable[i].hour - hours.toDouble()) * 100)
@@ -67,7 +68,8 @@ class _DayViewState extends State{
           events.add(new Event(
               startMinuteOfDay: hours * 60 + minuts,
               duration: 90,
-              title: groupModel.timetable[i].subject));
+              title: groupModel.timetable[i].subject + "\n" +
+                    groupModel.timetable[i].classroom);
         }
       }
     }
@@ -87,7 +89,6 @@ class _DayViewState extends State{
     )
         .toList();
   }
-
 
   @override
   Widget build(BuildContext context) {

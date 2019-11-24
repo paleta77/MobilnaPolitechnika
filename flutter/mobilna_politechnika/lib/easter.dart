@@ -139,7 +139,7 @@ class EasterGame extends Game with TapDetector {
   void reset() {
     speed = y = 0;
     points = 0;
-    tubePos = [300.0, 500.0, 700.0];
+    tubePos = [300.0 + screenSize.width, 500.0 + screenSize.width, 700.0 + screenSize.width];
     tubeHeight = [0.0, -10.0, 10.0];
     started = false;
     dead = false;

@@ -105,7 +105,7 @@ class EasterGame extends Game with TapDetector {
             text: points.toString(), style: TextStyle(color: Colors.red)),
         textDirection: TextDirection.ltr)
       ..layout(maxWidth: 200);
-    textPainter.paint(canvas, Offset(screenCenterX, 50));
+    textPainter.paint(canvas, Offset(screenCenterX, screenCenterY / 4));
   }
 
   void update(double t) {
@@ -133,7 +133,7 @@ class EasterGame extends Game with TapDetector {
       reset();
     else
       started = true;
-    speed = -300;
+    speed = -250;
   }
 
   void reset() {

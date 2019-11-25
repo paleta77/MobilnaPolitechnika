@@ -116,7 +116,8 @@ class _DayViewState extends State{
           properties: new DayViewProperties(days: <DateTime>[
             _day0,
             //_day1,
-          ]),
+          ],
+          minimumMinuteOfDay: 7*60), // set starting hour
           child: new Column(
             children: <Widget>[
               new Container(

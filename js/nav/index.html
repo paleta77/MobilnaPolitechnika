@@ -133,6 +133,23 @@
 				nodes.push({ floor: floor_idx, x: e.latlng.lat, y: e.latlng.lng });
 				changefloor(0);
 			}
+			else {
+				let min = 99999999999;
+				let min_node = null;
+				for (room in rooms) {
+					let node = rooms[room];
+
+					if (nodes[node].floor === floor_idx) {
+						let dis = distance(nodes[node], { x: e.latlng.lat, y: e.latlng.lng });
+						if (dis < min) {
+							min = dis;
+							min_node = node;
+						}
+					}
+				}
+				target = min_node;
+				changefloor(0);
+			}
 		});
 
 		function loadNodes() {
@@ -233,10 +250,16 @@
 					if (a.floor === floor_idx || b.floor === floor_idx)
 						pathLayer.addLayer(L.polyline([[a.x, a.y], [b.x, b.y]]));
 				}
-				if (path[0].floor === floor_idx)
-					markersLayer.addLayer(L.marker([path[0].x, path[0].y]));
-				if (path[path.length - 1].floor === floor_idx)
-					markersLayer.addLayer(L.marker([path[path.length - 1].x, path[path.length - 1].y]));
+				if (path[0].floor === floor_idx) {
+					let marker = L.marker([path[0].x, path[0].y]);
+					marker.bindPopup("<a href='#' onclick='navto(" + nodes.indexOf(path[0]) + ");'>Nawiguj do<a/>").openPopup();
+					markersLayer.addLayer(marker);
+				}
+				if (path[path.length - 1].floor === floor_idx) {
+					let marker = L.marker([path[path.length - 1].x, path[path.length - 1].y]);
+					marker.bindPopup("<a href='#' onclick='navto(" + nodes.indexOf(path[path.length - 1]) + ");'>Nawiguj do<a/>").openPopup();
+					markersLayer.addLayer(marker);
+				}
 			}
 
 			if (target) {

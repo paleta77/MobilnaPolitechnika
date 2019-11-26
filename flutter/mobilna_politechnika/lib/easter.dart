@@ -22,10 +22,11 @@ class _EasterState extends State<Easter> {
 }
 
 class EasterGame extends Game with TapDetector {
+  Random rand = Random();
   Size screenSize;
   double y;
   double speed;
-  Random rand = Random();
+  double ground;
   int points;
   bool started;
   bool dead;
@@ -43,6 +44,16 @@ class EasterGame extends Game with TapDetector {
       Sprite('spritesheet.png', x: 144, y: 36, width: 26, height: 160);
   var tubeDownSpirite =
       Sprite('spritesheet.png', x: 144 + 26.0, y: 36, width: 26, height: 160);
+  var groundSprite =
+      Sprite('spritesheet.png', x: 196, y: 0, width: 168, height: 56);
+
+  List<Sprite> fontSprites = List<Sprite>(); //196,160
+
+  EasterGame() {
+    for (var i = 0; i <= 9; i++)
+      fontSprites.add(Sprite('spritesheet.png',
+          x: 196.0 + 12 * i, y: 158, width: 12, height: 18));
+  }
 
   void resize(Size size) {
     screenSize = size;
@@ -50,44 +61,50 @@ class EasterGame extends Game with TapDetector {
     super.resize(size);
   }
 
+  void drawScore(Canvas canvas) {
+    // there must be better way of doing this! :(
+    var p = points ~/ 100 % 10;
+    var s = false;
+    var pos =
+        Position(screenSize.width / 2 - 12, screenSize.height / 8);
+    var size = Position(24, 26);
+    if (p > 0) {
+      fontSprites[p].renderPosition(canvas, pos, size: size);
+      s = true;
+      pos.x += 25;
+    }
+    p = points ~/ 10 % 10;
+    if (p > 0 || s) {
+      fontSprites[p].renderPosition(canvas, pos, size: size);
+      pos.x += 25;
+    }
+    p = (points).toInt() % 10;
+    fontSprites[p].renderPosition(canvas, pos, size: size);
+  }
+
   void render(Canvas canvas) {
-    Rect rect = Rect.fromLTWH(0, 0, screenSize.width, screenSize.height);
-    Paint paint = Paint();
-    paint.color = Color(0xff000000);
-    canvas.drawRect(rect, paint);
     bgSprite.render(canvas, width: screenSize.width, height: screenSize.height);
 
     double screenCenterX = screenSize.width / 2;
     double screenCenterY = screenSize.height / 2;
-    Rect player =
-        Rect.fromLTWH(screenCenterX - 20, screenCenterY - 20 + y, 30, 30);
+    Rect player = Rect.fromLTWH(
+        screenCenterX * 0.75 - 20, screenCenterY - 20 + y, 30, 30);
 
-    paint.color = Color(0xffffffff);
-    //canvas.drawRect(player, paint);
-    if (speed < -100)
-      playerSprite2.renderPosition(
-          canvas, Position(player.left - 5, player.top),
-          size: Position(40, 30));
-    else if (speed < 0)
-      playerSprite1.renderPosition(
-          canvas, Position(player.left - 5, player.top),
-          size: Position(40, 30));
-    else
-      playerSprite.renderPosition(canvas, Position(player.left - 5, player.top),
-          size: Position(40, 30));
+    Position playerPos =
+        Position(screenCenterX * 0.75 - 25, screenCenterY - 20 + y);
+    Position playerSize = Position(40, 30);
 
     for (int i = 0; i < tubePos.length; i++) {
       var tube = tubePos[i];
       var height = tubeHeight[i];
 
-      Rect tube1 = Rect.fromLTWH(
-          tube, screenCenterY + 75 + height, 50, screenCenterY - 75 - height);
-      //canvas.drawRect(tube1, paint);
+      Rect tube1 =
+          Rect.fromLTWH(tube, screenCenterY + height + 75, 50, (50 / 26) * 160);
       tubeDownSpirite.renderPosition(canvas, Position(tube1.left, tube1.top),
           size: Position(tube1.width, tube1.height));
-     
-      Rect tube2 = Rect.fromLTWH(tube, 0, 50, screenCenterY - 75 + height);
-      //canvas.drawRect(tube2, paint);
+
+      Rect tube2 = Rect.fromLTWH(tube,
+          screenCenterY + height - (50 / 26) * 160 - 75, 50, (50 / 26) * 160);
       tubeUpSpirite.renderPosition(canvas, Position(tube2.left, tube2.top),
           size: Position(tube2.width, tube2.height));
 
@@ -100,12 +117,19 @@ class EasterGame extends Game with TapDetector {
       }
     }
 
-    final TextPainter textPainter = TextPainter(
-        text: TextSpan(
-            text: points.toString(), style: TextStyle(color: Colors.red)),
-        textDirection: TextDirection.ltr)
-      ..layout(maxWidth: 200);
-    textPainter.paint(canvas, Offset(screenCenterX, screenCenterY / 4));
+    groundSprite.renderPosition(
+        canvas, Position(ground, screenSize.height - 56),
+        size: Position(
+            screenSize.width * 1.5, (screenSize.width * 1.5 / 168) * 56));
+
+    if (speed < -100)
+      playerSprite2.renderPosition(canvas, playerPos, size: playerSize);
+    else if (speed < 0)
+      playerSprite1.renderPosition(canvas, playerPos, size: playerSize);
+    else
+      playerSprite.renderPosition(canvas, playerPos, size: playerSize);
+
+    drawScore(canvas);
   }
 
   void update(double t) {
@@ -113,17 +137,23 @@ class EasterGame extends Game with TapDetector {
       speed += 400 * t;
       y += speed * t;
 
-      if (y > screenSize.height / 2) reset();
+      if (y > screenSize.height / 2 - 56 - 10) {
+        dead = true;
+        started = false;
+      }
+
+      ground -= 80 * t;
+      if (ground < -screenSize.width / 3) ground = -4;
 
       for (int i = 0; i < tubePos.length; i++) {
         var tube = tubePos[i];
         tubePos[i] -= 80 * t;
         if (tube < -50) {
           tubePos[i] = 600 - 50.0;
-          tubeHeight[i] = rand.nextDouble() * 100;
+          tubeHeight[i] = 50 - rand.nextDouble() * 100;
         }
-        if (tube > (screenSize.height / 2 + 50 + 50) &&
-            tubePos[i] <= (screenSize.height / 2 + 50 + 50)) points++;
+        if (tube > (screenSize.width / 2 - 70) &&
+            tubePos[i] <= (screenSize.width / 2 - 70)) points++;
       }
     }
   }
@@ -133,13 +163,18 @@ class EasterGame extends Game with TapDetector {
       reset();
     else
       started = true;
-    speed = -250;
+    speed = -280;
   }
 
   void reset() {
     speed = y = 0;
+    ground = 0;
     points = 0;
-    tubePos = [300.0 + screenSize.width, 500.0 + screenSize.width, 700.0 + screenSize.width];
+    tubePos = [
+      300.0 + screenSize.width,
+      500.0 + screenSize.width,
+      700.0 + screenSize.width
+    ];
     tubeHeight = [0.0, -10.0, 10.0];
     started = false;
     dead = false;

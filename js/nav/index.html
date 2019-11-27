@@ -403,6 +403,22 @@
 				alert('Cannot find room :(');
 			}
 		}
+
+		function bigButtons() {
+			$(".leaflet-control-zoom-in, .leaflet-control-zoom-out, .easy-button-button").css({
+				'width': '50px',
+				'height': '50px',
+				'line-height': '50px'
+			});
+		}
+
+		function smallButtons() {
+			$(".leaflet-control-zoom-in, .leaflet-control-zoom-out, .easy-button-button").css({
+				'width': '30px',
+				'height': '30px',
+				'line-height': '30px'
+			});
+		}
 	</script>
 </body>
 

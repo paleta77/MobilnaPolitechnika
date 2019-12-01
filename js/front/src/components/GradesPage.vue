@@ -31,16 +31,25 @@
           <th>Action</th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody>
+        <tr v-for="(grade, index) in grades" v-bind:key="grade.subject">
+          <td>{{index+1}}</td>
+          <td>{{grade.subject}}</td>
+          <td>{{grade.value}}</td>
+          <td>
+            <button class="btn btn-primary" @click="openChangeGrade(grade);">✎</button>
+            <button class="btn btn-primary" @click="deleteGrade(grade);">🗑</button>
+          </td>
+        </tr>
+      </tbody>
     </table>
 
     <div
       class="modal fade"
       id="changeGradeModal"
       tabindex="-1"
-      role="dialog"
       aria-labelledby="changeGradeModalTitle"
-      aria-hidden="true"
+      v-if="showChangeModal"
     >
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -75,7 +84,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click="changeGrade">Save changes</button>
+            <button type="button" class="btn btn-primary" @click="changeGrade()">Save changes</button>
           </div>
         </div>
       </div>
@@ -84,14 +93,112 @@
 </template>
 
 <script>
+import API from "../api.js";
+
 export default {
   name: "GradesPage",
-  methods: {
-    chnageGrade: function() {
-      console.log("Change grade");
+  data: function(){
+    return {
+      grades: [{subject:"abc", value: 5}],
+      showChangeModal: false
     }
+  },
+  methods: {
+    loadGrades: async function() {
+      console.log("test");
+      let grades = await API.getGrades(); //lista z obiektami
+      this.grades = grades;
+      console.log("Load grade");
+    },
+
+    openChangeGrade: function(grade){
+      console.log(grade);
+      this.showChangeModal = true;
+    },
+
+
+    deleteGrade: async function() {
+      await api.deleteGrade(username, subject);
+      loadGrade();
+      console.log("Delete grade");
+    },
+
+    changeGrade: async function() {
+      await api.changeGrade(username, subject);
+      loadGrade();
+      console.log("Change grade");
+    },
+
+    addGrade: async function() {
+      let subject = $('#subjectInput').val();
+      let value = parseFloat($('#valueInput').val());
+      await api.addGrade(username, subject, value);
+      loadGrades();
+    }
+    
   }
 };
+
+
+/*
+async function loadGrades() {
+    let grades = await api.getGrades(username);
+
+    $('#gradesTable tbody').empty();
+
+    let sum = 0;
+    let i = 1;
+    for (let grade of grades) {
+        $('#gradesTable tbody').append(`
+        <tr>
+            <td>${i}</td>
+            <td>${grade.subject}</td>
+            <td>${grade.value}</td>
+            <td>
+                <button class="btn btn-primary" onclick="openChangeGrade('${grade.subject}', ${grade.value});">✎</button>
+                <button class="btn btn-primary" onclick="deleteGrade('${grade.subject}');">🗑</button>
+            </td>
+        </tr>`);
+        i++;
+        sum += grade.value;
+    }
+
+    if (i == 1) {
+        $('#gradesTable tbody').append(`<tr><td colspan="4">None</td></tr>`);
+    } else {
+        let average = sum / (i - 1);
+        $('#gradesTable tbody').append(`<tr><td colspan="4">average: ${average}</td></tr>`);
+    }
+}
+
+async function deleteGrade(subject) {
+    await api.deleteGrade(username, subject);
+    loadGrades();
+}
+window.deleteGrade = deleteGrade;
+
+async function addGrade() {
+    let subject = $('#subjectInput').val();
+    let value = parseFloat($('#valueInput').val());
+    await api.addGrade(username, subject, value);
+    loadGrades();
+}
+window.addGrade = addGrade;
+
+function openChangeGrade(subject, value) {
+    $('#changeGradeModal').modal('show');
+    $('#subjectInputChange').val(subject);
+    $('#valueInputChange').val(value);
+}
+window.openChangeGrade = openChangeGrade;
+
+async function changeGrade() {
+    await api.changeGrade(username, $('#subjectInputChange').val(), $('#valueInputChange').val());
+    $('#changeGradeModal').modal('hide');
+    loadGrades();
+}
+window.changeGrade = changeGrade;*/
+
 </script>
 
 <style scoped>

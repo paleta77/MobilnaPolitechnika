@@ -67,7 +67,7 @@ export default {
         return null;
     },
 
-    getGrades: async function (username) {
+    getGrades: async function () {
         const data = await http.get('grades', { "Authorization": `Bearer ${this.token}` });
         this.msg = data.msg;
         if (data.msg == 'OK') {

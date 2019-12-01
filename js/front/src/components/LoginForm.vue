@@ -34,14 +34,21 @@
 
 <script>
 import API from "../api.js";
+import User from "../user.js";
 
 export default {
   name: "LoginForm",
   methods: {
     loginButton: async function() {
-      alert(this.login + " " + this.password);
-      console.log(await API.login(this.login, this.password));
-      console.log(await API.userInfo());
+      let logged = (await API.login(this.login, this.password));
+      if(logged) {
+        User.isLogged = true;
+        let info = await API.userInfo();
+        User.name = info.name;
+        User.mail = info.mail;
+        // call parent component
+        this.$emit("logged");
+      }
     }
   },
   data: function() {
@@ -52,6 +59,37 @@ export default {
   }
 };
 </script>
+
+
+/*async function login() {
+    $("#loading").show();
+
+    username = $("#username").val();
+
+    if (await api.login(username, $("#password").val())) {
+        localStorage.setItem('username', username);
+        showHide();
+    }
+    else {
+        alert(api.msg);
+    }
+
+    $("#loading").hide();
+};
+window.login = login;
+
+async function logout() {
+    $("#loading").show();
+
+    await api.logout();
+    localStorage.removeItem('username');
+    username = null;
+    showHide();
+
+    $("#loading").hide();
+};
+window.logout = logout;*/
+
 
 <style scoped>
 .login-form {

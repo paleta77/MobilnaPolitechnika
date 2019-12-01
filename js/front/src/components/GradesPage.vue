@@ -44,51 +44,30 @@
       </tbody>
     </table>
 
-    <div
-      class="modal fade"
-      id="changeGradeModal"
-      tabindex="-1"
-      aria-labelledby="changeGradeModalTitle"
-      v-if="showChangeModal"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Change grade</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="form-group">
-                <label for="subjectInputChange">Subject</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="subjectInputChange"
-                  placeholder="Enter subject"
-                  readonly
-                />
-              </div>
-              <div class="form-group">
-                <label for="valueInputChange">Value</label>
-                <select class="form-control" id="valueInputChange">
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                </select>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click="changeGrade()">Save changes</button>
-          </div>
+    <b-modal id="changeGradeModal" title="ChangeGrade" @ok="changeGrade">
+      <form>
+        <div class="form-group">
+          <label for="subjectInputChange">Subject</label>
+          <input
+            type="text"
+            class="form-control"
+            id="subjectInputChange"
+            placeholder="Enter subject"
+            v-model="changeSubject"
+            readonly
+          />
         </div>
-      </div>
-    </div>
+        <div class="form-group">
+          <label for="valueInputChange">Value</label>
+          <select class="form-control" id="valueInputChange" v-model="changeValue">
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+        </div>
+      </form>
+       </b-modal>
   </div>
 </template>
 
@@ -97,11 +76,13 @@ import API from "../api.js";
 
 export default {
   name: "GradesPage",
-  data: function(){
+  data: function() {
     return {
-      grades: [{subject:"abc", value: 5}],
-      showChangeModal: false
-    }
+      grades: [{ subject: "abc", value: 5 }],
+      showChangeModal: false,
+      changeSubject: "",
+      changeValue: ""
+    };
   },
   methods: {
     loadGrades: async function() {
@@ -111,11 +92,13 @@ export default {
       console.log("Load grade");
     },
 
-    openChangeGrade: function(grade){
+    openChangeGrade: function(grade) {
       console.log(grade);
       this.showChangeModal = true;
+      this.$bvModal.show("changeGradeModal").then(value => {
+            console.log("zmakneice " + value)
+          })
     },
-
 
     deleteGrade: async function() {
       await api.deleteGrade(username, subject);
@@ -124,21 +107,19 @@ export default {
     },
 
     changeGrade: async function() {
-      await api.changeGrade(username, subject);
+      await api.changeGrade(username, subject, grade);
       loadGrade();
       console.log("Change grade");
     },
 
     addGrade: async function() {
-      let subject = $('#subjectInput').val();
-      let value = parseFloat($('#valueInput').val());
+      let subject = $("#subjectInput").value();
+      let value = parseFloat($("#valueInput").val());
       await api.addGrade(username, subject, value);
       loadGrades();
     }
-    
   }
 };
-
 
 /*
 async function loadGrades() {
@@ -198,7 +179,6 @@ async function changeGrade() {
     loadGrades();
 }
 window.changeGrade = changeGrade;*/
-
 </script>
 
 <style scoped>

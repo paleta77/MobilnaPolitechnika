@@ -101,7 +101,7 @@ exports = module.exports = function (app) {
     });
 
     // get lecturer timetable
-    app.get('/lecturer/:name/timetable', (req, res) => {      
+    app.get('/lecturer/:name/timetable', (req, res) => {
         table.find({ 'lecturer': req.params.name }, '', (err, table) => {
             if (err) return res.json({ msg: err });
             res.json({ msg: "OK", timetable: table });
@@ -109,30 +109,29 @@ exports = module.exports = function (app) {
     });
 
     // get room timetable
-    app.get('/room/:name/timetable', (req, res) => {      
+    app.get('/room/:name/timetable', (req, res) => {
         table.find({ 'classroom': req.params.name }, '', (err, table) => {
-            if (err) return res.json({ msg: err });    
+            if (err) return res.json({ msg: err });
             res.json({ msg: "OK", timetable: table });
         });
     });
 
     // search group by text
-    app.get('/group/search', (req, res) => {
-        group.find({ $text: { $search: req.query.text } }, '_id field semester mode')
-            .limit(10)
+    app.get('/search/group', auth.restrict, (req, res) => {
+        group.find({ $text: { $search: eval(`"${req.query.text}"`) } }, '_id field semester mode')
+            .limit(50)
             .exec((err, docs) => {
                 if (err) return res.json({ msg: err });
                 res.json({ msg: "OK", result: docs });
             });
     });
 
-    // search place, subject or lecturer related to user
-    app.get('/search', auth.restrict, (req, res) => {
-        table.find({ $text: { $search: req.query.text }, group: req.session.user.group })
-            .limit(10)
+    // search place, subject or lecturer
+    app.get('/search/timetable', auth.restrict, (req, res) => {
+        table.find({ $text: { $search: eval(`"${req.query.text}"`) }, group: req.session.user.group })
+            .limit(50)
             .exec((err, docs) => {
                 if (err) return res.json({ msg: err });
-                console.log(docs);
                 res.json({ msg: "OK", result: docs });
             });
     });

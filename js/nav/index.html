@@ -114,7 +114,8 @@
 
 		let button_up = L.easyButton('fa-arrow-up', (btn, map) => changefloor(1));
 		let button_down = L.easyButton('fa-arrow-down', (btn, map) => changefloor(-1));
-		L.easyBar([button_up, button_down], { position: 'bottomright' }).addTo(map);
+		let button_floor = L.easyButton('<a></a>', () => 0);
+		L.easyBar([button_up, button_floor, button_down], { position: 'bottomright' }).addTo(map);
 
 		let nodes = [];
 		let edges = [];
@@ -212,11 +213,12 @@
 		}
 
 		function changefloor(change) {
-
 			map.removeLayer(floors[floor_idx]);
 			floor_idx += change;
 			floor_idx = Math.min(Math.max(floor_idx, 0), 2);
 			floors[floor_idx].addTo(map);
+
+			button_floor.button.innerHTML = floor_idx;
 
 			if (floor_idx == 0)
 				button_down.disable();
@@ -445,6 +447,8 @@
 
 		if (isTouchDevice())
 			bigButtons();
+
+		changefloor(0);
 	</script>
 </body>
 

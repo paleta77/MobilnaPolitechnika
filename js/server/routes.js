@@ -88,6 +88,17 @@ exports = module.exports = function (app) {
         });
     });
 
+    // set user group
+    app.put('/group', auth.restrict, (req, res) => {
+        group.findOne({ '_id': req.body.groupid }, (err, _group) => {
+            if (err) return res.json({ msg: err });
+            req.session.user.setGroup(_group, (err2) => {
+                if (err2) return res.json({ msg: err2 });
+                res.json({ msg: "OK", group: _group });
+            });
+        });
+    });
+
     // get group timetable
     app.get('/group/timetable', auth.restrict, (req, res) => {
         req.session.user.getGroup((err, group) => {

@@ -67,7 +67,14 @@ class UserClass {
             if (err) return cb(err);
             cb(null, _group);
         });
-        return;
+    }
+
+    setGroup(_group, cb) {
+        this.group = _group._id;
+        this.save(function (err) {
+            if (err) return cb(err);
+            cb(null, true);
+          });
     }
 
     getGrades(cb) {

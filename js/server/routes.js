@@ -51,7 +51,8 @@ exports = module.exports = function (app) {
 
     // add user extra lesson
     app.put('/user/extralessons', auth.restrict, (req, res) => {
-        req.session.user.addExtraLesson(req.body.subject, (err, _res) => {
+        req.session.user.addExtraLesson(req.body.subject, req.body.day, req.body.hour, req.body.length,
+            req.body.type, req.body.classroom, req.body.lecturer, (err, _res) => {
             if(err) return res.json({msg: err});
             res.json({msg: "OK"});
         });

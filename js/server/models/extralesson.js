@@ -1,5 +1,13 @@
 const mongoose = require('mongoose');
 
-const extralesson = mongoose.model('extralesson', {subject: String, user:String});
+const extralesson = mongoose.model('extralesson', {
+    day: String,
+    hour: Number,
+    length: Number,
+    subject: String,
+    type: String,
+    classroom: String,
+    lecturer: String
+});
 
 module.exports = extralesson;

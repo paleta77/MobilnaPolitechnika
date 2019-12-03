@@ -125,8 +125,10 @@ class UserClass {
         });
     }
 
-    addExtraLesson(subject, cb) {
-        extralesson.create({'subject': subject, 'user': this.name}, function (err) {
+    addExtraLesson(subject, day, hour, length, type, classroom, lecturer,cb) {
+        extralesson.create({'subject': subject, 'day': day, 'user': this.name,
+            'hour':hour, 'length':length, 'type':type, 'classroom':classroom,
+             'lecturer':lecturer}, function (err) {
             if (err) cb(err);
             cb(null, true);
         });

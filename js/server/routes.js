@@ -7,6 +7,7 @@ const grade = require('./models/grade.js');
 const group = require('./models/group.js');
 const table = require('./models/timetable.js');
 const auth = require('./auth.js');
+const extralesson = require('./models/extralesson.js');
 
 exports = module.exports = function (app) {
 
@@ -47,6 +48,17 @@ exports = module.exports = function (app) {
         let user = req.session.user;
         res.json({ msg: "OK", user: { _id: user._id, name: user.name, mail: user.mail } });
     });
+
+    // add user extra lesson
+    app.put('/user/extralessons', auth.restrict, (req, res) => {
+        req.session.user.addExtraLesson(req.body.subject, (err, _res) => {
+            if(err) return res.json({msg: err});
+            res.json({msg: "OK"});
+        });
+    });
+
+    // get user extra lessons
+    
 
     // get all user grades
     app.get('/grades', auth.restrict, (req, res) => {

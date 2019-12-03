@@ -4,6 +4,7 @@ const sendgrid = require('@sendgrid/mail');
 const group = require('./group.js');
 const auth = require('../auth.js');
 const grade = require('./grade.js');
+const extralesson = require('./extralesson.js');
 
 const userSchema = new mongoose.Schema({
     name: String,
@@ -112,6 +113,13 @@ class UserClass {
 
     deleteGrade(subject, cb) {
         grade.deleteOne({ 'user': this.name, 'subject': subject }, function (err) {
+            if (err) cb(err);
+            cb(null, true);
+        });
+    }
+
+    addExtraLesson(subject, cb) {
+        extralesson.create({'subject': subject, 'user': this.name}, function (err) {
             if (err) cb(err);
             cb(null, true);
         });

@@ -58,7 +58,20 @@ exports = module.exports = function (app) {
     });
 
     // get user extra lessons
-    
+    app.get('/user/extralessons', auth.restrict, (req, res) => {
+        req.session.user.getExtraLessons((err, extralesson) => {
+            if (err) return res.json({ msg: err });
+            res.json({ msg: "OK", extralesson: extralesson });
+        });
+    });
+
+    //delete user extra lessons
+    app.delete('/user/extralessons', auth.restrict, (req,res) => {
+        req.session.user.deleteExtraLesson(req.body.subject, (err, _res) => {
+            if (err) return res.json({ msg: err });
+            res.json({ msg: "OK" });
+        });
+    });
 
     // get all user grades
     app.get('/grades', auth.restrict, (req, res) => {

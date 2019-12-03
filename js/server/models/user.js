@@ -118,10 +118,24 @@ class UserClass {
         });
     }
 
+    deleteExtraLesson(subject, cb){
+        extralesson.deleteOne({'subject': subject, 'user': this.name}, function (err) {
+            if (err) cb(err);
+            cb(null, true);
+        });
+    }
+
     addExtraLesson(subject, cb) {
         extralesson.create({'subject': subject, 'user': this.name}, function (err) {
             if (err) cb(err);
             cb(null, true);
+        });
+    }
+
+    getExtraLessons(cb) {
+        extralesson.find({'user': this.name}, (err, _extraLessons) => {
+            if(err) return cb(err);
+            cb(null, _extraLessons);
         });
     }
 }

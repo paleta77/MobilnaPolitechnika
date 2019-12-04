@@ -23,9 +23,11 @@ function splitSubjects(lines) {
 let pdfParser = new PDFParser();
 pdfParser.on("pdfParser_dataError", err => console.error("Error: " + err.parserError));
 pdfParser.on("pdfParser_dataReady", data => {
+    let schedules = {};
     for (let page of data.formImage.Pages) {
         console.log("Page");
         let subjects = [];
+        let group = "no_group";
         for (let el of page.Texts) {
             let text = decodeURIComponent(el.R[0].T);
             if (isSubjectType(text)) {
@@ -39,7 +41,11 @@ pdfParser.on("pdfParser_dataReady", data => {
                 for (let sub of splitSubjects(lines))
                     subjects.push(sub);
             }
+            else if (text.includes("Grupa Rozkład")) {
+                group = text.split("-")[1].trim();
+            }
         }
+
         for (let sub of subjects) {
             if (sub.y > page.HLines[3].y - 0.1)
                 sub.day = "Niedziela";
@@ -56,8 +62,9 @@ pdfParser.on("pdfParser_dataReady", data => {
 
             sub.room = sub.body.pop();
 
+            let part_group_name = group.split("_").slice(0, -1).join("_");
             sub.name = "";
-            while (!_.first(sub.body).includes("ZI_5sem")) // TODO: parse group name from pdf!
+            while (!_.first(sub.body).includes(part_group_name))
                 sub.name += sub.body.shift() + " ";
             sub.name = sub.name.trim();
 
@@ -77,8 +84,9 @@ pdfParser.on("pdfParser_dataReady", data => {
             ))
         );
 
-        console.log(subjects);
+        schedules[group] = subjects;
     }
+    console.log(schedules);
 });
 
 pdfParser.loadPDF("./test.pdf");

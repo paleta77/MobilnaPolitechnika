@@ -41,14 +41,43 @@ pdfParser.on("pdfParser_dataReady", data => {
             }
         }
         for (let sub of subjects) {
-            if (sub.y >  page.HLines[3].y - 0.1)
-                sub.day = "niedziela";
+            if (sub.y > page.HLines[3].y - 0.1)
+                sub.day = "Niedziela";
             else
-                sub.day = "sobota";
+                sub.day = "Sobota";
 
-            console.log("\t" + sub.day + "|" + sub.text + "|" + sub.body.join("|"));
+            sub.type = sub.text.split(", ")[0];
+            sub.start = sub.text.split(", ")[1].split("-")[0];
+            sub.end = sub.text.split(", ")[1].split("-")[1];
+
+            if (_.last(sub.body).includes("zjazd")) {
+                sub.info = sub.body.pop(); // move additional info
+            }
+
+            sub.room = sub.body.pop();
+
+            sub.name = "";
+            while (!_.first(sub.body).includes("ZI_5sem")) // TODO: parse group name from pdf!
+                sub.name += sub.body.shift() + " ";
+            sub.name = sub.name.trim();
+
+            sub.group = sub.body.shift(); // might be multiline
+
+            sub.lecturer = sub.body.join(" ");
+
+            delete sub.body;
+            delete sub.x;
+            delete sub.y;
+            delete sub.text;
         }
 
+        subjects = subjects.filter((sub, index, self) =>
+            index === self.findIndex((t) => (
+                t.day === sub.day && t.type === sub.type && t.name === sub.name && t.start === sub.start
+            ))
+        );
+
+        console.log(subjects);
     }
 });
 

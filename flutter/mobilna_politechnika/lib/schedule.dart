@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:calendar_views/calendar_views.dart';
 import 'package:calendar_views/day_view.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import 'api.dart';
 import 'locale.dart';
@@ -33,10 +34,18 @@ class _DayViewState extends State{
   DateTime _day1;
 
   var groupModel;
+  var extraLessons;
   void loadGroups() async {
+    //load group timetables
     var groups = await API.getTimetable();
+    //load user timetables
+    var extraLessonsJson = await API.getExtraLessons();
+    await API.addExtraLesson();
+
+    //set them
     setState(() {
       groupModel = Timetables.fromJson(groups);
+      extraLessons = ExtraLessons.fromJson(extraLessonsJson);
     });
   }
 
@@ -84,6 +93,31 @@ class _DayViewState extends State{
                     groupModel.timetable[i].lecturer + "\n" +
                     groupModel.timetable[i].classroom));
 
+        }
+      }
+    }
+
+    //load extra lessons
+    if(extraLessons!=null){
+      for(int i = 0; i<extraLessons.extralesson.length; i++) {
+        int hours = extraLessons.extralesson[i].hour.toInt();
+        double minutes = ((extraLessons.extralesson[i].hour - hours) * 100);
+        String stringMinutes = minutes.toStringAsFixed(0);
+
+        Duration startTime = new Duration(hours: hours, minutes: int.parse(stringMinutes));
+        Duration duration = new Duration(minutes: extraLessons.extralesson[i].length);
+        Duration endTime = startTime + duration;
+
+        if (dropdownValue == extraLessons.extralesson[i].day) {
+          print(extraLessons.extralesson[i].subject);
+          events.add(new Event(
+              startMinuteOfDay: hours * 60 + minutes.toInt(),
+              duration: extraLessons.extralesson[i].length,
+              title:extraLessons.extralesson[i].type + ", " + startTime.inHours.toString() + ":" + add0If0Minutes(startTime.inMinutes.remainder(60).toString()) + "-" + endTime.inHours.toString() + ":" + add0If0Minutes(endTime.inMinutes.remainder(60).toString()) +"\n" +
+                  extraLessons.extralesson[i].subject + "\n" +
+                  extraLessons.extralesson[i].lecturer + "\n" +
+                  extraLessons.extralesson[i].classroom,
+              type: extraLessons.extralesson[i].type));
         }
       }
     }
@@ -146,6 +180,73 @@ class _DayViewState extends State{
                   ))
             ],
           )),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.list_view,
+        backgroundColor: Color.fromARGB(255, 128, 1, 0),
+        children: [
+          SpeedDialChild(
+              child: Icon(Icons.remove),
+              label: "Usuń swój przedmiot",
+              backgroundColor: Color.fromARGB(255, 128, 1, 0),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    String contentText = "Content of Dialog";
+                    String extralessontodelete = extraLessons.extralesson[0].subject;
+                    List<String> strings = extraLessons.toStringList();
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        return AlertDialog(
+                          title: Text("Wybierz "),
+                          content: new Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              new DropdownButton<String>(
+                                value: extralessontodelete,
+                                items: strings.map((String value) {
+                                  return new DropdownMenuItem<String>(
+                                    value: value,
+                                    child: new Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String newValue) {
+                                    setState(() {
+                                      extralessontodelete = newValue;
+                                    });
+                                },
+                              ),
+                            ],
+                          ),
+                          actions: <Widget>[
+                            FlatButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text("Anuluj"),
+                            ),
+                            FlatButton(
+                              onPressed: () {
+                                setState(() {
+                                  contentText = "Changed Content of Dialog";
+                                });
+                              },
+                              child: Text("Usuń"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+              }
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.add),
+            label: "Dodaj swój przedmiot",
+            backgroundColor: Color.fromARGB(255, 128, 1, 0),
+            onTap: () => print("first")
+          )
+        ],
+      ),
     );
   }
 
@@ -454,6 +555,95 @@ class Timetable {
     data['type'] = this.type;
     data['classroom'] = this.classroom;
     data['lecturer'] = this.lecturer;
+    data['__v'] = this.iV;
+    return data;
+  }
+}
+
+class ExtraLessons {
+  String msg;
+  List<Extralesson> extralesson;
+
+  ExtraLessons({this.msg, this.extralesson});
+
+  ExtraLessons.fromJson(Map<String, dynamic> json) {
+    msg = json['msg'];
+    if (json['extralesson'] != null) {
+      extralesson = new List<Extralesson>();
+      json['extralesson'].forEach((v) {
+        extralesson.add(new Extralesson.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['msg'] = this.msg;
+    if (this.extralesson != null) {
+      data['extralesson'] = this.extralesson.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+
+  List<String> toStringList(){
+    List<String> returnList = new List();
+
+    for(int i = 0; i<extralesson.length; i++){
+      returnList.add(extralesson[i].subject);
+    }
+
+    return returnList;
+  }
+}
+
+class Extralesson {
+  String sId;
+  String subject;
+  String day;
+  double hour;
+  int length;
+  String type;
+  String classroom;
+  String lecturer;
+  String user;
+  int iV;
+
+  Extralesson(
+      {this.sId,
+        this.subject,
+        this.day,
+        this.hour,
+        this.length,
+        this.type,
+        this.classroom,
+        this.lecturer,
+        this.user,
+        this.iV});
+
+  Extralesson.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    subject = json['subject'];
+    day = json['day'];
+    hour = json['hour'];
+    length = json['length'];
+    type = json['type'];
+    classroom = json['classroom'];
+    lecturer = json['lecturer'];
+    user = json['user'];
+    iV = json['__v'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['subject'] = this.subject;
+    data['day'] = this.day;
+    data['hour'] = this.hour;
+    data['length'] = this.length;
+    data['type'] = this.type;
+    data['classroom'] = this.classroom;
+    data['lecturer'] = this.lecturer;
+    data['user'] = this.user;
     data['__v'] = this.iV;
     return data;
   }

@@ -24,7 +24,7 @@ class _MapState extends State<Map> {
               Expanded(
                 child: Container(
                     child: WebView(
-                  initialUrl: 'http://mojmegatestkolejny.azurewebsites.net/nav/',
+                  initialUrl: 'http://77.55.208.10:8079/nav/index.html',
                   javascriptMode: JavascriptMode.unrestricted,
                   onPageFinished: (String url) {
                     print('Page finished loading: $url');

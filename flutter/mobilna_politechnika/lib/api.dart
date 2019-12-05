@@ -86,4 +86,32 @@ class API {
       return body;
     }
   }
+
+  static Future<dynamic> getExtraLessons() async {
+    final response = await http.get('$URL/user/extralessons', headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      var body = json.decode(response.body);
+      return body;
+    }
+}
+
+  static Future<dynamic> addExtraLesson() async {
+    final response = await http.put('$URL/user/extralessons', headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token"
+    }, body: json.encode(
+      {"subject": "Lekcja123456"}
+    )
+    );
+
+    if (response.statusCode == 200) {
+      var body = json.decode(response.body);
+      print(body);
+      return body;
+    }
+  }
 }

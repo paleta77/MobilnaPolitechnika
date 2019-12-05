@@ -219,7 +219,10 @@ class _DayViewState extends State{
                           actions: <Widget>[
                             FlatButton(
                               onPressed: () async {
-                                await API.removeExtraLesson(extralessontodelete.split(" ")[0]);
+                                await API.removeExtraLesson(extralessontodelete.split(" ")[0],
+                                    extralessontodelete.split(" ")[1] ,
+                                    extralessontodelete.split(" ")[2].split(":")[0],
+                                    extralessontodelete.split(" ")[2].split(":")[1]);
                                 loadGroups();
                                 Navigator.pop(context);
                                 setState(() {
@@ -281,7 +284,6 @@ class _DayViewState extends State{
                           actions: <Widget>[
                             FlatButton(
                               onPressed: () async {
-                                await API.removeExtraLesson(extralessontoadd);
                                 loadGroups();
                                 setState(() {
                                   //contentText = "Changed Content of Dialog";

@@ -101,12 +101,17 @@ class API {
     }
   }
 
-  static Future<dynamic> removeExtraLesson(String subject) async {
+  static Future<dynamic> removeExtraLesson(String subject, String day, String hour, String minutes) async {
+    String time = hour + "." + minutes;
+    if(time.endsWith("0")){
+      time = hour + "." + minutes[0];
+    }
+    print("time:" + time );
     HttpClient httpClient = new HttpClient();
     HttpClientRequest request = await httpClient.deleteUrl(Uri.parse('$URL/user/extralessons'));
     request.headers.set('content-type', 'application/json');
     request.headers.set('Authorization', 'Bearer 123');
-    request.add(utf8.encode(json.encode({"subject":subject})));
+    request.add(utf8.encode(json.encode({"subject":subject, "day": day, "hour": time})));
     HttpClientResponse response = await request.close();
     // todo - you should check the response.statusCode
     String reply = await response.transform(utf8.decoder).join();

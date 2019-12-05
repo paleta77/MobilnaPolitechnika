@@ -14,10 +14,12 @@ class Grades extends StatefulWidget {
 class GradeModel {
   final String subject;
   final String value;
+  final String ects;
 
   GradeModel({
     this.subject,
     this.value,
+    this.ects,
   });
 }
 
@@ -37,10 +39,11 @@ class _DisplayGradeState extends State {
     List gradesList = [];
     var sum = 0;
     for (int i = 0; i < grades.length; i++) {
+      var grade = grades[i];
       gradesList.add(GradeModel(
-          subject: grades[i]['subject'], value: grades[i]['value'].toString()));
+          subject: grade['subject'], ects: grade['ects'].toString(), value: grade['value'].toString()));
 
-      sum += grades[i]['value'];
+      sum += grade['value'];
     }
 
     // update state and force redraw
@@ -68,7 +71,7 @@ class _DisplayGradeState extends State {
             itemBuilder: (context, int i) => Column(
               children: [
                 new ListTile(
-                  title: new Text(gradeModelData[i].subject),
+                  title: new Text(gradeModelData[i].subject + " " + gradeModelData[i].ects),
                   subtitle: new Text(gradeModelData[i].value),
                   onTap: () {},
                   onLongPress: () {},

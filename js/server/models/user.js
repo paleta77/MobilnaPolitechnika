@@ -79,47 +79,47 @@ class UserClass {
     }
 
     getGrades(cb) {
-        grade.find({ 'user': this.name }, 'value subject', (err, grades) => {
+        grade.find({ 'user': this.name }, 'value subject ects', (err, grades) => {
             if (err) cb(err);
             cb(null, grades);
         });
     }
 
-    addGrade(subject, value, cb) {
-        if (!subject || !value) {
+    addGrade(subject, ects, value, cb) {
+        if (!subject || !value || !ects) {
             return cb("Fields cannot be empty!");
         }
-        if (value > 5 || value < 2) {
-            return cb("Value outside 2 and 5!");
+        if (value > 5 || value < 2 || ects < 0 || ects > 10) {
+            return cb("Value outside 2 and 5 or ects improper value!");
         }
-        grade.create({ 'user': this.name, 'subject': subject, 'value': value }, function (err) {
+        grade.create({ 'user': this.name, 'subject': subject, 'ects' : ects, 'value': value }, (err) => {
             if (err) cb(err);
             cb(null, true);
         });
     }
 
-    updateGrade(subject, value, cb) {
-        if (!subject || !value) {
+    updateGrade(subject, ects, value, cb) {
+        if (!subject || !value || !ects) {
             return cb("Fields cannot be empty!");
         }
-        if (value > 5 || value < 2) {
-            return cb("Value outside 2 and 5!");
+        if (value > 5 || value < 2 || ects < 0 || ects > 10) {
+            return cb("Value outside 2 and 5 or ects improper value!");
         }
-        grade.updateOne({ 'user': this.name, 'subject': subject }, { $set: { 'value': value } }, function (err) {
+        grade.updateOne({ 'user': this.name, 'subject': subject }, { $set: { 'etcs' : ects, 'value': value } }, (err) => {
             if (err) cb(err);
             cb(null, true);
         });
     }
 
     deleteGrade(subject, cb) {
-        grade.deleteOne({ 'user': this.name, 'subject': subject }, function (err) {
+        grade.deleteOne({ 'user': this.name, 'subject': subject }, (err) => {
             if (err) cb(err);
             cb(null, true);
         });
     }
 
     deleteExtraLesson(subject, cb){
-        extralesson.deleteOne({'subject': subject, 'user': this.name}, function (err) {
+        extralesson.deleteOne({'subject': subject, 'user': this.name}, (err) => {
             if (err) cb(err);
             cb(null, true);
         });
@@ -128,7 +128,7 @@ class UserClass {
     addExtraLesson(subject, day, hour, length, type, classroom, lecturer,cb) {
         extralesson.create({'subject': subject, 'day': day, 'user': this.name,
             'hour':hour, 'length':length, 'type':type, 'classroom':classroom,
-             'lecturer':lecturer}, function (err) {
+             'lecturer':lecturer}, (err) => {
             if (err) cb(err);
             cb(null, true);
         });

@@ -84,7 +84,7 @@ exports = module.exports = function (app) {
 
     // add new grade to user
     app.put('/grades', auth.restrict, (req, res) => {
-        req.session.user.addGrade(req.body.subject, req.body.value, (err, _res) => {
+        req.session.user.addGrade(req.body.subject, req.body.ects, req.body.value, (err, _res) => {
             if (err) return res.json({ msg: err });
             res.json({ msg: "OK" });
         });
@@ -92,7 +92,7 @@ exports = module.exports = function (app) {
 
     //update grade
     app.post('/grades', auth.restrict, (req, res) => {
-        req.session.user.updateGrade(req.body.subject, req.body.value, (err, _res) => {
+        req.session.user.updateGrade(req.body.subject, req.body.ects, req.body.value, (err, _res) => {
             if (err) return res.json({ msg: err });
             res.json({ msg: "OK" });
         });

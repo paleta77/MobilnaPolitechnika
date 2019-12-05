@@ -219,8 +219,14 @@ class _DayViewState extends State{
                           ),
                           actions: <Widget>[
                             FlatButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text("Anuluj"),
+                              onPressed: () async {
+                                await API.removeExtraLesson();
+                                loadGroups();
+                                setState(() {
+                                  //contentText = "Changed Content of Dialog";
+                                });
+                              },
+                              child: Text("Usuń"),
                             ),
                             FlatButton(
                               onPressed: () async {
@@ -230,7 +236,7 @@ class _DayViewState extends State{
                                   //contentText = "Changed Content of Dialog";
                                 });
                               },
-                              child: Text("Usuń"),
+                              child: Text("dodaj"),
                             ),
                           ],
                         );

@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 class API {
   static const String URL = 'http://77.55.208.10:8079';
@@ -97,7 +99,21 @@ class API {
       var body = json.decode(response.body);
       return body;
     }
-}
+  }
+
+  static Future<dynamic> removeExtraLesson() async {
+    HttpClient httpClient = new HttpClient();
+    HttpClientRequest request = await httpClient.deleteUrl(Uri.parse('$URL/user/extralessons'));
+    request.headers.set('content-type', 'application/json');
+    request.headers.set('Authorization', 'Bearer 123');
+    request.add(utf8.encode(json.encode({"subject":"Lekcja123456"})));
+    HttpClientResponse response = await request.close();
+    // todo - you should check the response.statusCode
+    String reply = await response.transform(utf8.decoder).join();
+    httpClient.close();
+    return reply;
+  }
+
 
   static Future<dynamic> addExtraLesson() async {
     final response = await http.put('$URL/user/extralessons', headers: {
@@ -110,8 +126,7 @@ class API {
         "length": "90",
         "type": "labolatorium",
         "classroom": "F9",
-        "lecturer": "Jan kowalski",
-        "user": "admin"
+        "lecturer": "Jan kowalski"
       }
     )
     );

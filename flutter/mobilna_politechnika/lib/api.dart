@@ -104,7 +104,15 @@ class API {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token"
     }, body: json.encode(
-      {"subject": "Lekcja123456"}
+      {"subject": "Lekcja123456",
+        "day": "Sobota",
+        "hour": "5.1",
+        "length": "90",
+        "type": "labolatorium",
+        "classroom": "F9",
+        "lecturer": "Jan kowalski",
+        "user": "admin"
+      }
     )
     );
 

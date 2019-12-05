@@ -40,7 +40,6 @@ class _DayViewState extends State{
     var groups = await API.getTimetable();
     //load user timetables
     var extraLessonsJson = await API.getExtraLessons();
-    await API.addExtraLesson();
 
     //set them
     setState(() {
@@ -151,7 +150,7 @@ class _DayViewState extends State{
             _day0,
             //_day1,
           ],
-          minimumMinuteOfDay: 7*60), // set starting hour
+          minimumMinuteOfDay: 5*60), // set starting hour
           child: new Column(
             children: <Widget>[
               new Container(
@@ -224,9 +223,11 @@ class _DayViewState extends State{
                               child: Text("Anuluj"),
                             ),
                             FlatButton(
-                              onPressed: () {
+                              onPressed: () async {
+                                await API.addExtraLesson();
+                                loadGroups();
                                 setState(() {
-                                  contentText = "Changed Content of Dialog";
+                                  //contentText = "Changed Content of Dialog";
                                 });
                               },
                               child: Text("Usuń"),

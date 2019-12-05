@@ -191,8 +191,7 @@ class _DayViewState extends State{
                 showDialog(
                   context: context,
                   builder: (context) {
-                    String contentText = "Content of Dialog";
-                    String extralessontodelete = extraLessons.extralesson[0].subject;
+                    String extralessontodelete = extraLessons.toStringList()[0];
                     List<String> strings = extraLessons.toStringList();
                     return StatefulBuilder(
                       builder: (context, setState) {
@@ -220,7 +219,69 @@ class _DayViewState extends State{
                           actions: <Widget>[
                             FlatButton(
                               onPressed: () async {
-                                await API.removeExtraLesson();
+                                await API.removeExtraLesson(extralessontodelete.split(" ")[0]);
+                                loadGroups();
+                                Navigator.pop(context);
+                                setState(() {
+                                  strings = extraLessons.toStringList();
+                                });
+                              },
+                              child: Text("Usuń"),
+                            ),
+                            FlatButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                setState(() {
+
+                                });
+                              },
+                              child: Text("Anuluj"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+              }
+          ),
+          SpeedDialChild(
+              child: Icon(Icons.remove),
+              label: "Dodaj swój przedmiot",
+              backgroundColor: Color.fromARGB(255, 128, 1, 0),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    String extralessontoadd = extraLessons.toStringList()[0];
+                    List<String> strings = extraLessons.toStringList();
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        return AlertDialog(
+                          title: Text("Wybierz "),
+                          content: new Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              new DropdownButton<String>(
+                                value: extralessontoadd,
+                                items: strings.map((String value) {
+                                  return new DropdownMenuItem<String>(
+                                    value: value,
+                                    child: new Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String newValue) {
+                                  setState(() {
+                                    extralessontoadd = newValue;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          actions: <Widget>[
+                            FlatButton(
+                              onPressed: () async {
+                                await API.removeExtraLesson(extralessontoadd);
                                 loadGroups();
                                 setState(() {
                                   //contentText = "Changed Content of Dialog";
@@ -246,12 +307,6 @@ class _DayViewState extends State{
                 );
               }
           ),
-          SpeedDialChild(
-            child: Icon(Icons.add),
-            label: "Dodaj swój przedmiot",
-            backgroundColor: Color.fromARGB(255, 128, 1, 0),
-            onTap: () => print("first")
-          )
         ],
       ),
     );
@@ -592,13 +647,24 @@ class ExtraLessons {
     return data;
   }
 
+  String add0If0Minutes(String time){
+    if(time.length==1 && time.endsWith("0")) return "00";
+    else return time.toString();
+  }
+
   List<String> toStringList(){
     List<String> returnList = new List();
 
     for(int i = 0; i<extralesson.length; i++){
-      returnList.add(extralesson[i].subject);
+      int hours = extralesson[i].hour.toInt();
+      double minutes = ((extralesson[i].hour - hours) * 100);
+      String stringMinutes = minutes.toStringAsFixed(0);
+
+      Duration startTime = new Duration(hours: hours, minutes: int.parse(stringMinutes));
+      returnList.add(extralesson[i].subject + " " + extralesson[i].day + " " + startTime.inHours.toString() + ":" + add0If0Minutes(startTime.inMinutes.remainder(60).toString()));
     }
 
+    returnList.sort((String a, String b)=>a.compareTo(b)); //todo sort
     return returnList;
   }
 }

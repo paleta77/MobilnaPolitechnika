@@ -101,12 +101,12 @@ class API {
     }
   }
 
-  static Future<dynamic> removeExtraLesson() async {
+  static Future<dynamic> removeExtraLesson(String subject) async {
     HttpClient httpClient = new HttpClient();
     HttpClientRequest request = await httpClient.deleteUrl(Uri.parse('$URL/user/extralessons'));
     request.headers.set('content-type', 'application/json');
     request.headers.set('Authorization', 'Bearer 123');
-    request.add(utf8.encode(json.encode({"subject":"Lekcja123456"})));
+    request.add(utf8.encode(json.encode({"subject":subject})));
     HttpClientResponse response = await request.close();
     // todo - you should check the response.statusCode
     String reply = await response.transform(utf8.decoder).join();

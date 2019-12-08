@@ -102,6 +102,7 @@ class API {
   }
 
   static Future<dynamic> getClassroomTimetable(String classroom) async {
+    classroom = classroom.replaceAll('/',"%2f");
     final response = await http.get('$URL/room/$classroom/timetable', headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token"

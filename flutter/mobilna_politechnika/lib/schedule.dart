@@ -505,7 +505,6 @@ class _DayViewState extends State {
                                   loadGroups();
                                   Navigator.pop(context);
                                   setState(() {
-                                    //contentText = "Changed Content of Dialog";
                                   });
                                 }
                               },
@@ -516,7 +515,6 @@ class _DayViewState extends State {
                                 loadGroups();
                                 Navigator.pop(context);
                                 setState(() {
-                                  //contentText = "Changed Content of Dialog";
                                 });
                               },
                               child: Text("Anuluj"),

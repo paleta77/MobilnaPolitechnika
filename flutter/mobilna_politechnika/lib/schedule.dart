@@ -54,8 +54,8 @@ class _DayViewState extends State {
   List<Event> events;
 
   String add0If0Minutes(String time) {
-    if (time.length == 1 && time.endsWith("0"))
-      return "00";
+    if (time.length == 1)
+      return "0" + time;
     else
       return time.toString();
   }
@@ -897,7 +897,7 @@ class Extralesson {
     sId = json['_id'];
     subject = json['subject'];
     day = json['day'];
-    hour = json['hour'];
+    hour = json['hour'] * 1.0;
     length = json['length'];
     type = json['type'];
     classroom = json['classroom'];

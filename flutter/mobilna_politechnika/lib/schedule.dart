@@ -51,11 +51,22 @@ class _DayViewState extends State {
   }
   void loadLecturerTimetables(String lecturer) async {
     //load group timetables
-    var LecturerTimetables = await API.getLecturerTimetable(lecturer);
+    var lecturerTimetables = await API.getLecturerTimetable(lecturer);
 
     //set them
     setState(() {
-      groupModel = Timetables.fromJson(LecturerTimetables);
+      groupModel = Timetables.fromJson(lecturerTimetables);
+      extraLessons = null;
+    });
+  }
+
+  void loadClassroomTimetables(String lecturer) async {
+    //load group timetables
+    var classroomTimetables = await API.getClassroomTimetable(lecturer);
+
+    //set them
+    setState(() {
+      groupModel = Timetables.fromJson(classroomTimetables);
       extraLessons = null;
     });
   }
@@ -517,6 +528,14 @@ class _DayViewState extends State {
                   },
                 );
               }),
+          new SpeedDialChild(
+            label: "Odśwież swój plan",
+              backgroundColor: Color.fromARGB(255, 128, 1, 0),
+            child: Icon(Icons.refresh),
+            onTap: () {
+              loadGroups();
+            }
+          )
         ],
       ),
     );
@@ -571,6 +590,7 @@ class _DayViewState extends State {
                       RaisedButton(
                         child: Text("Sprawdź plan sali\n" + classroom, textAlign: TextAlign.center),
                         onPressed: () {
+                          loadClassroomTimetables(classroom);
                           print("test");
                         },
                       ),

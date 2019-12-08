@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/cupertino.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:calendar_views/calendar_views.dart';
 import 'package:calendar_views/day_view.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as prefix1;
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
@@ -543,6 +546,49 @@ class _DayViewState extends State {
       left: itemPosition.left,
       width: itemSize.width,
       height: itemSize.height,
+      child:
+        GestureDetector(
+        // When the child is tapped, show a snackbar.
+        onTap: () {
+          showDialog(context: context,
+          builder: (context){
+            String subject = event.title.split("\n")[1];
+            String lecturer = event.title.split("\n")[2];
+            String classroom = event.title.split("\n")[3];
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: Text("Co chcesz zrobić?"),
+                  content: new Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      RaisedButton(
+                        child: Text("Sprawdź plan sali\n" + classroom, textAlign: TextAlign.center),
+                        onPressed: () {
+                          print("test");
+                        },
+                      ),
+                      RaisedButton(
+                        child: Text("Sprawdź plan wykładowcy\n" + lecturer, textAlign: TextAlign.center),
+                        onPressed: () {
+                          print("test");
+                        },
+                      )
+                    ],
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                      },
+                        child: Text("Anuluj"),
+                    )
+                  ],
+                );
+              },
+            );
+          });
+    },
       child: new Container(
         margin: new EdgeInsets.only(left: 1.0, right: 1.0, bottom: 1.0),
         padding: new EdgeInsets.all(3.0),
@@ -558,7 +604,7 @@ class _DayViewState extends State {
           ),
         ),
       ),
-    );
+    ));
   }
 
   //Hours display

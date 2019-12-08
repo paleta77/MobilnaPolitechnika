@@ -124,6 +124,14 @@ class API {
 
   static Future<dynamic> addExtraLesson(String subject, String day, String hour,
       String length, String type, String classroom, String lecturer) async {
+
+    String time;
+    if(hour.endsWith("0")){
+      time = hour.split(":")[0] + "." + hour.split(":")[1][0];
+    } else{
+      time = hour.split(":")[0] + "." + hour.split(":")[1];
+    }
+
     final response = await http.put('$URL/user/extralessons',
         headers: {
           "Content-Type": "application/json",
@@ -132,7 +140,7 @@ class API {
         body: json.encode({
           "subject": subject,
           "day": day,
-          "hour": "5.1",
+          "hour": time,
           "length": length,
           "type": type,
           "classroom": classroom,

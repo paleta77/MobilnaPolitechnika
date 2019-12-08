@@ -75,9 +75,15 @@ class _DisplayGradeState extends State {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Row(children: <Widget>[
-                        Expanded(child: Text("1")),
+                        Expanded(child: RaisedButton(child: Text("+", textAlign: TextAlign.center),
+                                  onPressed: () {
+                                    print("Increse grade");
+                                  })),
                         Expanded(child: Center(child: Text("2"))),
-                        Expanded(child: Text("3"))
+                        Expanded(child: RaisedButton(child: Text("-", textAlign: TextAlign.center),
+                                  onPressed: () {
+                                    print("Decrease grade");
+                                  }))
                       ]),
                       RaisedButton(
                           child: Text("Usun", textAlign: TextAlign.center),

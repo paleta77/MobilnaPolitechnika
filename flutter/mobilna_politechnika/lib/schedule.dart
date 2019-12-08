@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:calendar_views/calendar_views.dart';
 import 'package:calendar_views/day_view.dart';
@@ -278,10 +279,15 @@ class _DayViewState extends State {
                           actions: <Widget>[
                             FlatButton(
                               onPressed: () async {
-                                await API.removeExtraLesson(extraLessonToDelete.split(" ")[0],
-                                    extraLessonToDelete.split(" ")[1] ,
-                                    extraLessonToDelete.split(" ")[2].split(":")[0],
-                                    extraLessonToDelete.split(" ")[2].split(":")[1]);
+                                List<String> splitExtraLesson = extraLessonToDelete.split(' ');
+                                String lessonName = "";
+                                for(int i = 0; i<splitExtraLesson.length-2; i++){
+                                  lessonName += splitExtraLesson[i] + " ";
+                                }
+                                await API.removeExtraLesson(lessonName.substring(0,lessonName.length-1),
+                                    splitExtraLesson[splitExtraLesson.length-2] ,
+                                    splitExtraLesson[splitExtraLesson.length-1].split(":")[0],
+                                    splitExtraLesson[splitExtraLesson.length-1].split(":")[1]);
                                 loadGroups();
                                 Navigator.pop(context);
                                 setState(() {
@@ -338,22 +344,25 @@ class _DayViewState extends State {
                                   },
                                 ),
                                 //day
-                                new DropdownButton<String>(
-                                  value: chosenDay,
-                                  hint: Text('Wybierz dzień'),
-                                  items: <String>['Sobota', 'Niedziela']
-                                      .map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String newValue) {
-                                    setState(() {
-                                      chosenDay = newValue;
-                                    });
-                                  },
+                                new Container(
+                                  width: double.infinity,
+                                  child: new DropdownButton<String>(
+                                    value: chosenDay,
+                                    hint: Text('Wybierz dzień'),
+                                    items: <String>['Sobota', 'Niedziela']
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                    onChanged: (String newValue) {
+                                      setState(() {
+                                        chosenDay = newValue;
+                                      });
+                                    },
+                                  ),
                                 ),
                                 //hour
                                 FlatButton(
@@ -435,25 +444,28 @@ class _DayViewState extends State {
                                   },
                                 ),
                                 //type
-                                new DropdownButton<String>(
-                                  value: chosenType,
-                                  items: <String>[
-                                    'Wykład',
-                                    'Lektorat',
-                                    'Laboratorium',
-                                    'Projekt'
-                                  ].map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String newValue) {
-                                    setState(() {
-                                      chosenType = newValue;
-                                    });
-                                  },
+                                new Container(
+                                  width: double.infinity,
+                                  child: new DropdownButton<String>(
+                                    value: chosenType,
+                                    items: <String>[
+                                      'Wykład',
+                                      'Lektorat',
+                                      'Laboratorium',
+                                      'Projekt'
+                                    ].map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                    onChanged: (String newValue) {
+                                      setState(() {
+                                        chosenType = newValue;
+                                      });
+                                    },
+                                  ),
                                 ),
                                 //classroom
                                 TextFormField(

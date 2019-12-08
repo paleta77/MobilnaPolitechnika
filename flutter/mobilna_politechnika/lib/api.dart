@@ -89,6 +89,18 @@ class API {
     }
   }
 
+  static Future<dynamic> getLecturerTimetable(String lecturer) async {
+    final response = await http.get('$URL/lecturer/$lecturer/timetable', headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      var body = json.decode(response.body);
+      return body;
+    }
+  }
+
   static Future<dynamic> getExtraLessons() async {
     final response = await http.get('$URL/user/extralessons', headers: {
       "Content-Type": "application/json",

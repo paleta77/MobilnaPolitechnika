@@ -1,11 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:calendar_views/calendar_views.dart';
 import 'package:calendar_views/day_view.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/material.dart' as prefix1;
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
@@ -51,6 +47,16 @@ class _DayViewState extends State {
     setState(() {
       groupModel = Timetables.fromJson(groups);
       extraLessons = ExtraLessons.fromJson(extraLessonsJson);
+    });
+  }
+  void loadLecturerTimetables(String lecturer) async {
+    //load group timetables
+    var LecturerTimetables = await API.getLecturerTimetable(lecturer);
+
+    //set them
+    setState(() {
+      groupModel = Timetables.fromJson(LecturerTimetables);
+      extraLessons = null;
     });
   }
 
@@ -572,6 +578,7 @@ class _DayViewState extends State {
                         child: Text("Sprawdź plan wykładowcy\n" + lecturer, textAlign: TextAlign.center),
                         onPressed: () {
                           print("test");
+                          loadLecturerTimetables(lecturer);
                         },
                       )
                     ],

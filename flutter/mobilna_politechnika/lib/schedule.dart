@@ -192,6 +192,9 @@ class _DayViewState extends State {
   final durationController = TextEditingController();
   final classroomController = TextEditingController();
   final lecturerController = TextEditingController();
+  String chosenDay = 'Sobota';
+  String chosenType = 'Wykład';
+  String _timeBegin = "Rozpoczęcie";
 
   @override
   Widget build(BuildContext context) {
@@ -309,9 +312,6 @@ class _DayViewState extends State {
                 showDialog(
                   context: context,
                   builder: (context) {
-                    String chosenDay = 'Sobota';
-                    String chosenType = 'Wykład';
-                    String _timeBegin = "Rozpoczęcie";
                     return StatefulBuilder(
                       builder: (context, setState) {
                         return AlertDialog(

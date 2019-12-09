@@ -6,10 +6,12 @@ import 'side-drawer.dart';
 
 class Map extends StatefulWidget {
   @override
-  _MapState createState() => new _MapState();
+  MapState createState() => new MapState();
 }
 
-class _MapState extends State<Map> {
+class MapState extends State<Map> {
+  WebViewController controller;
+  static String target = "";
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +26,21 @@ class _MapState extends State<Map> {
               Expanded(
                 child: Container(
                     child: WebView(
-                  initialUrl: 'http://mojmegatestkolejny.azurewebsites.net/nav/',
-                  javascriptMode: JavascriptMode.unrestricted,
-                  onPageFinished: (String url) {
-                    print('Page finished loading: $url');
+                  onWebViewCreated: (webViewController) {
+                    controller = webViewController;
                   },
+                  initialUrl:
+                      'http://mojmegatestkolejny.azurewebsites.net/nav/' +
+                          (target.length > 0 ? ('?target=' + target) : ''),
+                  javascriptMode: JavascriptMode.unrestricted,
+                  javascriptChannels: Set.from([
+                    JavascriptChannel(
+                        name: 'host',
+                        onMessageReceived: (JavascriptMessage msg) {
+                          print(msg.message);
+                        })
+                  ]),
+                  onPageFinished: (String url) {},
                 )),
               ),
             ],

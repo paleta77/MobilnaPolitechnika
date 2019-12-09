@@ -60,8 +60,8 @@ class SideDrawer extends StatelessWidget {
           leading: Icon(Icons.map),
           onTap: () {
             Navigator.pop(context);
-            Navigator.push(context,
-                new MaterialPageRoute(builder: (context) => new Map()));
+            MapState.target = ""; // Clear target
+            Navigator.of(context).pushNamed('/Map');
           },
         ),
         ListTile(

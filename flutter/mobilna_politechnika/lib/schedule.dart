@@ -322,183 +322,186 @@ class _DayViewState extends State {
                       builder: (context, setState) {
                         return AlertDialog(
                           title: Text("Dodaj swój przedmiot "),
-                          content: new Form(
-                            key: _formKey,
-                            child: new Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                //subject
-                                TextFormField(
-                                  controller: subjectController,
-                                  decoration: InputDecoration(
-                                      hintText: "Nazwa przedmiotu"),
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return 'Podaj nazwę przedmiotu';
-                                    }
-                                    if (value.length > 50) {
-                                      return 'Zbyt długa nazwa';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                //day
-                                new Container(
-                                  width: double.infinity,
-                                  child: new DropdownButton<String>(
-                                    value: chosenDay,
-                                    hint: Text('Wybierz dzień'),
-                                    items: <String>['Sobota', 'Niedziela']
-                                        .map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
-                                    onChanged: (String newValue) {
-                                      setState(() {
-                                        chosenDay = newValue;
-                                      });
+                          content:
+                          SingleChildScrollView(
+                            child: new Form(
+                              key: _formKey,
+                              child: new Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  //subject
+                                  TextFormField(
+                                    controller: subjectController,
+                                    decoration: InputDecoration(
+                                        hintText: "Nazwa przedmiotu"),
+                                    // The validator receives the text that the user has entered.
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Podaj nazwę przedmiotu';
+                                      }
+                                      if (value.length > 50) {
+                                        return 'Zbyt długa nazwa';
+                                      }
+                                      return null;
                                     },
                                   ),
-                                ),
-                                //hour
-                                FlatButton(
-                                  onPressed: () {
-                                    DatePicker.showTimePicker(context,
-                                        theme: DatePickerTheme(
-                                          containerHeight: 210.0,
-                                        ),
-                                        showTitleActions: true,
-                                        onConfirm: (time) {
-                                      print('confirm $time');
-                                      _timeBegin =
-                                          '${time.hour}:${time.minute}';
-                                      setState(() {});
-                                    },
-                                        currentTime: DateTime.now(),
-                                        locale: LocaleType.pl);
-                                    setState(() {});
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: 50.0,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Container(
-                                              child: Row(
-                                                children: <Widget>[
-                                                  Icon(
-                                                    Icons.access_time,
-                                                    size: 18.0,
-                                                    color: Colors.teal,
-                                                  ),
-                                                  Text(
-                                                    " $_timeBegin",
-                                                    style: TextStyle(
-                                                        color: Colors.teal,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 18.0),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        Text(
-                                          "  Wybierz",
-                                          style: TextStyle(
-                                              color: Colors.teal,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18.0),
-                                        ),
-                                      ],
+                                  //day
+                                  new Container(
+                                    width: double.infinity,
+                                    child: new DropdownButton<String>(
+                                      value: chosenDay,
+                                      hint: Text('Wybierz dzień'),
+                                      items: <String>['Sobota', 'Niedziela']
+                                          .map<DropdownMenuItem<String>>(
+                                              (String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                      onChanged: (String newValue) {
+                                        setState(() {
+                                          chosenDay = newValue;
+                                        });
+                                      },
                                     ),
                                   ),
-                                  color: Colors.white,
-                                ),
-                                //length
-                                TextFormField(
-                                  controller: durationController,
-                                  decoration: InputDecoration(
-                                      hintText: "Czas trwania w minutach"),
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return 'Podaj nazwę przedmiotu';
-                                    }
-                                    if (int.parse(value) >= 3600) {
-                                      return 'Zbyt długi czas trwania';
-                                    }
-                                    if (int.parse(value) <= 0) {
-                                      return 'Zbyt krótki czas trwania';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                //type
-                                new Container(
-                                  width: double.infinity,
-                                  child: new DropdownButton<String>(
-                                    value: chosenType,
-                                    items: <String>[
-                                      'Wykład',
-                                      'Lektorat',
-                                      'Laboratorium',
-                                      'Projekt'
-                                    ].map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
-                                    onChanged: (String newValue) {
-                                      setState(() {
-                                        chosenType = newValue;
-                                      });
+                                  //hour
+                                  FlatButton(
+                                    onPressed: () {
+                                      DatePicker.showTimePicker(context,
+                                          theme: DatePickerTheme(
+                                            containerHeight: 210.0,
+                                          ),
+                                          showTitleActions: true,
+                                          onConfirm: (time) {
+                                            print('confirm $time');
+                                            _timeBegin =
+                                            '${time.hour}:${time.minute}';
+                                            setState(() {});
+                                          },
+                                          currentTime: DateTime.now(),
+                                          locale: LocaleType.pl);
+                                      setState(() {});
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      height: 50.0,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Row(
+                                            children: <Widget>[
+                                              Container(
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      Icons.access_time,
+                                                      size: 18.0,
+                                                      color: Colors.teal,
+                                                    ),
+                                                    Text(
+                                                      " $_timeBegin",
+                                                      style: TextStyle(
+                                                          color: Colors.teal,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          fontSize: 18.0),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          Text(
+                                            "  Wybierz",
+                                            style: TextStyle(
+                                                color: Colors.teal,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18.0),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  //length
+                                  TextFormField(
+                                    controller: durationController,
+                                    decoration: InputDecoration(
+                                        hintText: "Czas trwania w minutach"),
+                                    // The validator receives the text that the user has entered.
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Podaj nazwę przedmiotu';
+                                      }
+                                      if (int.parse(value) >= 3600) {
+                                        return 'Zbyt długi czas trwania';
+                                      }
+                                      if (int.parse(value) <= 0) {
+                                        return 'Zbyt krótki czas trwania';
+                                      }
+                                      return null;
                                     },
                                   ),
-                                ),
-                                //classroom
-                                TextFormField(
-                                  controller: classroomController,
-                                  decoration: InputDecoration(hintText: "Sala"),
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return 'Podaj nazwę sali';
-                                    }
-                                    if (value.length > 50) {
-                                      return 'Zbyt długa nazwa';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                //lecturer
-                                TextFormField(
-                                  controller: lecturerController,
-                                  decoration:
-                                      InputDecoration(hintText: "Wykładowca"),
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return 'Podaj wykładowce';
-                                    }
-                                    if (value.length > 75) {
-                                      return 'Zbyt długa nazwa';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ],
+                                  //type
+                                  new Container(
+                                    width: double.infinity,
+                                    child: new DropdownButton<String>(
+                                      value: chosenType,
+                                      items: <String>[
+                                        'Wykład',
+                                        'Lektorat',
+                                        'Laboratorium',
+                                        'Projekt'
+                                      ].map<DropdownMenuItem<String>>(
+                                              (String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                      onChanged: (String newValue) {
+                                        setState(() {
+                                          chosenType = newValue;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  //classroom
+                                  TextFormField(
+                                    controller: classroomController,
+                                    decoration: InputDecoration(hintText: "Sala"),
+                                    // The validator receives the text that the user has entered.
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Podaj nazwę sali';
+                                      }
+                                      if (value.length > 50) {
+                                        return 'Zbyt długa nazwa';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  //lecturer
+                                  TextFormField(
+                                    controller: lecturerController,
+                                    decoration:
+                                    InputDecoration(hintText: "Wykładowca"),
+                                    // The validator receives the text that the user has entered.
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Podaj wykładowce';
+                                      }
+                                      if (value.length > 75) {
+                                        return 'Zbyt długa nazwa';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           actions: <Widget>[

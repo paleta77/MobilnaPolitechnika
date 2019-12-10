@@ -68,7 +68,7 @@ exports = module.exports = function (app) {
 
     //delete user extra lessons
     app.delete('/user/extralessons', auth.restrict, (req,res) => {
-        req.session.user.deleteExtraLesson(req.body.subject, (err, _res) => {
+        req.session.user.deleteExtraLesson(req.body.subject, req.body.day, req.body.hour, (err, _res) => {
             if (err) return res.json({ msg: err });
             res.json({ msg: "OK" });
         });

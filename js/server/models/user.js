@@ -118,8 +118,8 @@ class UserClass {
         });
     }
 
-    deleteExtraLesson(subject, cb){
-        extralesson.deleteOne({'subject': subject, 'user': this.name}, (err) => {
+    deleteExtraLesson(subject, day, hour, cb){
+        extralesson.deleteOne({'subject': subject, 'day': day, 'hour':hour, 'user': this.name}, function (err) {
             if (err) cb(err);
             cb(null, true);
         });

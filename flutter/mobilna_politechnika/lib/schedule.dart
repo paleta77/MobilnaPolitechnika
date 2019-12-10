@@ -8,6 +8,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import 'api.dart';
 import 'locale.dart';
+import 'map.dart' as myMap;
 import 'side-drawer.dart';
 
 //displaying it as calendar view
@@ -604,13 +605,19 @@ class _DayViewState extends State {
                         child: Text("Sprawdź plan sali\n" + classroom, textAlign: TextAlign.center),
                         onPressed: () {
                           loadClassroomTimetables(classroom);
-                          print("test");
+                        },
+                      ),
+                      RaisedButton(
+                        child: Text("Pokaż na mapie\n" + classroom, textAlign: TextAlign.center),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          myMap.MapState.target = classroom; // Clear target
+                          Navigator.of(context).pushNamed('/Map');
                         },
                       ),
                       RaisedButton(
                         child: Text("Sprawdź plan wykładowcy\n" + lecturer, textAlign: TextAlign.center),
                         onPressed: () {
-                          print("test");
                           loadLecturerTimetables(lecturer);
                         },
                       )

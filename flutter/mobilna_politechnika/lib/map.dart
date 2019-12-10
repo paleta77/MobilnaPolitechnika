@@ -75,8 +75,26 @@ class _MapSearchDelegate extends SearchDelegate<String> {
     "CTI 202/B19",
     "CTI 203/B19",
     "CTI 204/B19",
-    "CTI 204/B19",
-    "CTI 101/B19"
+    "CTI 205/B19",
+    "CTI 206/B19",
+    "CTI 207/B19",
+    "CTI 208/B19",
+    "CTI 209/B19",
+    "CTI 210/B19",
+    "CTI 211/B19",
+    "CTI 212/B19",
+    "CTI 101/B19",
+    "CTI 102/B19",
+    "CTI 103/B19",
+    "CTI 104/B19",
+    "CTI 105/B19",
+    "CTI 106/B19",
+    "CTI 107/B19",
+    "CTI 108/B19",
+    "CTI 110/B19",
+    "CTI 111/B19",
+    "CTI 112/B19",
+    "SPNJO"
   ];
   final MapState mapState;
 

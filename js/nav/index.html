@@ -290,6 +290,9 @@
 			map.closePopup();
 			$("#search-field").val("");
 			$("#search-field").focus();
+			if (typeof host !== 'undefined') {
+				host.postMessage('open_search');
+			}
 		}
 
 		function smallest(set) {

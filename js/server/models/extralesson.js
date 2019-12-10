@@ -7,7 +7,8 @@ const extralesson = mongoose.model('extralesson', {
     subject: String,
     type: String,
     classroom: String,
-    lecturer: String
+    lecturer: String,
+    user: String
 });
 
 module.exports = extralesson;

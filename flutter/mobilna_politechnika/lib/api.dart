@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 class API {
   static const String URL = 'http://77.55.208.10:8079';
@@ -83,6 +85,96 @@ class API {
 
     if (response.statusCode == 200) {
       var body = json.decode(response.body);
+      return body;
+    }
+  }
+
+  static Future<dynamic> getLecturerTimetable(String lecturer) async {
+    final response = await http.get('$URL/lecturer/$lecturer/timetable', headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      var body = json.decode(response.body);
+      return body;
+    }
+  }
+
+  static Future<dynamic> getClassroomTimetable(String classroom) async {
+    classroom = classroom.replaceAll('/',"%2f");
+    final response = await http.get('$URL/room/$classroom/timetable', headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      var body = json.decode(response.body);
+      return body;
+    }
+  }
+
+  static Future<dynamic> getExtraLessons() async {
+    final response = await http.get('$URL/user/extralessons', headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      var body = json.decode(response.body);
+      return body;
+    }
+  }
+
+  static Future<dynamic> removeExtraLesson(
+      String subject, String day, String hour, String minutes) async {
+    String time = hour + "." + minutes;
+    if (time.endsWith("0")) {
+      time = hour + "." + minutes[0];
+    }
+    print("time:" + time);
+    HttpClient httpClient = new HttpClient();
+    HttpClientRequest request =
+        await httpClient.deleteUrl(Uri.parse('$URL/user/extralessons'));
+    request.headers.set('content-type', 'application/json');
+    request.headers.set('Authorization', 'Bearer 123');
+    request.add(utf8
+        .encode(json.encode({"subject": subject, "day": day, "hour": time})));
+    HttpClientResponse response = await request.close();
+    // todo - you should check the response.statusCode
+    String reply = await response.transform(utf8.decoder).join();
+    httpClient.close();
+    return reply;
+  }
+
+  static Future<dynamic> addExtraLesson(String subject, String day, String hour,
+      String length, String type, String classroom, String lecturer) async {
+
+    String time;
+    if(hour.endsWith("0")){
+      time = hour.split(":")[0] + "." + hour.split(":")[1][0];
+    } else{
+      time = hour.split(":")[0] + "." + hour.split(":")[1];
+    }
+
+    final response = await http.put('$URL/user/extralessons',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: json.encode({
+          "subject": subject,
+          "day": day,
+          "hour": time,
+          "length": length,
+          "type": type,
+          "classroom": classroom,
+          "lecturer": lecturer
+        }));
+
+    if (response.statusCode == 200) {
+      var body = json.decode(response.body);
+      print(body);
       return body;
     }
   }

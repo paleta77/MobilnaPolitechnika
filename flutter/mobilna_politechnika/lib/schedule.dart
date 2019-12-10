@@ -1,14 +1,17 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:calendar_views/calendar_views.dart';
 import 'package:calendar_views/day_view.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import 'api.dart';
 import 'locale.dart';
 import 'side-drawer.dart';
 
 //displaying it as calendar view
-class DayView extends StatefulWidget{
+class DayView extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => new _DayViewState();
 }
@@ -28,23 +31,54 @@ class Event {
   final String type;
 }
 
-class _DayViewState extends State{
+class _DayViewState extends State {
   DateTime _day0;
   DateTime _day1;
 
   var groupModel;
+  var extraLessons;
+
   void loadGroups() async {
+    //load group timetables
     var groups = await API.getTimetable();
+    //load user timetables
+    var extraLessonsJson = await API.getExtraLessons();
+
+    //set them
     setState(() {
       groupModel = Timetables.fromJson(groups);
+      extraLessons = ExtraLessons.fromJson(extraLessonsJson);
+    });
+  }
+  void loadLecturerTimetables(String lecturer) async {
+    //load group timetables
+    var lecturerTimetables = await API.getLecturerTimetable(lecturer);
+
+    //set them
+    setState(() {
+      groupModel = Timetables.fromJson(lecturerTimetables);
+      extraLessons = null;
+    });
+  }
+
+  void loadClassroomTimetables(String lecturer) async {
+    //load group timetables
+    var classroomTimetables = await API.getClassroomTimetable(lecturer);
+
+    //set them
+    setState(() {
+      groupModel = Timetables.fromJson(classroomTimetables);
+      extraLessons = null;
     });
   }
 
   List<Event> events;
-  
-  String add0If0Minutes(String time){
-    if(time.length==1 && time.endsWith("0")) return "00";
-    else return time.toString();
+
+  String add0If0Minutes(String time) {
+    if (time.length == 1)
+      return "0" + time;
+    else
+      return time.toString();
   }
 
   @override
@@ -52,58 +86,116 @@ class _DayViewState extends State{
     super.initState();
     loadGroups();
     events = <Event>[];
-    _day0 = new DateTime.utc(2019,1,5);
-    _day1 = new DateTime.utc(2019,1,6);
+    _day0 = new DateTime.utc(2019, 1, 5);
+    _day1 = new DateTime.utc(2019, 1, 6);
   }
 
-    List<StartDurationItem> _getEventsOfDay(DateTime day) {
+  List<StartDurationItem> _getEventsOfDay(DateTime day) {
     events = <Event>[
       //new Event(startMinuteOfDay: 1 * 60, duration: 90, title: "Sleep Walking"),
     ];
 
     //loadGroups()
-    if(groupModel!=null){
+    if (groupModel != null) {
       //print("\n\n" + groupModel.timetable[0].day);
-      for(int i = 0; i<groupModel.timetable.length; i++){
+      for (int i = 0; i < groupModel.timetable.length; i++) {
         //if(weekdayToAbbreviatedString(day.weekday)==groupModel.timetable[i].day){
-        if(dropdownValue==groupModel.timetable[i].day){
+        if (dropdownValue == groupModel.timetable[i].day) {
           int hours = groupModel.timetable[i].hour.toInt();
           double minutes = ((groupModel.timetable[i].hour - hours) * 100);
           String stringMinutes = minutes.toStringAsFixed(0);
 
-          Duration startTime = new Duration(hours: hours, minutes: int.parse(stringMinutes));
-          Duration duration = new Duration(minutes: groupModel.timetable[i].length);
+          Duration startTime =
+              new Duration(hours: hours, minutes: int.parse(stringMinutes));
+          Duration duration =
+              new Duration(minutes: groupModel.timetable[i].length);
           Duration endTime = startTime + duration;
-          
-          events.add(new Event(
-                startMinuteOfDay: hours * 60 + minutes.toInt(),
-                duration: groupModel.timetable[i].length,
-                type: groupModel.timetable[i].type,
-                title:groupModel.timetable[i].type + ", " + startTime.inHours.toString() + ":" + add0If0Minutes(startTime.inMinutes.remainder(60).toString()) + "-" + endTime.inHours.toString() + ":" + add0If0Minutes(endTime.inMinutes.remainder(60).toString()) +"\n" +
-                    groupModel.timetable[i].subject + "\n" +
-                    groupModel.timetable[i].lecturer + "\n" +
-                    groupModel.timetable[i].classroom));
 
+          events.add(new Event(
+              startMinuteOfDay: hours * 60 + minutes.toInt(),
+              duration: groupModel.timetable[i].length,
+              type: groupModel.timetable[i].type,
+              title: groupModel.timetable[i].type +
+                  ", " +
+                  startTime.inHours.toString() +
+                  ":" +
+                  add0If0Minutes(startTime.inMinutes.remainder(60).toString()) +
+                  "-" +
+                  endTime.inHours.toString() +
+                  ":" +
+                  add0If0Minutes(endTime.inMinutes.remainder(60).toString()) +
+                  "\n" +
+                  groupModel.timetable[i].subject +
+                  "\n" +
+                  groupModel.timetable[i].lecturer +
+                  "\n" +
+                  groupModel.timetable[i].classroom));
         }
       }
     }
 
+    //load extra lessons
+    if (extraLessons != null) {
+      for (int i = 0; i < extraLessons.extralesson.length; i++) {
+        int hours = extraLessons.extralesson[i].hour.toInt();
+        double minutes = ((extraLessons.extralesson[i].hour - hours) * 100);
+        String stringMinutes = minutes.toStringAsFixed(0);
+
+        Duration startTime =
+            new Duration(hours: hours, minutes: int.parse(stringMinutes));
+        Duration duration =
+            new Duration(minutes: extraLessons.extralesson[i].length);
+        Duration endTime = startTime + duration;
+
+        if (dropdownValue == extraLessons.extralesson[i].day) {
+          print(extraLessons.extralesson[i].subject);
+          events.add(new Event(
+              startMinuteOfDay: hours * 60 + minutes.toInt(),
+              duration: extraLessons.extralesson[i].length,
+              title: extraLessons.extralesson[i].type +
+                  ", " +
+                  startTime.inHours.toString() +
+                  ":" +
+                  add0If0Minutes(startTime.inMinutes.remainder(60).toString()) +
+                  "-" +
+                  endTime.inHours.toString() +
+                  ":" +
+                  add0If0Minutes(endTime.inMinutes.remainder(60).toString()) +
+                  "\n" +
+                  extraLessons.extralesson[i].subject +
+                  "\n" +
+                  extraLessons.extralesson[i].lecturer +
+                  "\n" +
+                  extraLessons.extralesson[i].classroom,
+              type: extraLessons.extralesson[i].type));
+        }
+      }
+    }
 
     return events
         .map(
           (event) => new StartDurationItem(
-        startMinuteOfDay: event.startMinuteOfDay,
-        duration: event.duration,
-        builder: (context, itemPosition, itemSize) => _eventBuilder(
-          context,
-          itemPosition,
-          itemSize,
-          event,
-        ),
-      ),
-    )
+            startMinuteOfDay: event.startMinuteOfDay,
+            duration: event.duration,
+            builder: (context, itemPosition, itemSize) => _eventBuilder(
+              context,
+              itemPosition,
+              itemSize,
+              event,
+            ),
+          ),
+        )
         .toList();
   }
+
+  final _formKey = GlobalKey<FormState>();
+  final subjectController = TextEditingController();
+  final durationController = TextEditingController();
+  final classroomController = TextEditingController();
+  final lecturerController = TextEditingController();
+  String chosenDay = 'Sobota';
+  String chosenType = 'Wykład';
+  String _timeBegin = "Rozpoczęcie";
 
   @override
   Widget build(BuildContext context) {
@@ -116,36 +208,349 @@ class _DayViewState extends State{
           properties: new DayViewProperties(days: <DateTime>[
             _day0,
             //_day1,
-          ],
-          minimumMinuteOfDay: 7*60), // set starting hour
+          ], minimumMinuteOfDay: 5 * 60), // set starting hour
           child: new Column(
             children: <Widget>[
               new Container(
                 color: Colors.grey[200],
-                child: new DayViewDaysHeader(headerItemBuilder: _headerItemBuilder),
+                child: new DayViewDaysHeader(
+                    headerItemBuilder: _headerItemBuilder),
               ),
               new Expanded(
                   child: new SingleChildScrollView(
-                    child: new DayViewSchedule(
-                        heightPerMinute: 1.0,
-                        components: <ScheduleComponent>[
-                          new TimeIndicationComponent.intervalGenerated(
+                child: new DayViewSchedule(
+                    heightPerMinute: 1.0,
+                    components: <ScheduleComponent>[
+                      new TimeIndicationComponent.intervalGenerated(
                           generatedTimeIndicatorBuilder:
                               _generatedTimeIndicatorBuilder),
-                          new SupportLineComponent.intervalGenerated(
-                            generatedSupportLineBuilder: _generatedSupportLineBuilder,
-                          ),
-                          new DaySeparationComponent(
-                            generatedDaySeparatorBuilder:
+                      new SupportLineComponent.intervalGenerated(
+                        generatedSupportLineBuilder:
+                            _generatedSupportLineBuilder,
+                      ),
+                      new DaySeparationComponent(
+                        generatedDaySeparatorBuilder:
                             _generatedDaySeparatorBuilder,
-                          ),
-                          new EventViewComponent(
-                            getEventsOfDay: _getEventsOfDay,
-                          ),
+                      ),
+                      new EventViewComponent(
+                        getEventsOfDay: _getEventsOfDay,
+                      ),
                     ]),
-                  ))
+              ))
             ],
           )),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.list_view,
+        backgroundColor: Color.fromARGB(255, 128, 1, 0),
+        children: [
+          SpeedDialChild(
+              child: Icon(Icons.remove),
+              label: "Usuń swój przedmiot",
+              backgroundColor: Color.fromARGB(255, 128, 1, 0),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    String extraLessonToDelete = extraLessons.toStringList()[0];
+                    List<String> strings = extraLessons.toStringList();
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        return AlertDialog(
+                          title: Text("Usuń swój przedmiot "),
+                          content: new Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              new DropdownButton<String>(
+                                value: extraLessonToDelete,
+                                items: strings.map((String value) {
+                                  return new DropdownMenuItem<String>(
+                                    value: value,
+                                    child: new Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String newValue) {
+                                  setState(() {
+                                    extraLessonToDelete = newValue;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          actions: <Widget>[
+                            FlatButton(
+                              onPressed: () async {
+                                List<String> splitExtraLesson = extraLessonToDelete.split(' ');
+                                String lessonName = "";
+                                for(int i = 0; i<splitExtraLesson.length-2; i++){
+                                  lessonName += splitExtraLesson[i] + " ";
+                                }
+                                await API.removeExtraLesson(lessonName.substring(0,lessonName.length-1),
+                                    splitExtraLesson[splitExtraLesson.length-2] ,
+                                    splitExtraLesson[splitExtraLesson.length-1].split(":")[0],
+                                    splitExtraLesson[splitExtraLesson.length-1].split(":")[1]);
+                                loadGroups();
+                                Navigator.pop(context);
+                                setState(() {
+                                  strings = extraLessons.toStringList();
+                                });
+                              },
+                              child: Text("Usuń"),
+                            ),
+                            FlatButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                setState(() {});
+                              },
+                              child: Text("Anuluj"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+              }),
+          SpeedDialChild(
+              child: Icon(Icons.add),
+              label: "Dodaj swój przedmiot",
+              backgroundColor: Color.fromARGB(255, 128, 1, 0),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        return AlertDialog(
+                          title: Text("Dodaj swój przedmiot "),
+                          content:
+                          SingleChildScrollView(
+                            child: new Form(
+                              key: _formKey,
+                              child: new Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  //subject
+                                  TextFormField(
+                                    controller: subjectController,
+                                    decoration: InputDecoration(
+                                        hintText: "Nazwa przedmiotu"),
+                                    // The validator receives the text that the user has entered.
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Podaj nazwę przedmiotu';
+                                      }
+                                      if (value.length > 50) {
+                                        return 'Zbyt długa nazwa';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  //day
+                                  new Container(
+                                    width: double.infinity,
+                                    child: new DropdownButton<String>(
+                                      value: chosenDay,
+                                      hint: Text('Wybierz dzień'),
+                                      items: <String>['Sobota', 'Niedziela']
+                                          .map<DropdownMenuItem<String>>(
+                                              (String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                      onChanged: (String newValue) {
+                                        setState(() {
+                                          chosenDay = newValue;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  //hour
+                                  FlatButton(
+                                    onPressed: () {
+                                      DatePicker.showTimePicker(context,
+                                          theme: DatePickerTheme(
+                                            containerHeight: 210.0,
+                                          ),
+                                          showTitleActions: true,
+                                          onConfirm: (time) {
+                                            print('confirm $time');
+                                            _timeBegin =
+                                            '${time.hour}:${time.minute}';
+                                            setState(() {});
+                                          },
+                                          currentTime: DateTime.now(),
+                                          locale: LocaleType.pl);
+                                      setState(() {});
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      height: 50.0,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Row(
+                                            children: <Widget>[
+                                              Container(
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      Icons.access_time,
+                                                      size: 18.0,
+                                                      color: Colors.teal,
+                                                    ),
+                                                    Text(
+                                                      " $_timeBegin",
+                                                      style: TextStyle(
+                                                          color: Colors.teal,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          fontSize: 18.0),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          Text(
+                                            "  Wybierz",
+                                            style: TextStyle(
+                                                color: Colors.teal,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18.0),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  //length
+                                  TextFormField(
+                                    controller: durationController,
+                                    decoration: InputDecoration(
+                                        hintText: "Czas trwania w minutach"),
+                                    // The validator receives the text that the user has entered.
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Podaj nazwę przedmiotu';
+                                      }
+                                      if (int.parse(value) >= 3600) {
+                                        return 'Zbyt długi czas trwania';
+                                      }
+                                      if (int.parse(value) <= 0) {
+                                        return 'Zbyt krótki czas trwania';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  //type
+                                  new Container(
+                                    width: double.infinity,
+                                    child: new DropdownButton<String>(
+                                      value: chosenType,
+                                      items: <String>[
+                                        'Wykład',
+                                        'Lektorat',
+                                        'Laboratorium',
+                                        'Projekt'
+                                      ].map<DropdownMenuItem<String>>(
+                                              (String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                      onChanged: (String newValue) {
+                                        setState(() {
+                                          chosenType = newValue;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  //classroom
+                                  TextFormField(
+                                    controller: classroomController,
+                                    decoration: InputDecoration(hintText: "Sala"),
+                                    // The validator receives the text that the user has entered.
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Podaj nazwę sali';
+                                      }
+                                      if (value.length > 50) {
+                                        return 'Zbyt długa nazwa';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  //lecturer
+                                  TextFormField(
+                                    controller: lecturerController,
+                                    decoration:
+                                    InputDecoration(hintText: "Wykładowca"),
+                                    // The validator receives the text that the user has entered.
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Podaj wykładowce';
+                                      }
+                                      if (value.length > 75) {
+                                        return 'Zbyt długa nazwa';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          actions: <Widget>[
+                            FlatButton(
+                              onPressed: () async {
+                                if (_formKey.currentState.validate() &&
+                                    _timeBegin != "Rozpoczęcie") {
+                                  API.addExtraLesson(
+                                      subjectController.text,
+                                      chosenDay,
+                                      _timeBegin,
+                                      durationController.text,
+                                      chosenType,
+                                      classroomController.text,
+                                      lecturerController.text);
+                                  loadGroups();
+                                  Navigator.pop(context);
+                                  setState(() {
+                                  });
+                                }
+                              },
+                              child: Text("Dodaj"),
+                            ),
+                            FlatButton(
+                              onPressed: () async {
+                                loadGroups();
+                                Navigator.pop(context);
+                                setState(() {
+                                });
+                              },
+                              child: Text("Anuluj"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+              }),
+          new SpeedDialChild(
+            label: "Odśwież swój plan",
+              backgroundColor: Color.fromARGB(255, 128, 1, 0),
+            child: Icon(Icons.refresh),
+            onTap: () {
+              loadGroups();
+            }
+          )
+        ],
+      ),
     );
   }
 
@@ -155,8 +560,8 @@ class _DayViewState extends State{
         "${(minuteOfDay % 60).toString().padLeft(2, "0")}";
   }
 
-  MaterialColor eventToColor(String eventType){
-    switch (eventType){
+  MaterialColor eventToColor(String eventType) {
+    switch (eventType) {
       case "Projekt":
         return Colors.green;
       case "Lektorat":
@@ -169,39 +574,86 @@ class _DayViewState extends State{
   }
 
   Positioned _eventBuilder(
-      BuildContext context,
-      ItemPosition itemPosition,
-      ItemSize itemSize,
-      Event event,
-      ) {
+    BuildContext context,
+    ItemPosition itemPosition,
+    ItemSize itemSize,
+    Event event,
+  ) {
     return new Positioned(
       top: itemPosition.top,
       left: itemPosition.left,
       width: itemSize.width,
       height: itemSize.height,
+      child:
+        GestureDetector(
+        // When the child is tapped, show a snackbar.
+        onTap: () {
+          showDialog(context: context,
+          builder: (context){
+            String subject = event.title.split("\n")[1];
+            String lecturer = event.title.split("\n")[2];
+            String classroom = event.title.split("\n")[3];
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: Text("Co chcesz zrobić?"),
+                  content: new Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      RaisedButton(
+                        child: Text("Sprawdź plan sali\n" + classroom, textAlign: TextAlign.center),
+                        onPressed: () {
+                          loadClassroomTimetables(classroom);
+                          print("test");
+                        },
+                      ),
+                      RaisedButton(
+                        child: Text("Sprawdź plan wykładowcy\n" + lecturer, textAlign: TextAlign.center),
+                        onPressed: () {
+                          print("test");
+                          loadLecturerTimetables(lecturer);
+                        },
+                      )
+                    ],
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                      },
+                        child: Text("Anuluj"),
+                    )
+                  ],
+                );
+              },
+            );
+          });
+    },
       child: new Container(
         margin: new EdgeInsets.only(left: 1.0, right: 1.0, bottom: 1.0),
         padding: new EdgeInsets.all(3.0),
-        child:
-        new Text("${event.title}",),
+        child: new Text(
+          "${event.title}",
+        ),
         decoration: new BoxDecoration(
           color: Colors.white,
           border: Border.all(
-            color: eventToColor("${event.type}"), //                   <--- border color
+            color: eventToColor("${event.type}"),
+            //                   <--- border color
             width: 5.0,
           ),
-         ),
+        ),
       ),
-    );
+    ));
   }
 
   //Hours display
   Positioned _generatedTimeIndicatorBuilder(
-      BuildContext context,
-      ItemPosition itemPosition,
-      ItemSize itemSize,
-      int minuteOfDay,
-      ) {
+    BuildContext context,
+    ItemPosition itemPosition,
+    ItemSize itemSize,
+    int minuteOfDay,
+  ) {
     return new Positioned(
       top: itemPosition.top,
       left: itemPosition.left,
@@ -216,8 +668,9 @@ class _DayViewState extends State{
   }
 
   String dropdownValue = 'Sobota';
+
   //Day header
-  Widget _headerItemBuilder(BuildContext context, DateTime day){
+  Widget _headerItemBuilder(BuildContext context, DateTime day) {
     return new Container(
       child: new DropdownButton<String>(
         value: dropdownValue,
@@ -248,7 +701,7 @@ class _DayViewState extends State{
   }
 
   weekdayToAbbreviatedString(int weekday) {
-    switch(weekday){
+    switch (weekday) {
       case 1:
         return Locale.current['moday'];
         break;
@@ -274,16 +727,15 @@ class _DayViewState extends State{
         return Locale.current['error'];
     }
   }
-
 }
 
 //lines separating days
 Positioned _generatedDaySeparatorBuilder(
-    BuildContext context,
-    ItemPosition itemPosition,
-    ItemSize itemSize,
-    int daySeparatorNumber,
-    ) {
+  BuildContext context,
+  ItemPosition itemPosition,
+  ItemSize itemSize,
+  int daySeparatorNumber,
+) {
   return new Positioned(
     top: itemPosition.top,
     left: itemPosition.left,
@@ -300,11 +752,11 @@ Positioned _generatedDaySeparatorBuilder(
 
 //Lines separating each event
 Positioned _generatedSupportLineBuilder(
-    BuildContext context,
-    ItemPosition itemPosition,
-    double itemWidth,
-    int minuteOfDay,
-    ) {
+  BuildContext context,
+  ItemPosition itemPosition,
+  double itemWidth,
+  int minuteOfDay,
+) {
   return new Positioned(
     top: itemPosition.top,
     left: itemPosition.left,
@@ -331,32 +783,21 @@ class DisplayGroups extends StatefulWidget {
   }
 }
 
-class _DisplayGroupsState extends State{
+class _DisplayGroupsState extends State {
   var groupModel;
+
   void loadGroups() async {
     var groups = await API.getTimetable();
     setState(() {
       groupModel = Timetables.fromJson(groups);
     });
-    for(int i = 0; i<groupModel.group.timetable.length; i++) {
-      print(groupModel.group.timetable
-          .elementAt(i)
-          .day);
-      print(groupModel.group.timetable
-          .elementAt(i)
-          .hour);
-      print(groupModel.group.timetable
-          .elementAt(i)
-          .length);
-      print(groupModel.group.timetable
-          .elementAt(i)
-          .subject);
-      print(groupModel.group.timetable
-          .elementAt(i)
-          .classroom);
-      print(groupModel.group.timetable
-          .elementAt(i)
-          .lecturer);
+    for (int i = 0; i < groupModel.group.timetable.length; i++) {
+      print(groupModel.group.timetable.elementAt(i).day);
+      print(groupModel.group.timetable.elementAt(i).hour);
+      print(groupModel.group.timetable.elementAt(i).length);
+      print(groupModel.group.timetable.elementAt(i).subject);
+      print(groupModel.group.timetable.elementAt(i).classroom);
+      print(groupModel.group.timetable.elementAt(i).lecturer);
     }
   }
 
@@ -373,9 +814,8 @@ class _DisplayGroupsState extends State{
         appBar: AppBar(title: Text(Locale.current['schedule'])),
         drawer: SideDrawer(),
         body: Center(
-            child: DayView(),
-        )
-    );
+          child: DayView(),
+        ));
   }
 }
 
@@ -420,21 +860,21 @@ class Timetable {
 
   Timetable(
       {this.sId,
-        this.group,
-        this.day,
-        this.hour,
-        this.length,
-        this.subject,
-        this.type,
-        this.classroom,
-        this.lecturer,
-        this.iV});
+      this.group,
+      this.day,
+      this.hour,
+      this.length,
+      this.subject,
+      this.type,
+      this.classroom,
+      this.lecturer,
+      this.iV});
 
   Timetable.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     group = json['group'];
     day = json['day'];
-    hour = json['hour']*1.0;
+    hour = json['hour'] * 1.0;
     length = json['length'];
     subject = json['subject'];
     type = json['type'];
@@ -454,6 +894,115 @@ class Timetable {
     data['type'] = this.type;
     data['classroom'] = this.classroom;
     data['lecturer'] = this.lecturer;
+    data['__v'] = this.iV;
+    return data;
+  }
+}
+
+class ExtraLessons {
+  String msg;
+  List<Extralesson> extralesson;
+
+  ExtraLessons({this.msg, this.extralesson});
+
+  ExtraLessons.fromJson(Map<String, dynamic> json) {
+    msg = json['msg'];
+    if (json['extralesson'] != null) {
+      extralesson = new List<Extralesson>();
+      json['extralesson'].forEach((v) {
+        extralesson.add(new Extralesson.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['msg'] = this.msg;
+    if (this.extralesson != null) {
+      data['extralesson'] = this.extralesson.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+
+  String add0If0Minutes(String time) {
+    if (time.length == 1 && time.endsWith("0"))
+      return "00";
+    else
+      return time.toString();
+  }
+
+  List<String> toStringList() {
+    List<String> returnList = new List();
+
+    for (int i = 0; i < extralesson.length; i++) {
+      int hours = extralesson[i].hour.toInt();
+      double minutes = ((extralesson[i].hour - hours) * 100);
+      String stringMinutes = minutes.toStringAsFixed(0);
+
+      Duration startTime =
+          new Duration(hours: hours, minutes: int.parse(stringMinutes));
+      returnList.add(extralesson[i].subject +
+          " " +
+          extralesson[i].day +
+          " " +
+          startTime.inHours.toString() +
+          ":" +
+          add0If0Minutes(startTime.inMinutes.remainder(60).toString()));
+    }
+
+    returnList.sort((String a, String b) => a.compareTo(b)); //todo sort
+    return returnList;
+  }
+}
+
+class Extralesson {
+  String sId;
+  String subject;
+  String day;
+  double hour;
+  int length;
+  String type;
+  String classroom;
+  String lecturer;
+  String user;
+  int iV;
+
+  Extralesson(
+      {this.sId,
+      this.subject,
+      this.day,
+      this.hour,
+      this.length,
+      this.type,
+      this.classroom,
+      this.lecturer,
+      this.user,
+      this.iV});
+
+  Extralesson.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    subject = json['subject'];
+    day = json['day'];
+    hour = json['hour'] * 1.0;
+    length = json['length'];
+    type = json['type'];
+    classroom = json['classroom'];
+    lecturer = json['lecturer'];
+    user = json['user'];
+    iV = json['__v'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['subject'] = this.subject;
+    data['day'] = this.day;
+    data['hour'] = this.hour;
+    data['length'] = this.length;
+    data['type'] = this.type;
+    data['classroom'] = this.classroom;
+    data['lecturer'] = this.lecturer;
+    data['user'] = this.user;
     data['__v'] = this.iV;
     return data;
   }

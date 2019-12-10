@@ -613,6 +613,7 @@ class _DayViewState extends State {
                           Navigator.pop(context);
                           myMap.MapState.target = classroom; // Clear target
                           Navigator.of(context).pushNamed('/Map');
+
                         },
                       ),
                       RaisedButton(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as prefix0;
 
 import 'api.dart';
 import 'locale.dart';
@@ -13,8 +14,8 @@ class Grades extends StatefulWidget {
 
 class GradeModel {
   final String subject;
-  final String value;
-  final String ects;
+  final double value;
+  final double ects;
 
   GradeModel({
     this.subject,
@@ -24,7 +25,7 @@ class GradeModel {
 }
 
 class _DisplayGradeState extends State {
-  List gradeModelData = [];
+  List<GradeModel> gradeModelData = [];
   String average = "";
 
   void loadGrades() async {
@@ -37,22 +38,24 @@ class _DisplayGradeState extends State {
 
     grades = grades['grades'];
 
-    List gradesList = [];
-    var sum = 0;
+    List<GradeModel> gradesList = [];
+    var sum = 0.0;
+    var sumEcts = 0.0;
     for (int i = 0; i < grades.length; i++) {
       var grade = grades[i];
       gradesList.add(GradeModel(
           subject: grade['subject'],
-          ects: grade['ects'].toString(),
-          value: grade['value'].toString()));
+          ects: grade['ects'].toDouble(),
+          value: grade['value'].toDouble())); 
 
-      sum += grade['value'];
+      sum += grade['value'].toDouble() * grade['ects'].toDouble();
+      sumEcts += grade['ects'].toDouble();
     }
 
     // update state and force redraw
     setState(() {
       gradeModelData = gradesList;
-      average = (sum / grades.length).toString();
+      average = (sum / sumEcts).toString();
     });
   }
 
@@ -62,8 +65,15 @@ class _DisplayGradeState extends State {
     super.initState();
   }
 
+  void updateGrade(String subject, double ects, double grade) async {
+    // update in server
+    await API.updateGrade(subject, ects, grade);
+    loadGrades();
+  }
+
   void longPress(GradeModel grade) {
     print("Long press " + grade.subject);
+    var grade_value = grade.value;
     showDialog(
         context: context,
         builder: (context) {
@@ -78,12 +88,21 @@ class _DisplayGradeState extends State {
                         Expanded(child: RaisedButton(child: Text("+", textAlign: TextAlign.center),
                                   onPressed: () {
                                     print("Increse grade");
-                                  })),
-                        Expanded(child: Center(child: Text("2"))),
+                                    setState((){
+                                      grade_value += 0.5;
+                                    });
+                                  },
+                                  textColor: Colors.blue,)),
+                        Expanded(child: Center(child: Text(grade_value.toString()))),
                         Expanded(child: RaisedButton(child: Text("-", textAlign: TextAlign.center),
                                   onPressed: () {
                                     print("Decrease grade");
-                                  }))
+                                    setState((){
+                                      grade_value -= 0.5;
+                                    });
+                                  },
+                                  textColor: Colors.blue,
+                                  ))
                       ]),
                       RaisedButton(
                           child: Text("Usun", textAlign: TextAlign.center),
@@ -95,8 +114,9 @@ class _DisplayGradeState extends State {
                   FlatButton(
                     onPressed: () async {
                       Navigator.pop(context);
+                      updateGrade(grade.subject, grade.ects, grade_value);
                     },
-                    child: Text("Anuluj"),
+                    child: Text("Zapisz"),
                   )
                 ],
               );
@@ -138,13 +158,13 @@ class _DisplayGradeState extends State {
                                   Expanded(
                                       child: Center(
                                           child: Text(
-                                              gradeModelData[i].ects + "ECTS",
+                                              gradeModelData[i].ects.toString() + "ECTS",
                                               style: TextStyle(
                                                   color: Colors.grey))))
                                 ])),
                                 Expanded(
                                     child: Center(
-                                        child: Text(gradeModelData[i].value,
+                                        child: Text(gradeModelData[i].value.toString(),
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 20))))

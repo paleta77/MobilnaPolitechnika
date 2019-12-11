@@ -5,6 +5,7 @@ import 'side-drawer.dart';
 import 'user.dart';
 
 class Profile extends StatelessWidget {
+  String group = "abc";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,51 +37,120 @@ class Profile extends StatelessWidget {
                   child: Column(children: <Widget>[
             Container(height: 90, child: Center(child: Text("mail"))),
             Container(
-              height: 90,
-              child: RaisedButton(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return StatefulBuilder(
-                          builder: (context, setState) {
-                            return AlertDialog(
-                              title: Text("Wybierz grupe"),
-                              content: new Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[],
-                              ),
-                              actions: <Widget>[
-                                FlatButton(
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("Zapisz"),
-                                )
-                              ],
-                            );
-                          },
-                        );
-                      });
-                },
-                child: Text("choose group"),
-              ),
-              color: Colors.amber,
-            ),
+                child: Center(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                  Text(group),
+                  ButtonTheme(
+                      minWidth: 1,
+                      buttonColor: Color.fromRGBO(128, 1, 0, 1.0),
+                      child: RaisedButton(
+                        onPressed: () {
+
+                          var result = showSearch(
+                              context: context,
+                              delegate: _GroupSearchDelegate());
+                     },
+                        child: Text("✎"),
+                      )),
+                ]))),
             Container(
               height: 90,
               child: Center(child: Text("average")),
             )
           ])))
-        ])
+        ]));
+  }
+}
 
-        /*Center(
-          child: Text("name: " +
-              User.instance.name +
-              '\nmail: ' +
-              User.instance.mail +
-              '\ngroup: ' +
-              User.instance.group)),*/
+class _GroupSearchDelegate extends SearchDelegate<String> {
+  final List<String> _data = <String>["5sem infromatyka", "3sem informatyka"];
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      tooltip: 'Back',
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,
+      ),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final Iterable<String> suggestions = query.isEmpty
+        ? _data.take(10)
+        : _data.where((String i) => i.startsWith(query));
+
+    return _SuggestionList(
+      query: query,
+      suggestions: suggestions.toList(),
+      onSelected: (String suggestion) {
+        query = suggestion;
+        close(context, suggestion);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return null;
+  }
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return <Widget>[
+      if (query.isNotEmpty)
+        IconButton(
+          tooltip: 'Clear',
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            query = '';
+            showSuggestions(context);
+          },
+        ),
+    ];
+  }
+}
+
+class _SuggestionList extends StatelessWidget {
+  const _SuggestionList({this.suggestions, this.query, this.onSelected});
+
+  final List<String> suggestions;
+  final String query;
+  final ValueChanged<String> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (BuildContext context, int i) {
+        final String suggestion = suggestions[i];
+        return ListTile(
+          leading: const Icon(Icons.group),
+          title: RichText(
+            text: TextSpan(
+              text: suggestion.substring(0, query.length),
+              style:
+                  theme.textTheme.subhead.copyWith(fontWeight: FontWeight.bold),
+              children: <TextSpan>[
+                TextSpan(
+                  text: suggestion.substring(query.length),
+                  style: theme.textTheme.subhead,
+                ),
+              ],
+            ),
+          ),
+          onTap: () {
+            onSelected(suggestion);
+          },
         );
+      },
+    );
   }
 }

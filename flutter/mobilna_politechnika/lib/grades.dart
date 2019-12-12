@@ -143,6 +143,7 @@ class _DisplayGradeState extends State {
         floatingActionButton: FloatingActionButton(
             onPressed: () {
               print("Add grade");
+              //wywołać addGrade z api.dart w okienku
             },
             child: Icon(Icons.add),
             backgroundColor: Color.fromARGB(255, 128, 1, 0)),
@@ -168,14 +169,14 @@ class _DisplayGradeState extends State {
                                         gradeModelData[i].subject,
                                         style: TextStyle(fontSize: 18),
                                       ),
-                                  Text(
-                                      gradeModelData[i]
-                                              .ects
-                                              .toInt()
-                                              .toString() +
-                                          " ECTS",
-                                      style: TextStyle(color: Colors.grey))
-                                ])),
+                                      Text(
+                                          gradeModelData[i]
+                                                  .ects
+                                                  .toInt()
+                                                  .toString() +
+                                              " ECTS",
+                                          style: TextStyle(color: Colors.grey))
+                                    ])),
                                 Expanded(
                                     child: Center(
                                         child: Text(

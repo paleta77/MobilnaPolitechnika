@@ -23,6 +23,7 @@ class API {
   }
 
   static Future<bool> logout() async {
+    API.token = null;
     final response = await http.get('$URL/logout', headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token"
@@ -102,7 +103,7 @@ class API {
   }
 
   static Future<dynamic> getClassroomTimetable(String classroom) async {
-    classroom = classroom.replaceAll('/',"%2f");
+    classroom = classroom.replaceAll('/',"%2f"); // ugly hack :(
     final response = await http.get('$URL/room/$classroom/timetable', headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token"
@@ -133,7 +134,7 @@ class API {
       time = hour + "." + minutes[0];
     }
     print("time:" + time);
-    HttpClient httpClient = new HttpClient();
+    HttpClient httpClient = new HttpClient(); // why we cant just use http.delete() ?
     HttpClientRequest request =
         await httpClient.deleteUrl(Uri.parse('$URL/user/extralessons'));
     request.headers.set('content-type', 'application/json');

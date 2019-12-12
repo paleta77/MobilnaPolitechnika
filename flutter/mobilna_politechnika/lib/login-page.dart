@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api.dart';
 import 'locale.dart';
@@ -89,10 +90,20 @@ class LoginFormState extends State<LoginForm> {
                       loginController.text, passwordController.text);
 
                   if (isLogged) {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.setString('token', API.token);
                     var user = await API.userInfo();
                     var group = await API.getGroup();
 
-                    User(user['name'], user['mail'], group['field'].toString() + ' ' +  group['semester'].toString() + ' ' + group['mode'].toString());
+                    User(
+                        user['name'],
+                        user['mail'],
+                        group['field'].toString() +
+                            ' ' +
+                            group['semester'].toString() +
+                            ' ' +
+                            group['mode'].toString());
 
                     Navigator.of(context).pushNamedAndRemoveUntil(
                         '/Profile', (Route<dynamic> route) => false);

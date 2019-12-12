@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api.dart';
 import 'locale.dart';
@@ -96,11 +97,13 @@ class SideDrawer extends StatelessWidget {
         ListTile(
           title: Text(Locale.current['logout']),
           leading: Icon(Icons.arrow_back),
-          onTap: () {
+          onTap: () async {
             Navigator.pop(context);
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.clear();
             API.logout();
             Navigator.of(context)
-                .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+                .pushNamedAndRemoveUntil('/Login', (Route<dynamic> route) => false);
           },
         ),
       ],

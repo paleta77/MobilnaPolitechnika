@@ -118,10 +118,20 @@ class _MapSearchDelegate extends SearchDelegate<String> {
   Widget buildSuggestions(BuildContext context) {
     final Iterable<String> suggestions = query.isEmpty
         ? _data.take(10)
-        : _data.where((String i) => i.startsWith(query));
+        : _data.where((str) {
+            var result = query.toLowerCase().split(" ");
+            var input = str.toLowerCase();
+
+            bool flag = true;
+            for (var element in result) {
+              if (element.length > 0) if (!input.contains(element)) {
+                flag = false;
+              }
+            }
+            return flag;
+          });
 
     return _SuggestionList(
-      query: query,
       suggestions: suggestions.toList(),
       onSelected: (String suggestion) {
         query = suggestion;
@@ -153,34 +163,20 @@ class _MapSearchDelegate extends SearchDelegate<String> {
 }
 
 class _SuggestionList extends StatelessWidget {
-  const _SuggestionList({this.suggestions, this.query, this.onSelected});
+  const _SuggestionList({this.suggestions, this.onSelected});
 
   final List<String> suggestions;
-  final String query;
   final ValueChanged<String> onSelected;
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
     return ListView.builder(
       itemCount: suggestions.length,
       itemBuilder: (BuildContext context, int i) {
         final String suggestion = suggestions[i];
         return ListTile(
           leading: const Icon(Icons.room),
-          title: RichText(
-            text: TextSpan(
-              text: suggestion.substring(0, query.length),
-              style:
-                  theme.textTheme.subhead.copyWith(fontWeight: FontWeight.bold),
-              children: <TextSpan>[
-                TextSpan(
-                  text: suggestion.substring(query.length),
-                  style: theme.textTheme.subhead,
-                ),
-              ],
-            ),
-          ),
+          title: Text(suggestion),
           onTap: () {
             onSelected(suggestion);
           },

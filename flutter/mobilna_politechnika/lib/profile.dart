@@ -35,29 +35,29 @@ class Profile extends StatelessWidget {
           Expanded(
               child: SingleChildScrollView(
                   child: Column(children: <Widget>[
-            Container(height: 90, child: Center(child: Text("mail"))),
+            Container(height: 50, child: Center(child: Text(User.instance.mail))),
             Container(
+              height: 50,
                 child: Center(
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                  Text(group),
+                  Text(User.instance.group),
                   ButtonTheme(
                       minWidth: 1,
-                      buttonColor: Color.fromRGBO(128, 1, 0, 1.0),
-                      child: RaisedButton(
-                        onPressed: () {
-
-                          var result = showSearch(
+                      child: FlatButton(
+                        onPressed: () async {
+                          var result = await showSearch(
                               context: context,
                               delegate: _GroupSearchDelegate());
-                     },
-                        child: Text("✎"),
+                          print(result);
+                        },
+                        child: Icon(Icons.edit),
                       )),
                 ]))),
             Container(
-              height: 90,
-              child: Center(child: Text("average")),
+              height: 50,
+              child: Center(child: Text("average: 0.00")),
             )
           ])))
         ]));

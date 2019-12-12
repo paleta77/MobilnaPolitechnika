@@ -218,7 +218,7 @@
 			floor_idx = Math.min(Math.max(floor_idx, 0), 2);
 			floors[floor_idx].addTo(map);
 
-			button_floor.button.innerHTML = floor_idx;
+			button_floor.button.innerHTML = `<b>${floor_idx}</b>`;
 
 			if (floor_idx == 0)
 				button_down.disable();
@@ -290,6 +290,9 @@
 			map.closePopup();
 			$("#search-field").val("");
 			$("#search-field").focus();
+			if (typeof host !== 'undefined') {
+				host.postMessage('open_search');
+			}
 		}
 
 		function smallest(set) {
@@ -449,6 +452,11 @@
 			bigButtons();
 
 		changefloor(0);
+
+		if(typeof host !== 'undefined') {
+			$(".search").hide();
+			host.postMessage('Hello from js!');
+		}
 	</script>
 </body>
 

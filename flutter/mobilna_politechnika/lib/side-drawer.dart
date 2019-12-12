@@ -14,6 +14,7 @@ int taps = 0;
 class SideDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    taps = 0;
     return Drawer(
         child: ListView(
       padding: EdgeInsets.zero,
@@ -22,18 +23,23 @@ class SideDrawer extends StatelessWidget {
           accountName: Text(User.instance.name),
           accountEmail: Text(User.instance.mail),
           currentAccountPicture: GestureDetector(
-            onTap: () {
-              //do what you want here
+            onDoubleTap: () {
               taps++;
-              if (taps >= 8) {
+              if (taps >= 4) {
                 taps = 0;
                 Navigator.pop(context);
                 Navigator.push(context,
                     new MaterialPageRoute(builder: (context) => new Easter()));
               }
             },
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => new Profile()));
+            },
             child: new CircleAvatar(
-              backgroundColor: Color.fromARGB(255, 0, 0, 0),
+              backgroundColor: Colors.brown.shade800,
+              child: Text(User.instance.name[0].toUpperCase()),
             ),
           ),
         ),
@@ -73,6 +79,17 @@ class SideDrawer extends StatelessWidget {
                 context,
                 new MaterialPageRoute(
                     builder: (context) => new GroupTimetable()));
+          },
+        ),
+        ListTile(
+          title: Text("O aplikacji"),
+          leading: Icon(Icons.question_answer),
+          onTap: () {
+            showAboutDialog(
+                context: context,
+                applicationVersion: "0.0.0",
+                applicationLegalese:
+                    "Developed for PŁ course Aplikacje Mobilne and Chmura Obliczeniowa.");
           },
         ),
         Divider(),

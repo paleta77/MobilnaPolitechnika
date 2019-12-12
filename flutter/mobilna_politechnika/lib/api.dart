@@ -97,6 +97,22 @@ class API {
     return null;
   }
 
+  static Future<bool> deleteGrade(String subject) async {
+    http.Request rq = http.Request('DELETE', Uri.parse('$URL/grades'))
+      ..headers.addAll({
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      });
+
+      rq.body = json.encode({
+      'subject': subject,
+    });
+
+    http.StreamedResponse response = await http.Client().send(rq);
+
+    return null;
+  }
+
   static Future<dynamic> getGroup() async {
     final response = await http.get('$URL/group', headers: {
       "Content-Type": "application/json",

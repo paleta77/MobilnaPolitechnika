@@ -4,8 +4,14 @@ import 'locale.dart';
 import 'side-drawer.dart';
 import 'user.dart';
 
-class Profile extends StatelessWidget {
-  String group = "abc";
+class Profile extends StatefulWidget {
+  @override
+  _ProfileState createState() {
+    return new _ProfileState();
+  }
+}
+
+class _ProfileState extends State {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,30 +41,30 @@ class Profile extends StatelessWidget {
           Expanded(
               child: SingleChildScrollView(
                   child: Column(children: <Widget>[
-            Container(height: 50, child: Center(child: Text(User.instance.mail))),
             Container(
-              height: 50,
+                height: 50, child: Center(child: Text(User.instance.mail))),
+            Container(
+                height: 50,
                 child: Center(
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                  Text(User.instance.group),
-                  ButtonTheme(
-                      minWidth: 1,
-                      child: FlatButton(
-                        onPressed: () async {
-                          var result = await showSearch(
-                              context: context,
-                              delegate: _GroupSearchDelegate());
-                          print(result);
-                        },
-                        child: Icon(Icons.edit),
-                      )),
-                ]))),
-            Container(
-              height: 50,
-              child: Center(child: Text("average: 0.00")),
-            )
+                      Text(User.instance.group),
+                      ButtonTheme(
+                          minWidth: 1,
+                          child: FlatButton(
+                            onPressed: () async {
+                              var result = await showSearch(
+                                  context: context,
+                                  delegate: _GroupSearchDelegate());
+                              print(result);
+                              setState(() {
+                                User.instance.group = result;
+                              });
+                            },
+                            child: Icon(Icons.edit),
+                          )),
+                    ]))),
           ])))
         ]));
   }

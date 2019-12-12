@@ -112,6 +112,8 @@ class _DisplayGradeState extends State {
                     onPressed: () async {
                       Navigator.pop(context);
                       print("Remove " + grade.subject);
+                      API.deleteGrade(grade.subject);
+                      loadGrades();
                     },
                     child: Text("Usuń"),
                   ),
@@ -135,6 +137,10 @@ class _DisplayGradeState extends State {
         });
   }
 
+  final _formKey = GlobalKey<FormState>();
+  final subjectController = TextEditingController();
+  final ectsController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,6 +150,87 @@ class _DisplayGradeState extends State {
             onPressed: () {
               print("Add grade");
               //wywołać addGrade z api.dart w okienku
+
+              //API.addGrade(grade.subject, grade.ects, grade.value);
+              //loadGrades();
+
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return StatefulBuilder(
+                    builder: (context, setState) {
+                      return AlertDialog(
+                        title: Text("Dodaj swój przedmiot "),
+                        content: SingleChildScrollView(
+                          child: new Form(
+                            key: _formKey,
+                            child: new Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                //subject
+                                TextFormField(
+                                  controller: subjectController,
+                                  decoration: InputDecoration(
+                                      hintText: "Nazwa przedmiotu"),
+                                  // The validator receives the text that the user has entered.
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return 'Podaj nazwę przedmiotu';
+                                    }
+                                    if (value.length > 50) {
+                                      return 'Zbyt długa nazwa';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                //length
+                                TextFormField(
+                                  controller: ectsController,
+                                  decoration: InputDecoration(hintText: "ECTS"),
+                                  // The validator receives the text that the user has entered.
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return 'Podaj ilosc ECTS';
+                                    }
+                                    if (int.parse(value) >= 10) {
+                                      return 'Za duzo ects';
+                                    }
+                                    if (int.parse(value) < 0) {
+                                      return 'Za mało ects';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            onPressed: () async {
+                              if (_formKey.currentState.validate()) {
+                                print("subject " + subjectController.text);
+                                print("ects " + ectsController.text);
+                                API.addGrade(subjectController.text,
+                                    double.parse(ectsController.text), 5.0);
+                                loadGrades();
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: Text("Dodaj"),
+                          ),
+                          FlatButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                            },
+                            child: Text("Anuluj"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              );
             },
             child: Icon(Icons.add),
             backgroundColor: Color.fromARGB(255, 128, 1, 0)),

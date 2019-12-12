@@ -20,7 +20,7 @@ class LoginPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'PŁ',
+                          'MP',
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 125, color: Colors.white),
                         )

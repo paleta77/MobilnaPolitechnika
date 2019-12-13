@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as prefix0;
 
 import 'api.dart';
 import 'locale.dart';
@@ -13,8 +14,8 @@ class Grades extends StatefulWidget {
 
 class GradeModel {
   final String subject;
-  final String value;
-  final String ects;
+  final double value;
+  final double ects;
 
   GradeModel({
     this.subject,
@@ -24,7 +25,7 @@ class GradeModel {
 }
 
 class _DisplayGradeState extends State {
-  List gradeModelData = [];
+  List<GradeModel> gradeModelData = [];
   String average = "";
 
   void loadGrades() async {
@@ -37,22 +38,24 @@ class _DisplayGradeState extends State {
 
     grades = grades['grades'];
 
-    List gradesList = [];
-    var sum = 0;
+    List<GradeModel> gradesList = [];
+    var sum = 0.0;
+    var sumEcts = 0.0;
     for (int i = 0; i < grades.length; i++) {
       var grade = grades[i];
       gradesList.add(GradeModel(
           subject: grade['subject'],
-          ects: grade['ects'].toString(),
-          value: grade['value'].toString()));
+          ects: grade['ects'].toDouble(),
+          value: grade['value'].toDouble()));
 
-      sum += grade['value'];
+      sum += grade['value'].toDouble() * grade['ects'].toDouble();
+      sumEcts += grade['ects'].toDouble();
     }
 
     // update state and force redraw
     setState(() {
       gradeModelData = gradesList;
-      average = (sum / grades.length).toString();
+      average = (sum / sumEcts).toStringAsFixed(2);
     });
   }
 
@@ -62,8 +65,15 @@ class _DisplayGradeState extends State {
     super.initState();
   }
 
-  void longPress(GradeModel grade) {
+  void updateGrade(String subject, double ects, double grade) async {
+    // update in server
+    await API.updateGrade(subject, ects, grade);
+    loadGrades();
+  }
+
+  void gradeTap(GradeModel grade) {
     print("Long press " + grade.subject);
+    var gradeValue = grade.value;
     showDialog(
         context: context,
         builder: (context) {
@@ -75,23 +85,49 @@ class _DisplayGradeState extends State {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Row(children: <Widget>[
-                        Expanded(child: Text("1")),
-                        Expanded(child: Center(child: Text("2"))),
-                        Expanded(child: Text("3"))
-                      ]),
-                      RaisedButton(
-                          child: Text("Usun", textAlign: TextAlign.center),
+                        Expanded(
+                            child: FlatButton(
+                          child: Icon(Icons.remove),
                           onPressed: () {
-                            print("Remove " + grade.subject);
-                          }),
+                            setState(() {
+                              gradeValue -= 0.5;
+                            });
+                          },
+                        )),
+                        Expanded(
+                            child: Center(child: Text(gradeValue.toString()))),
+                        Expanded(
+                            child: FlatButton(
+                          child: Icon(Icons.add),
+                          onPressed: () {
+                            setState(() {
+                              gradeValue += 0.5;
+                            });
+                          },
+                        ))
+                      ]),
                     ]),
                 actions: <Widget>[
                   FlatButton(
                     onPressed: () async {
                       Navigator.pop(context);
+                      print("Remove " + grade.subject);
+                    },
+                    child: Text("Usuń"),
+                  ),
+                  FlatButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      updateGrade(grade.subject, grade.ects, gradeValue);
+                    },
+                    child: Text("Zapisz"),
+                  ),
+                  FlatButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
                     },
                     child: Text("Anuluj"),
-                  )
+                  ),
                 ],
               );
             },
@@ -106,39 +142,44 @@ class _DisplayGradeState extends State {
         drawer: SideDrawer(),
         floatingActionButton: FloatingActionButton(
             onPressed: () {
-              // Add your onPressed code here!
+              print("Add grade");
             },
-            child: Text("+"),
+            child: Icon(Icons.add),
             backgroundColor: Color.fromARGB(255, 128, 1, 0)),
         body: Column(children: <Widget>[
           Expanded(
               child: ListView.builder(
-            itemCount: gradeModelData.length,
+                  itemCount: gradeModelData.length,
                   itemBuilder: (context, int i) => Card(
                       child: InkWell(
-                          onLongPress: () => longPress(gradeModelData[i]),
                           onTap: () {
                             print("click " + gradeModelData[i].subject);
+                            gradeTap(gradeModelData[i]);
                           },
                           child: Container(
                               height: 70,
                               child: Row(children: <Widget>[
                                 Expanded(
-                                    child: Column(children: [
-                                  Expanded(
-                                      child: Center(
-                                          child:
-                                              Text(gradeModelData[i].subject))),
-                                  Expanded(
-                                      child: Center(
-                                          child: Text(
-                                              gradeModelData[i].ects + "ECTS",
-                                              style: TextStyle(
-                                                  color: Colors.grey))))
+                                    child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                      Text(
+                                        gradeModelData[i].subject,
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                  Text(
+                                      gradeModelData[i]
+                                              .ects
+                                              .toInt()
+                                              .toString() +
+                                          " ECTS",
+                                      style: TextStyle(color: Colors.grey))
                                 ])),
                                 Expanded(
                                     child: Center(
-                                        child: Text(gradeModelData[i].value,
+                                        child: Text(
+                                            gradeModelData[i].value.toString(),
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 20))))

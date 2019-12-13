@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
 class API {
-  static const String URL = 'http://192.168.0.14:8079';
+  static const String URL = 'http://77.55.208.10:8079';
   static String token;
 
   static Future<bool> login(String username, String password) async {

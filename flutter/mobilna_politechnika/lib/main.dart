@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
 
 import 'login-page.dart';
 import 'profile.dart';
@@ -8,7 +10,8 @@ import 'user.dart';
 import 'api.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+  /*WidgetsFlutterBinding.ensureInitialized();
   // hmm, maybe move it somewhere else?
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String data = prefs.getString('token');
@@ -29,7 +32,7 @@ void main() async {
     } else {
       API.token = null;
     }
-  }
+  }*/
   runApp(MyApp());
 }
 
@@ -46,7 +49,7 @@ class MyApp extends StatelessWidget {
           '/Map': (context) => Map(),
         },
         title: 'Mobilna politechnika',
-        theme: ThemeData(primaryColor: Color.fromARGB(255, 128, 1, 0)),
+        theme: ThemeData(primaryColor: Color.fromARGB(255, 128, 1, 0), fontFamily: 'Roboto',),
         home: (User.instance == null || API.token == null)
             ? LoginPage()
             : Profile());

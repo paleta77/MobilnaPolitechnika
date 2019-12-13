@@ -99,8 +99,8 @@ class SideDrawer extends StatelessWidget {
           leading: Icon(Icons.arrow_back),
           onTap: () async {
             Navigator.pop(context);
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.clear();
+            /*SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.clear();*/
             API.logout();
             Navigator.of(context)
                 .pushNamedAndRemoveUntil('/Login', (Route<dynamic> route) => false);

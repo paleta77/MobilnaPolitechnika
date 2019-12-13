@@ -90,9 +90,9 @@ class LoginFormState extends State<LoginForm> {
                       loginController.text, passwordController.text);
 
                   if (isLogged) {
-                    SharedPreferences prefs =
+                    /*SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                    prefs.setString('token', API.token);
+                    prefs.setString('token', API.token);*/
                     var user = await API.userInfo();
                     var group = await API.getGroup();
 

@@ -43,6 +43,7 @@ class _DisplayGradeState extends State {
     var sumEcts = 0.0;
     for (int i = 0; i < grades.length; i++) {
       var grade = grades[i];
+      if(grade['ects'] == null) grade['ects'] = 0;
       gradesList.add(GradeModel(
           subject: grade['subject'],
           ects: grade['ects'].toDouble(),

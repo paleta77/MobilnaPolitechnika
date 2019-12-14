@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'locale.dart';
+import 'user.dart';
 import 'side-drawer.dart';
 
 class Map extends StatefulWidget {
@@ -36,7 +37,7 @@ class MapState extends State<Map> {
             )
           ],
         ),
-        drawer: SideDrawer(),
+        drawer: User.instance == null ? null : SideDrawer(),
         body: Container(
           child: Column(
             children: <Widget>[

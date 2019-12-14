@@ -128,6 +128,13 @@ class LoginFormState extends State<LoginForm> {
                 }
               },
               child: Text(Locale.current['login_button']),
+            ),
+            FlatButton(
+              child: Text("Mapa kampusu"),
+              onPressed: () {
+                User.instance = null;
+                Navigator.of(context).pushNamed('/Map');
+              },
             )
           ],
         ));

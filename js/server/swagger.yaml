@@ -1,0 +1,123 @@
+swagger: "2.0"
+info:
+  description: "Mobilna Politechnika to aplikacja ..."
+  version: "0.0.0"
+  title: "Mobilna Politechnika"
+host: "77.55.208.10:8079"
+basePath: "/"
+tags:
+- name: "user"
+  description: "Operations about user"
+schemes:
+- "http"
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+paths:
+  /login:
+    post:
+      tags:
+      - "user"
+      summary: "User login"
+      description: "This can only be done by the logged in user."
+      operationId: "loginUser"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "User credentials"
+        required: true
+        schema:
+          properties:
+            username:
+              type: "string"
+            password:
+              type: "string"
+      responses:
+        default:
+          description: "Successful operation"
+  /register:
+    post:
+      tags:
+      - "user"
+      summary: "Create user"
+      description: "This can only be done by the logged in user."
+      operationId: "createUser"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          properties:
+            username:
+              type: "string"
+            email:
+              type: "string"
+            password:
+              type: "string"
+      responses:
+        default:
+          description: "Successful operation"
+  /logged:
+    get:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Is user logged"
+      description: "Check if user auth is correct"
+      operationId: "isLogged"
+      produces:
+      - "application/json"
+      responses:
+        default:
+          description: "Successful operation"
+  /logout:
+    get:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Logs out current logged in user session"
+      description: ""
+      operationId: "logoutUser"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /user:
+    get:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Get base user info"
+      description: "This can only be done by the logged in user."
+      operationId: "userInfo"
+      produces:
+      - "application/json"
+      responses:
+        default:
+          description: "Successful operation"
+
+definitions:
+  User:
+    type: "object"
+    properties:
+      _id:
+        type: "string"
+      name:
+        type: "string"
+      email:
+        type: "string"

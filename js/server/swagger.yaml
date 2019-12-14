@@ -3,7 +3,6 @@ info:
   description: "Mobilna Politechnika to aplikacja ..."
   version: "0.0.0"
   title: "Mobilna Politechnika"
-host: "77.55.208.10:8079"
 basePath: "/"
 tags:
 - name: "user"
@@ -110,6 +109,315 @@ paths:
       responses:
         default:
           description: "Successful operation"
+
+  /user/extralessons:
+    get:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Get user extra lessons"
+      description: "This can only be done by the logged in user."
+      operationId: "getExtra"
+      produces:
+      - "application/json"
+      responses:
+        default:
+          description: "Successful operation"
+    put:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Add extra lesson to user"
+      description: "This can only be done by the logged in user."
+      operationId: "addExtra"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          properties:
+            subject:
+              type: "string"
+            day:
+              type: "number"
+            hour:
+              type: "number"
+            length:
+              type: "number"
+            type:
+              type: "string"
+            classroom:
+              type: "string"
+            lecturer:
+              type: "string"
+      responses:
+        default:
+          description: "Successful operation"
+
+    delete:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Remove user extra lesson"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteExtra"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          properties:
+            subject:
+              type: "string"
+            day:
+              type: "number"
+            hour:
+              type: "number"
+      responses:
+        default:
+          description: "Successful operation"
+
+  /grades:
+    get:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Get user grades"
+      description: "This can only be done by the logged in user."
+      operationId: "getGrades"
+      produces:
+      - "application/json"
+      responses:
+        default:
+          description: "Successful operation"
+    put:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Add grade to user"
+      description: "This can only be done by the logged in user."
+      operationId: "addGrades"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          properties:
+            subject:
+              type: "string"
+            ects:
+              type: "number"
+            value:
+              type: "number"
+      responses:
+        default:
+          description: "Successful operation"    
+    post:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Update user grade"
+      description: "This can only be done by the logged in user."
+      operationId: "updateGrades"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          properties:
+            subject:
+              type: "string"
+            ects:
+              type: "number"
+            value:
+              type: "number"
+      responses:
+        default:
+          description: "Successful operation"
+
+    delete:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Remove user grade"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteGrades"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          properties:
+            subject:
+              type: "string"
+            ects:
+              type: "number"
+            value:
+              type: "number"
+      responses:
+        default:
+          description: "Successful operation"
+  /group:
+    get:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Get user group"
+      description: "This can only be done by the logged in user."
+      operationId: "getGroup"
+      produces:
+      - "application/json"
+      responses:
+        default:
+          description: "Successful operation"
+
+    put:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Set user group"
+      description: "This can only be done by the logged in user."
+      operationId: "setGroup"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          properties:
+            groupid:
+              type: "string"
+      responses:
+        default:
+          description: "Successful operation"
+
+  /group/timetable:
+    get:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "User group schedule"
+      description: "Get user group schedule"
+      operationId: "getGroupSch"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+  
+  /lecturer/{lecturerName}/timetable:
+    get:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Lecturer scedhule"
+      description: "Get lecturer schedule"
+      operationId: "getLecSch"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "lecturerName"
+        in: "path"
+        description: "name of lectutere"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+
+
+  /room/{roomName}/timetable:
+    get:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Room schedule"
+      description: "Get room schedule"
+      operationId: "getRoomSch"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "roomName"
+        in: "path"
+        description: "name of room"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+
+
+
+  /search/group:
+    get:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Search groups"
+      description: "Search groups"
+      operationId: "sGroup"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "text"
+        in: "query"
+        description: "Query text"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+
+  /search/timetable:
+    get:
+      security:
+        - Bearer: []
+      tags:
+      - "user"
+      summary: "Search user schedule"
+      description: "Search user schedule"
+      operationId: "sGroup"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "text"
+        in: "query"
+        description: "Query text"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
 
 definitions:
   User:

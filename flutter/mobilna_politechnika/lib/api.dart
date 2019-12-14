@@ -66,20 +66,52 @@ class API {
     return null;
   }
 
-  static Future<dynamic> updateGrade(String subject, double ects, double value) async {
-    final response = await http.post(
-      '$URL/grades', 
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
-      },
-      body: json.encode({'subject': subject, 'ects': ects, 'value': value})
-    );
+  static Future<dynamic> addGrade(
+      String subject, double ects, double value) async {
+    final response = await http.put('$URL/grades',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: json.encode({'subject': subject, 'ects': ects, 'value': value}));
 
     if (response.statusCode == 200) {
       var body = json.decode(response.body);
       return body;
     }
+
+    return null;
+  }
+
+  static Future<dynamic> updateGrade(
+      String subject, double ects, double value) async {
+    final response = await http.post('$URL/grades',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: json.encode({'subject': subject, 'ects': ects, 'value': value}));
+
+    if (response.statusCode == 200) {
+      var body = json.decode(response.body);
+      return body;
+    }
+
+    return null;
+  }
+
+  static Future<bool> deleteGrade(String subject) async {
+    http.Request rq = http.Request('DELETE', Uri.parse('$URL/grades'))
+      ..headers.addAll({
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      });
+
+      rq.body = json.encode({
+      'subject': subject,
+    });
+
+    http.StreamedResponse response = await http.Client().send(rq);
 
     return null;
   }

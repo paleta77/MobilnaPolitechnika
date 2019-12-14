@@ -406,7 +406,7 @@ paths:
       - "user"
       summary: "Search user schedule"
       description: "Search user schedule"
-      operationId: "sGroup"
+      operationId: "tGroup"
       produces:
       - "application/json"
       parameters:

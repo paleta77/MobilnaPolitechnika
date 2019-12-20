@@ -3,11 +3,12 @@
     <form class="border mb-2 p-3">
       <div class="form-group">
         <label for="subjectInput">Subject</label>
-        <input type="text" class="form-control" id="subjectInput" placeholder="Enter subject" />
+        <input type="text" class="form-control" id="subjectInput" placeholder="Enter subject" v-model="newSubject"/>
       </div>
+       <!-- @Agnieszka Add ects input field -->
       <div class="form-group">
         <label for="valueInput">Value</label>
-        <select class="form-control" id="valueInput">
+        <select class="form-control" id="valueInput" v-model="newValue">
           <option>2</option>
           <option>3</option>
           <option>4</option>
@@ -17,7 +18,7 @@
       <button
         type="submit"
         class="btn btn-primary"
-        onclick="addGrade();"
+        @click="addGrade();"
         data-toggle="modal"
         data-target="#changeGradeModal"
       >Add</button>
@@ -35,6 +36,7 @@
         <tr v-for="(grade, index) in grades" v-bind:key="grade.subject">
           <td>{{index+1}}</td>
           <td>{{grade.subject}}</td>
+          <!-- @Agnieszka Add ects display -->
           <td>{{grade.value}}</td>
           <td>
             <button class="btn btn-primary" @click="openChangeGrade(grade);">✎</button>
@@ -68,11 +70,14 @@
         </div>
       </form>
        </b-modal>
+
+       <!-- @Agnieszka Display average grade -->
   </div>
 </template>
 
 <script>
 import API from "../api.js";
+import User from "../user.js";
 
 export default {
   name: "GradesPage",
@@ -80,8 +85,11 @@ export default {
     return {
       grades: [{ subject: "abc", value: 5 }],
       showChangeModal: false,
-      changeSubject: "",
-      changeValue: ""
+      newSubject: "", // holds subject name from Add panel
+      newValue: "",
+      changeSubject: "", // holds subject name from change grade
+      changeValue: "",
+      // @Agnieszka add average variable declaration
     };
   },
   methods: {
@@ -89,41 +97,40 @@ export default {
       console.log("test");
       let grades = await API.getGrades(); //lista z obiektami
       this.grades = grades;
+      // @Agnieszka calc average
       console.log("Load grade");
     },
 
     openChangeGrade: function(grade) {
       console.log(grade);
       this.showChangeModal = true;
-      this.$bvModal.show("changeGradeModal").then(value => {
-            console.log("zmakneice " + value)
-          })
+      this.changeSubject = grade.subject;
+      this.changeValue = grade.value;
+      this.$bvModal.show("changeGradeModal");
     },
 
-    deleteGrade: async function() {
-      await api.deleteGrade(username, subject);
-      loadGrade();
+    deleteGrade: async function(grade) {
+      await API.deleteGrade(User.name, grade.subject);
+      this.loadGrades();
       console.log("Delete grade");
     },
 
     changeGrade: async function() {
-      await api.changeGrade(username, subject, grade);
-      loadGrade();
+      await API.changeGrade(User.name, this.changeSubject, /* @Agnieszka ects here*/1, this.changeValue);
+      this.loadGrades();
       console.log("Change grade");
     },
 
     addGrade: async function() {
-      let subject = $("#subjectInput").value();
-      let value = parseFloat($("#valueInput").val());
-      await api.addGrade(username, subject, value);
-      loadGrades();
+      await API.addGrade(User.name, this.newSubject, /* @Agnieszka ects here*/1, this.newValue);
+      this.loadGrades();
     }
   }
 };
 
 /*
 async function loadGrades() {
-    let grades = await api.getGrades(username);
+    let grades = await API.getGrades(username);
 
     $('#gradesTable tbody').empty();
 
@@ -153,7 +160,7 @@ async function loadGrades() {
 }
 
 async function deleteGrade(subject) {
-    await api.deleteGrade(username, subject);
+    await API.deleteGrade(username, subject);
     loadGrades();
 }
 window.deleteGrade = deleteGrade;
@@ -161,7 +168,7 @@ window.deleteGrade = deleteGrade;
 async function addGrade() {
     let subject = $('#subjectInput').val();
     let value = parseFloat($('#valueInput').val());
-    await api.addGrade(username, subject, value);
+    await API.addGrade(username, subject, value);
     loadGrades();
 }
 window.addGrade = addGrade;
@@ -174,7 +181,7 @@ function openChangeGrade(subject, value) {
 window.openChangeGrade = openChangeGrade;
 
 async function changeGrade() {
-    await api.changeGrade(username, $('#subjectInputChange').val(), $('#valueInputChange').val());
+    await API.changeGrade(username, $('#subjectInputChange').val(), $('#valueInputChange').val());
     $('#changeGradeModal').modal('hide');
     loadGrades();
 }

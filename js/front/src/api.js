@@ -20,6 +20,7 @@ export default {
     login: async function (username, password) {
         const data = await http.post('login', { username: username, password: password });
         this.msg = data.msg;
+        console.log(this.msg);
         if (data.msg == 'OK') {
             localStorage.setItem('token', data.token);
             this.token = data.token;
@@ -85,8 +86,8 @@ export default {
         return false;
     },
 
-    addGrade: async function (username, subject, value) {
-        const data = await http.put('grades', { user: username, subject: subject, value: value }, { "Authorization": `Bearer ${this.token}` });
+    addGrade: async function (username, subject, ects, value) {
+        const data = await http.put('grades', { user: username, subject: subject, ects: ects, value: value }, { "Authorization": `Bearer ${this.token}` });
         this.msg = data.msg;
         if (data.msg == 'OK') {
             return true;
@@ -94,8 +95,8 @@ export default {
         return false;
     },
 
-    changeGrade: async function (username, subject, value) {
-        const data = await http.post('grades', { user: username, subject: subject, value: value }, { "Authorization": `Bearer ${this.token}` });
+    changeGrade: async function (username, subject, ects, value) {
+        const data = await http.post('grades', { user: username, subject: subject, ects: ects, value: value }, { "Authorization": `Bearer ${this.token}` });
         this.msg = data.msg;
         if (data.msg == 'OK') {
             return true;

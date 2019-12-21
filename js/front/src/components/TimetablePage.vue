@@ -1,7 +1,21 @@
  <template>
   <div id="tablePage">
     <div id="ttable">
-      <div id="timetable"></div>
+      <div id="timetable">
+        <div
+          v-for="(el, index) in table"
+          v-bind:key="el.el.subject"
+          class="card"
+          :style="{ top:el.y +'px',left:el.x +'px', 'min-height':el.height +'px'}"
+        >
+          <div class="header">{{el.start}} - {{el.end}}</div>
+            {{el.el.subject}}
+            <br/>
+            <b>{{el.el.lecturer ? el.el.lecturer : ""}}</b>
+            <br />
+            <a href="#"><b>{{el.el.classroom}}</b></a>
+        </div>
+      </div>
       <div id="header">
         <h3>Sobota</h3>
         <h3>Niedziela</h3>
@@ -48,8 +62,66 @@
 </template>
 
 <script>
+import API from "../api.js";
+
 export default {
-  name: "TimetablePage"
+  name: "TimetablePage",
+  data: function() {
+    return {
+      table: []
+    };
+  },
+  methods: {
+    zero2: function(number) {
+      return ("" + number).padStart(2, "0");
+    },
+
+    strhour: function(hour) {
+      return this.zero2(hour[0]) + ":" + this.zero2(hour[1]);
+    },
+
+    addMinutes: function(date, minutes) {
+      return [
+        (date[0] + (date[1] + minutes) / 60) | 0,
+        (date[1] + minutes) % 60 | 0
+      ];
+    },
+
+    toHour: function(float) {
+      return [float | 0, ((float % 1) * 100) | 0];
+    },
+
+    loadTable: async function() {
+      let timetable = await API.timetable();
+
+      if (timetable === null) {
+        return;
+      }
+
+      this.table = [];
+
+      let i = 1;
+      for (let el of timetable) {
+        let start = this.toHour(el.hour);
+        let end = this.addMinutes(start, el.length);
+
+        let x = (el.day == "Sobota" ? 0 : 430) + 100;
+        let y = 80 * (start[0] + start[1] / 60 - 8) + 12 + 20;
+        let height = (8 * el.length) / 6;
+
+        this.table.push({
+          x: x,
+          y: y,
+          height: height,
+          start: this.strhour(start),
+          end: this.strhour(end),
+          el: el
+        });
+        i++;
+      }
+      console.log(this.table);
+    }
+  }
 };
 </script>
 

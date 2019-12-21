@@ -1,13 +1,12 @@
 <template>
   <div id="app">
     <Loading v-if="isLoading" />
-    <LoginForm v-if="!isLogged" @logged="logged"/>
-    <!--<RegisterForm />-->
-    <div v-if="isLogged">
+    <LoginForm v-if="!isLogged" @logged="logged" />
+    <div v-show="isLogged">
       <Navbar />
       <HomePage />
-      <GradesPage ref="gradesRef"/>
-      <TimetablePage />
+      <GradesPage ref="gradesRef" />
+      <TimetablePage ref="tableRef" />
     </div>
   </div>
 </template>
@@ -39,10 +38,8 @@ export default {
   methods: {
     logged: async function() {
       this.isLogged = true;
-      setTimeout(() => {
-        console.log("after 1 sec");
-        this.$refs.gradesRef.loadGrades()
-      }, 1000);
+      this.$refs.gradesRef.loadGrades();
+      this.$refs.tableRef.loadTable();
     }
   },
   data: function() {

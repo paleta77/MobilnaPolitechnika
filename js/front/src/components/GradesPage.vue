@@ -5,7 +5,22 @@
         <label for="subjectInput">Subject</label>
         <input type="text" class="form-control" id="subjectInput" placeholder="Enter subject" v-model="newSubject"/>
       </div>
-       <!-- @Agnieszka Add ects input field -->
+      <div class="form-group">
+        <label for="ectsInput">ECTS</label>
+        <select class="form-control" id="ectsInput" v-model="newEcts">
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+          <option>8</option>
+          <option>9</option>
+          <option>10</option>        
+        </select>
+      </div>
       <div class="form-group">
         <label for="valueInput">Value</label>
         <select class="form-control" id="valueInput" v-model="newValue">
@@ -28,6 +43,7 @@
         <tr>
           <th>#</th>
           <th>Subject</th>
+          <th>ECTS</th>
           <th>Grade</th>
           <th>Action</th>
         </tr>
@@ -36,12 +52,19 @@
         <tr v-for="(grade, index) in grades" v-bind:key="grade.subject">
           <td>{{index+1}}</td>
           <td>{{grade.subject}}</td>
-          <!-- @Agnieszka Add ects display -->
+          <td>{{grade.ects}}</td>
           <td>{{grade.value}}</td>
           <td>
             <button class="btn btn-primary" @click="openChangeGrade(grade);">✎</button>
             <button class="btn btn-primary" @click="deleteGrade(grade);">🗑</button>
           </td>
+        </tr>
+        <tr class="bg-light">
+          <td></td>
+          <td></td>
+          <td><b>Srednia: {{average}}</b></td>
+          <td></td>
+          <td></td>
         </tr>
       </tbody>
     </table>
@@ -60,6 +83,22 @@
           />
         </div>
         <div class="form-group">
+        <label for="ectsInputChange">ECTS</label>
+        <select class="form-control" id="ectsInputChange" v-model="changeEcts">
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+          <option>8</option>
+          <option>9</option>
+          <option>10</option>        
+        </select>
+      </div>
+        <div class="form-group">
           <label for="valueInputChange">Value</label>
           <select class="form-control" id="valueInputChange" v-model="changeValue">
             <option>2</option>
@@ -70,8 +109,6 @@
         </div>
       </form>
        </b-modal>
-
-       <!-- @Agnieszka Display average grade -->
   </div>
 </template>
 
@@ -83,13 +120,15 @@ export default {
   name: "GradesPage",
   data: function() {
     return {
-      grades: [{ subject: "abc", value: 5 }],
+      grades: [],
       showChangeModal: false,
       newSubject: "", // holds subject name from Add panel
+      newEcts: "",
       newValue: "",
       changeSubject: "", // holds subject name from change grade
+      changeEcts: "",
       changeValue: "",
-      // @Agnieszka add average variable declaration
+      average: 0,
     };
   },
   methods: {
@@ -97,7 +136,13 @@ export default {
       console.log("test");
       let grades = await API.getGrades(); //lista z obiektami
       this.grades = grades;
-      // @Agnieszka calc average
+      let sum = 0;
+      let number = 0;
+      for (let grade of grades) {
+        sum += parseFloat(grade.ects) * parseFloat(grade.value);
+        number += parseFloat(grade.ects);
+      }
+      this.average = sum / number;
       console.log("Load grade");
     },
 
@@ -105,6 +150,7 @@ export default {
       console.log(grade);
       this.showChangeModal = true;
       this.changeSubject = grade.subject;
+      this.changeEcts = grade.ects;
       this.changeValue = grade.value;
       this.$bvModal.show("changeGradeModal");
     },
@@ -116,13 +162,13 @@ export default {
     },
 
     changeGrade: async function() {
-      await API.changeGrade(User.name, this.changeSubject, /* @Agnieszka ects here*/1, this.changeValue);
+      await API.changeGrade(User.name, this.changeSubject, this.changeEcts, this.changeValue);
       this.loadGrades();
       console.log("Change grade");
     },
 
     addGrade: async function() {
-      await API.addGrade(User.name, this.newSubject, /* @Agnieszka ects here*/1, this.newValue);
+      await API.addGrade(User.name, this.newSubject, this.newEcts, this.newValue);
       this.loadGrades();
     }
   }

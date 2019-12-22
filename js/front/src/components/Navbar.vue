@@ -16,13 +16,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" href="#" @click="click">Home</a>
+          <a class="nav-link" href="#" @click="click('home')">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" @click="click">Grades</a>
+          <a class="nav-link" href="#" @click="click('grades')">Grades</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" @click="click">Timetable</a>
+          <a class="nav-link" href="#" @click="click('table')">Timetable</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#" @click="click">Map</a>
@@ -41,8 +41,9 @@
 export default {
   name: "Navbar",
   methods: {
-    click: function() {
-      console.log("click pressed!");
+    click: function(page) {
+      console.log("click pressed! " +page);
+      this.$emit('select', page);
     },
     logout: function() {
       console.log("logout pressed!");

@@ -75,24 +75,28 @@ class UserClass {
         this.save(function (err) {
             if (err) return cb(err);
             cb(null, true);
-          });
+        });
     }
 
     getGrades(cb) {
-        grade.find({ 'user': this.name }, 'value subject ects', (err, grades) => {
+        grade.find({ 'user': this.name }, (err, grades) => {
             if (err) cb(err);
             cb(null, grades);
         });
     }
 
-    addGrade(subject, ects, value, cb) {
+    addGrade(semester, subject, ects, value, cb) {
         if (!subject || !value || !ects) {
             return cb("Fields cannot be empty!");
         }
         if (value > 5 || value < 2 || ects < 0 || ects > 10) {
             return cb("Value outside 2 and 5 or ects improper value!");
         }
-        grade.create({ 'user': this.name, 'subject': subject, 'ects' : ects, 'value': value }, (err) => {
+        if (semester < 1 || semester > 20) {
+            return cb("Wrong semester!");
+        }
+
+        grade.create({ 'semester': semester, 'user': this.name, 'subject': subject, 'ects': ects, 'value': value }, (err) => {
             if (err) cb(err);
             cb(null, true);
         });
@@ -105,7 +109,7 @@ class UserClass {
         if (value > 5 || value < 2 || ects < 0 || ects > 10) {
             return cb("Value outside 2 and 5 or ects improper value!");
         }
-        grade.updateOne({ 'user': this.name, 'subject': subject }, { $set: { 'etcs' : ects, 'value': value } }, (err) => {
+        grade.updateOne({ 'user': this.name, 'subject': subject }, { $set: { 'etcs': ects, 'value': value } }, (err) => {
             if (err) cb(err);
             cb(null, true);
         });
@@ -118,25 +122,27 @@ class UserClass {
         });
     }
 
-    deleteExtraLesson(subject, day, hour, cb){
-        extralesson.deleteOne({'subject': subject, 'day': day, 'hour':hour, 'user': this.name}, function (err) {
+    deleteExtraLesson(subject, day, hour, cb) {
+        extralesson.deleteOne({ 'subject': subject, 'day': day, 'hour': hour, 'user': this.name }, function (err) {
             if (err) cb(err);
             cb(null, true);
         });
     }
 
-    addExtraLesson(subject, day, hour, length, type, classroom, lecturer,cb) {
-        extralesson.create({'subject': subject, 'day': day, 'user': this.name,
-            'hour':hour, 'length':length, 'type':type, 'classroom':classroom,
-             'lecturer':lecturer}, (err) => {
+    addExtraLesson(subject, day, hour, length, type, classroom, lecturer, cb) {
+        extralesson.create({
+            'subject': subject, 'day': day, 'user': this.name,
+            'hour': hour, 'length': length, 'type': type, 'classroom': classroom,
+            'lecturer': lecturer
+        }, (err) => {
             if (err) cb(err);
             cb(null, true);
         });
     }
 
     getExtraLessons(cb) {
-        extralesson.find({'user': this.name}, (err, _extraLessons) => {
-            if(err) return cb(err);
+        extralesson.find({ 'user': this.name }, (err, _extraLessons) => {
+            if (err) return cb(err);
             cb(null, _extraLessons);
         });
     }
@@ -151,5 +157,5 @@ module.exports = user;
 // remove me after testing
 user.findOne({ 'name': 'admin' }, (err, _user) => {
     if (err || !_user) return;
-    setTimeout(()=>auth.sessions['123'] = _user, 1000);
+    setTimeout(() => auth.sessions['123'] = _user, 1000);
 });

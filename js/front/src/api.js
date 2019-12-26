@@ -77,8 +77,8 @@ export default {
         return null;
     },
 
-    deleteGrade: async function (username, subject) {
-        const data = await http.del('grades', { user: username, subject: subject }, { "Authorization": `Bearer ${this.token}` });
+    deleteGrade: async function (username, semester, subject) {
+        const data = await http.del('grades', { user: username, semester:semester, subject: subject }, { "Authorization": `Bearer ${this.token}` });
         this.msg = data.msg;
         if (data.msg == 'OK') {
             return true;
@@ -86,8 +86,8 @@ export default {
         return false;
     },
 
-    addGrade: async function (username, subject, ects, value) {
-        const data = await http.put('grades', { user: username, subject: subject, ects: ects, value: value }, { "Authorization": `Bearer ${this.token}` });
+    addGrade: async function (username, semester, subject, ects, value) {
+        const data = await http.put('grades', { user: username, semester:semester, subject: subject, ects: ects, value: value }, { "Authorization": `Bearer ${this.token}` });
         this.msg = data.msg;
         if (data.msg == 'OK') {
             return true;
@@ -95,8 +95,8 @@ export default {
         return false;
     },
 
-    changeGrade: async function (username, subject, ects, value) {
-        const data = await http.post('grades', { user: username, subject: subject, ects: ects, value: value }, { "Authorization": `Bearer ${this.token}` });
+    changeGrade: async function (username, semester, subject, ects, value) {
+        const data = await http.post('grades', { user: username, semester:semester, subject: subject, ects: ects, value: value }, { "Authorization": `Bearer ${this.token}` });
         this.msg = data.msg;
         if (data.msg == 'OK') {
             return true;

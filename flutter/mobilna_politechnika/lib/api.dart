@@ -67,13 +67,18 @@ class API {
   }
 
   static Future<dynamic> addGrade(
-      String subject, double ects, double value) async {
+      int semester, String subject, double ects, double value) async {
     final response = await http.put('$URL/grades',
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token"
         },
-        body: json.encode({'subject': subject, 'ects': ects, 'value': value}));
+        body: json.encode({
+          'semester': semester,
+          'subject': subject,
+          'ects': ects,
+          'value': value
+        }));
 
     if (response.statusCode == 200) {
       var body = json.decode(response.body);
@@ -84,13 +89,18 @@ class API {
   }
 
   static Future<dynamic> updateGrade(
-      String subject, double ects, double value) async {
+      int semester, String subject, double ects, double value) async {
     final response = await http.post('$URL/grades',
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token"
         },
-        body: json.encode({'subject': subject, 'ects': ects, 'value': value}));
+        body: json.encode({
+          'semester': semester,
+          'subject': subject,
+          'ects': ects,
+          'value': value
+        }));
 
     if (response.statusCode == 200) {
       var body = json.decode(response.body);
@@ -100,14 +110,15 @@ class API {
     return null;
   }
 
-  static Future<bool> deleteGrade(String subject) async {
+  static Future<bool> deleteGrade(int semester, String subject) async {
     http.Request rq = http.Request('DELETE', Uri.parse('$URL/grades'))
       ..headers.addAll({
         "Content-Type": "application/json",
         "Authorization": "Bearer $token"
       });
 
-      rq.body = json.encode({
+    rq.body = json.encode({
+      'semester': semester,
       'subject': subject,
     });
 
@@ -141,10 +152,11 @@ class API {
   }
 
   static Future<dynamic> getLecturerTimetable(String lecturer) async {
-    final response = await http.get('$URL/lecturer/$lecturer/timetable', headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token"
-    });
+    final response = await http.get('$URL/lecturer/$lecturer/timetable',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        });
 
     if (response.statusCode == 200) {
       var body = json.decode(response.body);
@@ -153,7 +165,7 @@ class API {
   }
 
   static Future<dynamic> getClassroomTimetable(String classroom) async {
-    classroom = classroom.replaceAll('/',"%2f"); // ugly hack :(
+    classroom = classroom.replaceAll('/', "%2f"); // ugly hack :(
     final response = await http.get('$URL/room/$classroom/timetable', headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token"
@@ -184,7 +196,8 @@ class API {
       time = hour + "." + minutes[0];
     }
     print("time:" + time);
-    HttpClient httpClient = new HttpClient(); // why we cant just use http.delete() ?
+    HttpClient httpClient =
+        new HttpClient(); // why we cant just use http.delete() ?
     HttpClientRequest request =
         await httpClient.deleteUrl(Uri.parse('$URL/user/extralessons'));
     request.headers.set('content-type', 'application/json');
@@ -200,11 +213,10 @@ class API {
 
   static Future<dynamic> addExtraLesson(String subject, String day, String hour,
       String length, String type, String classroom, String lecturer) async {
-
     String time;
-    if(hour.endsWith("0")){
+    if (hour.endsWith("0")) {
       time = hour.split(":")[0] + "." + hour.split(":")[1][0];
-    } else{
+    } else {
       time = hour.split(":")[0] + "." + hour.split(":")[1];
     }
 

@@ -1,9 +1,43 @@
  <template>
   <div id="gradesPage">
+    <div class="form-group">
+      <label for="ectsInput">
+        <h2>Semestr</h2>
+      </label>
+      <select class="form-control" id="ectsInput" v-model="semester" v-on:change="selectSem">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+        <option>11</option>
+        <option>12</option>
+        <option>13</option>
+        <option>14</option>
+        <option>15</option>
+        <option>16</option>
+        <option>17</option>
+        <option>18</option>
+        <option>19</option>
+        <option>20</option>
+      </select>
+    </div>
+
     <form class="border mb-2 p-3">
       <div class="form-group">
         <label for="subjectInput">Subject</label>
-        <input type="text" class="form-control" id="subjectInput" placeholder="Enter subject" v-model="newSubject"/>
+        <input
+          type="text"
+          class="form-control"
+          id="subjectInput"
+          placeholder="Enter subject"
+          v-model="newSubject"
+        />
       </div>
       <div class="form-group">
         <label for="ectsInput">ECTS</label>
@@ -18,7 +52,7 @@
           <option>7</option>
           <option>8</option>
           <option>9</option>
-          <option>10</option>        
+          <option>10</option>
         </select>
       </div>
       <div class="form-group">
@@ -62,7 +96,9 @@
         <tr class="bg-light">
           <td></td>
           <td></td>
-          <td><b>Srednia: {{average}}</b></td>
+          <td>
+            <b>Srednia: {{average}}</b>
+          </td>
           <td></td>
           <td></td>
         </tr>
@@ -83,21 +119,21 @@
           />
         </div>
         <div class="form-group">
-        <label for="ectsInputChange">ECTS</label>
-        <select class="form-control" id="ectsInputChange" v-model="changeEcts">
-          <option>0</option>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-          <option>6</option>
-          <option>7</option>
-          <option>8</option>
-          <option>9</option>
-          <option>10</option>        
-        </select>
-      </div>
+          <label for="ectsInputChange">ECTS</label>
+          <select class="form-control" id="ectsInputChange" v-model="changeEcts">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+          </select>
+        </div>
         <div class="form-group">
           <label for="valueInputChange">Value</label>
           <select class="form-control" id="valueInputChange" v-model="changeValue">
@@ -108,7 +144,7 @@
           </select>
         </div>
       </form>
-       </b-modal>
+    </b-modal>
   </div>
 </template>
 
@@ -120,6 +156,7 @@ export default {
   name: "GradesPage",
   data: function() {
     return {
+      semester: 1,
       grades: [],
       showChangeModal: false,
       newSubject: "", // holds subject name from Add panel
@@ -128,17 +165,21 @@ export default {
       changeSubject: "", // holds subject name from change grade
       changeEcts: "",
       changeValue: "",
-      average: 0,
+      average: 0
     };
   },
   methods: {
+    selectSem: async function() {
+      this.loadGrades();
+    },
     loadGrades: async function() {
-      console.log("test");
       let grades = await API.getGrades(); //lista z obiektami
-      this.grades = grades;
+
+      this.grades = grades.filter(v => v.semester == parseInt(this.semester));
+
       let sum = 0;
       let number = 0;
-      for (let grade of grades) {
+      for (let grade of this.grades) {
         sum += parseFloat(grade.ects) * parseFloat(grade.value);
         number += parseFloat(grade.ects);
       }
@@ -156,19 +197,31 @@ export default {
     },
 
     deleteGrade: async function(grade) {
-      await API.deleteGrade(User.name, grade.subject);
+      await API.deleteGrade(User.name, this.semester, grade.subject);
       this.loadGrades();
       console.log("Delete grade");
     },
 
     changeGrade: async function() {
-      await API.changeGrade(User.name, this.changeSubject, this.changeEcts, this.changeValue);
+      await API.changeGrade(
+        User.name,
+        this.semester,
+        this.changeSubject,
+        this.changeEcts,
+        this.changeValue
+      );
       this.loadGrades();
       console.log("Change grade");
     },
 
     addGrade: async function() {
-      await API.addGrade(User.name, this.newSubject, this.newEcts, this.newValue);
+      await API.addGrade(
+        User.name,
+        this.semester,
+        this.newSubject,
+        this.newEcts,
+        this.newValue
+      );
       this.loadGrades();
     }
   }

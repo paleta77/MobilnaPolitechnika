@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart' as prefix0;
 
 import 'api.dart';
 import 'locale.dart';
@@ -27,6 +26,7 @@ class GradeModel {
 class _DisplayGradeState extends State {
   List<GradeModel> gradeModelData = [];
   String average = "";
+  int semester = 1;
 
   void loadGrades() async {
     var grades = await API.getGrades();
@@ -43,10 +43,12 @@ class _DisplayGradeState extends State {
     var sumEcts = 0.0;
     for (int i = 0; i < grades.length; i++) {
       var grade = grades[i];
-      gradesList.add(GradeModel(
-          subject: grade['subject'],
-          ects: grade['ects'].toDouble(),
-          value: grade['value'].toDouble()));
+      if (grade['semester'] == semester) {
+        gradesList.add(GradeModel(
+            subject: grade['subject'],
+            ects: grade['ects'].toDouble(),
+            value: grade['value'].toDouble()));
+      }
 
       sum += grade['value'].toDouble() * grade['ects'].toDouble();
       sumEcts += grade['ects'].toDouble();
@@ -67,7 +69,7 @@ class _DisplayGradeState extends State {
 
   void updateGrade(String subject, double ects, double grade) async {
     // update in server
-    await API.updateGrade(subject, ects, grade);
+    await API.updateGrade(semester, subject, ects, grade);
     loadGrades();
   }
 
@@ -112,7 +114,7 @@ class _DisplayGradeState extends State {
                     onPressed: () async {
                       Navigator.pop(context);
                       print("Remove " + grade.subject);
-                      API.deleteGrade(grade.subject);
+                      API.deleteGrade(semester, grade.subject);
                       loadGrades();
                     },
                     child: Text("Usuń"),
@@ -211,7 +213,7 @@ class _DisplayGradeState extends State {
                               if (_formKey.currentState.validate()) {
                                 print("subject " + subjectController.text);
                                 print("ects " + ectsController.text);
-                                API.addGrade(subjectController.text,
+                                API.addGrade(semester, subjectController.text,
                                     double.parse(ectsController.text), 5.0);
                                 loadGrades();
                                 Navigator.pop(context);

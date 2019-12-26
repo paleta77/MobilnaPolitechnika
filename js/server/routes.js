@@ -42,7 +42,6 @@ exports = module.exports = function (app) {
         });
     });
 
-
     // get user info
     app.get('/user', auth.restrict, (req, res) => {
         let user = req.session.user;
@@ -84,7 +83,7 @@ exports = module.exports = function (app) {
 
     // add new grade to user
     app.put('/grades', auth.restrict, (req, res) => {
-        req.session.user.addGrade(req.body.subject, req.body.ects, req.body.value, (err, _res) => {
+        req.session.user.addGrade(req.body.semester, req.body.subject, req.body.ects, req.body.value, (err, _res) => {
             if (err) return res.json({ msg: err });
             res.json({ msg: "OK" });
         });
@@ -92,7 +91,7 @@ exports = module.exports = function (app) {
 
     //update grade
     app.post('/grades', auth.restrict, (req, res) => {
-        req.session.user.updateGrade(req.body.subject, req.body.ects, req.body.value, (err, _res) => {
+        req.session.user.updateGrade(req.body.semester, req.body.subject, req.body.ects, req.body.value, (err, _res) => {
             if (err) return res.json({ msg: err });
             res.json({ msg: "OK" });
         });
@@ -100,7 +99,7 @@ exports = module.exports = function (app) {
 
     // delete grade
     app.delete('/grades', auth.restrict, (req, res) => {
-        req.session.user.deleteGrade(req.body.subject, (err, _res) => {
+        req.session.user.deleteGrade(req.body.semester, req.body.subject, (err, _res) => {
             if (err) return res.json({ msg: err });
             res.json({ msg: "OK" });
         });

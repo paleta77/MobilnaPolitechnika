@@ -3,10 +3,10 @@
     <Loading v-if="isLoading" />
     <LoginForm v-if="!isLogged" @logged="logged" />
     <div v-show="isLogged">
-      <Navbar />
-      <HomePage />
-      <GradesPage ref="gradesRef" />
-      <TimetablePage ref="tableRef" />
+      <Navbar @select="changePage"/>
+      <HomePage v-show="currentPage=='home'" />
+      <GradesPage ref="gradesRef" v-show="currentPage=='grades'"  />
+      <TimetablePage ref="tableRef" v-show="currentPage=='table'"  />
     </div>
   </div>
 </template>
@@ -36,6 +36,10 @@ export default {
     TimetablePage
   },
   methods: {
+    changePage(page) {
+      this.currentPage = page;
+
+    },
     logged: async function() {
       this.isLogged = true;
       this.$refs.gradesRef.loadGrades();
@@ -45,7 +49,8 @@ export default {
   data: function() {
     return {
       isLoading: false,
-      isLogged: false
+      isLogged: false,
+      currentPage: "home",
     };
   }
 };

@@ -166,11 +166,6 @@ class _DisplayGradeState extends State {
         floatingActionButton: FloatingActionButton(
             onPressed: () {
               print("Add grade");
-              //wywołać addGrade z api.dart w okienku
-
-              //API.addGrade(grade.subject, grade.ects, grade.value);
-              //loadGrades();
-
               showDialog(
                 context: context,
                 builder: (context) {
@@ -248,47 +243,53 @@ class _DisplayGradeState extends State {
                   );
                 },
               );
+              loadGrades();
             },
             child: Icon(Icons.add),
             backgroundColor: Color.fromARGB(255, 128, 1, 0)),
         body: Column(children: <Widget>[
           Expanded(
-              child: ListView.builder(
-                  itemCount: gradeModelData.length,
-                  itemBuilder: (context, int i) => Card(
-                      child: InkWell(
-                          onTap: () {
-                            print("click " + gradeModelData[i].subject);
-                            gradeTap(gradeModelData[i]);
-                          },
-                          child: Container(
-                              height: 70,
-                              child: Row(children: <Widget>[
-                                Expanded(
-                                    child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                      Text(
-                                        gradeModelData[i].subject,
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                      Text(
-                                          gradeModelData[i]
-                                                  .ects
-                                                  .toInt()
-                                                  .toString() +
-                                              " ECTS",
-                                          style: TextStyle(color: Colors.grey))
-                                    ])),
-                                Expanded(
-                                    child: Center(
-                                        child: Text(
-                                            gradeModelData[i].value.toString(),
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20))))
-                              ])))))),
+              child: gradeModelData.length == 0
+                  ? Text("Brak ocen", style: TextStyle(fontSize: 20))
+                  : ListView.builder(
+                      itemCount: gradeModelData.length,
+                      itemBuilder: (context, int i) => Card(
+                          child: InkWell(
+                              onTap: () {
+                                print("click " + gradeModelData[i].subject);
+                                gradeTap(gradeModelData[i]);
+                              },
+                              child: Container(
+                                  height: 70,
+                                  child: Row(children: <Widget>[
+                                    Expanded(
+                                        child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                          Text(
+                                            gradeModelData[i].subject,
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                          Text(
+                                              gradeModelData[i]
+                                                      .ects
+                                                      .toInt()
+                                                      .toString() +
+                                                  " ECTS",
+                                              style:
+                                                  TextStyle(color: Colors.grey))
+                                        ])),
+                                    Expanded(
+                                        child: Center(
+                                            child: Text(
+                                                gradeModelData[i]
+                                                    .value
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20))))
+                                  ])))))),
           Container(
               height: 25,
               color: Color.fromARGB(255, 230, 230, 230),

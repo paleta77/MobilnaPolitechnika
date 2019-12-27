@@ -48,10 +48,10 @@ class _DisplayGradeState extends State {
             subject: grade['subject'],
             ects: grade['ects'].toDouble(),
             value: grade['value'].toDouble()));
-      }
 
-      sum += grade['value'].toDouble() * grade['ects'].toDouble();
-      sumEcts += grade['ects'].toDouble();
+        sum += grade['value'].toDouble() * grade['ects'].toDouble();
+        sumEcts += grade['ects'].toDouble();
+      }
     }
 
     // update state and force redraw
@@ -146,7 +146,22 @@ class _DisplayGradeState extends State {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(Locale.current['grades'])),
+        appBar: AppBar(title: Text(Locale.current['grades']), actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: (str) {
+              semester = int.parse(str);
+              loadGrades();
+              print(str);
+            },
+            itemBuilder: (BuildContext context) {
+              return List<PopupMenuItem<String>>.generate(
+                  10,
+                  (int index) => new PopupMenuItem<String>(
+                      value: (index + 1).toString(),
+                      child: Text("Sem " + (index + 1).toString())));
+            },
+          ),
+        ]),
         drawer: SideDrawer(),
         floatingActionButton: FloatingActionButton(
             onPressed: () {

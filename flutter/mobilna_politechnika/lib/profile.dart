@@ -57,10 +57,12 @@ class _ProfileState extends State {
                               var result = await showSearch(
                                   context: context,
                                   delegate: _GroupSearchDelegate());
-                              print(result);
-                              setState(() {
-                                User.instance.group = result;
-                              });
+                              if (result != null) {
+                                print(result);
+                                setState(() {
+                                  User.instance.group = result;
+                                });
+                              }
                             },
                             child: Icon(Icons.edit),
                           )),

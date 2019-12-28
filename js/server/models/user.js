@@ -102,12 +102,15 @@ class UserClass {
         });
     }
 
-    updateGrade(subject, ects, value, cb) {
+    updateGrade(semester, subject, ects, value, cb) {
         if (!subject || !value || !ects) {
             return cb("Fields cannot be empty!");
         }
         if (value > 5 || value < 2 || ects < 0 || ects > 10) {
             return cb("Value outside 2 and 5 or ects improper value!");
+        }
+        if (semester < 1 || semester > 20) {
+            return cb("Wrong semester!");
         }
         grade.updateOne({ 'user': this.name, 'subject': subject }, { $set: { 'etcs': ects, 'value': value } }, (err) => {
             if (err) cb(err);
@@ -115,7 +118,10 @@ class UserClass {
         });
     }
 
-    deleteGrade(subject, cb) {
+    deleteGrade(semester, subject, cb) {
+        if (semester < 1 || semester > 20) {
+            return cb("Wrong semester!");
+        }
         grade.deleteOne({ 'user': this.name, 'subject': subject }, (err) => {
             if (err) cb(err);
             cb(null, true);

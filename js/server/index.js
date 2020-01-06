@@ -19,6 +19,6 @@ app.use('/api-docs', swagger.serve, swagger.setup(YAML.load('./swagger.yaml')));
 
 require('./routes.js')(app);
 
-app.listen(8079, () => {
-  console.log('Server listening on port 8079!');
+app.listen(8080, () => {
+  console.log('Server listening on port 8080!');
 });

@@ -91,7 +91,7 @@
 
 		let map = L.map('map').setView([51.747, 19.455], 19);
 		let bounds = [[51.747 - 0.003, 19.455 - 0.006], [51.747 + 0.003, 19.455 + 0.005]];
-		L.tileLayer('https://c.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		L.tileLayer('https://plmap.blob.core.windows.net/images/tiles/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
 			attributionControl: false,
 			maxNativeZoom: 19,
@@ -453,7 +453,7 @@
 
 		changefloor(0);
 
-		if(typeof host !== 'undefined') {
+		if (typeof host !== 'undefined') {
 			$(".search").hide();
 			host.postMessage('Hello from js!');
 		}

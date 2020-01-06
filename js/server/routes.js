@@ -1,13 +1,7 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-
 const user = require('./models/user.js');
-const grade = require('./models/grade.js');
 const group = require('./models/group.js');
 const table = require('./models/timetable.js');
 const auth = require('./auth.js');
-const extralesson = require('./models/extralesson.js');
 
 exports = module.exports = function (app) {
 

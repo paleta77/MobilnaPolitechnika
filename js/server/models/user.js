@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const sendgrid = require('@sendgrid/mail');
 const group = require('./group.js');
 const auth = require('../auth.js');

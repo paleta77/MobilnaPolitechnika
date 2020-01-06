@@ -44,6 +44,9 @@ paths:
               type: "string"
             password:
               type: "string"
+          example:
+              username: "admin"
+              password: "1234"
       responses:
         default:
           description: "Successful operation"
@@ -69,6 +72,10 @@ paths:
               type: "string"
             password:
               type: "string"
+          example:
+              username: "new_user_123"
+              email: "name@name.name"
+              password: "strong_password"
       responses:
         default:
           description: "Successful operation"
@@ -144,7 +151,7 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Created user object"
+        description: "Created user extra lesson object"
         required: true
         schema:
           properties:
@@ -162,6 +169,14 @@ paths:
               type: "string"
             lecturer:
               type: "string"
+          example:
+            subject: "Matematyka"
+            day: 1
+            hour: 8.15
+            length: 45
+            type: "Lecture"
+            classroom: "CTI 201/B19"
+            lecturer: "Somebody"
       responses:
         default:
           description: "Successful operation"
@@ -189,6 +204,10 @@ paths:
               type: "number"
             hour:
               type: "number"
+          example:
+            subject: "Matematyka"
+            day: 1
+            hour: 8.15
       responses:
         default:
           description: "Successful operation"
@@ -224,12 +243,19 @@ paths:
         required: true
         schema:
           properties:
+            semester:
+              type: "number"
             subject:
               type: "string"
             ects:
               type: "number"
             value:
               type: "number"
+          example:
+            semester: 1
+            subject: "Matematyka 1"
+            ects: 6
+            value: 4
       responses:
         default:
           description: "Successful operation"    
@@ -250,12 +276,19 @@ paths:
         required: true
         schema:
           properties:
+            semester:
+              type: "number"
             subject:
               type: "string"
             ects:
               type: "number"
             value:
               type: "number"
+          example:
+            semester: 1
+            subject: "Matematyka 1"
+            ects: 6
+            value: 4
       responses:
         default:
           description: "Successful operation"
@@ -277,12 +310,19 @@ paths:
         required: true
         schema:
           properties:
+            semester:
+              type: "number"
             subject:
               type: "string"
             ects:
               type: "number"
             value:
               type: "number"
+          example:
+            semester: 1
+            subject: "Matematyka 1"
+            ects: 6
+            value: 4
       responses:
         default:
           description: "Successful operation"
@@ -319,7 +359,7 @@ paths:
         schema:
           properties:
             groupid:
-              type: "string"
+              $ref: "#/definitions/Group/properties/_id"
       responses:
         default:
           description: "Successful operation"

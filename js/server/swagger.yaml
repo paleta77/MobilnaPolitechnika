@@ -427,5 +427,54 @@ definitions:
         type: "string"
       name:
         type: "string"
-      email:
+      mail:
         type: "string"
+      password:
+        type: "string"
+      group:
+        $ref: "#/definitions/Group/properties/_id"
+  Grade:
+    type: "object"
+    properties:
+      _id:
+        type: "string"
+      semester: 
+        type: "number"
+      value:
+        type: "number"
+      subject:
+        type: "string"
+      ects:
+        type: "number"
+      user:
+        $ref: "#/definitions/User/properties/name"
+  Group:
+    type: "object"
+    properties:
+      _id:
+        type: "string"
+      field:
+        type: "string"
+      semester:
+        type: "number"
+      mode:
+        type: "string"
+  Extralesson:
+    type: "object"
+    properties:
+      day:
+        type: "String"
+      hour:
+        type: "Number"
+      length:
+        type: "Number"
+      subject:
+        type: "String"
+      type:
+        type: "String"
+      classroom:
+        type: "String"
+      lecturer:
+        type: "String"
+      user:
+        $ref: "#/definitions/User/properties/name"

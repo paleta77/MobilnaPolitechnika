@@ -5,8 +5,14 @@ info:
   title: "Mobilna Politechnika"
 basePath: "/"
 tags:
-- name: "user"
+- name: "User"
   description: "Operations about user"
+- name: "Grades"
+  description: "Operations about grades"
+- name: "Schedule"
+  description: "Operations about schedule"
+- name: "Search"
+  description: "Operations about search"
 schemes:
 - "http"
 
@@ -20,7 +26,7 @@ paths:
   /login:
     post:
       tags:
-      - "user"
+      - "User"
       summary: "User login"
       description: "This can only be done by the logged in user."
       operationId: "loginUser"
@@ -43,7 +49,7 @@ paths:
   /register:
     post:
       tags:
-      - "user"
+      - "User"
       summary: "Create user"
       description: "This can only be done by the logged in user."
       operationId: "createUser"
@@ -70,7 +76,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "User"
       summary: "Is user logged"
       description: "Check if user auth is correct"
       operationId: "isLogged"
@@ -84,7 +90,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "User"
       summary: "Logs out current logged in user session"
       description: ""
       operationId: "logoutUser"
@@ -100,7 +106,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "User"
       summary: "Get base user info"
       description: "This can only be done by the logged in user."
       operationId: "userInfo"
@@ -115,7 +121,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "Schedule"
       summary: "Get user extra lessons"
       description: "This can only be done by the logged in user."
       operationId: "getExtra"
@@ -128,7 +134,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "Schedule"
       summary: "Add extra lesson to user"
       description: "This can only be done by the logged in user."
       operationId: "addExtra"
@@ -163,7 +169,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "Schedule"
       summary: "Remove user extra lesson"
       description: "This can only be done by the logged in user."
       operationId: "deleteExtra"
@@ -191,7 +197,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "Grades"
       summary: "Get user grades"
       description: "This can only be done by the logged in user."
       operationId: "getGrades"
@@ -204,7 +210,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "Grades"
       summary: "Add grade to user"
       description: "This can only be done by the logged in user."
       operationId: "addGrades"
@@ -230,7 +236,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "Grades"
       summary: "Update user grade"
       description: "This can only be done by the logged in user."
       operationId: "updateGrades"
@@ -257,7 +263,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "Grades"
       summary: "Remove user grade"
       description: "This can only be done by the logged in user."
       operationId: "deleteGrades"
@@ -284,7 +290,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "User"
       summary: "Get user group"
       description: "This can only be done by the logged in user."
       operationId: "getGroup"
@@ -298,7 +304,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "User"
       summary: "Set user group"
       description: "This can only be done by the logged in user."
       operationId: "setGroup"
@@ -322,7 +328,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "Schedule"
       summary: "User group schedule"
       description: "Get user group schedule"
       operationId: "getGroupSch"
@@ -337,8 +343,8 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
-      summary: "Lecturer scedhule"
+      - "Schedule"
+      summary: "Lecturer schedule"
       description: "Get lecturer schedule"
       operationId: "getLecSch"
       produces:
@@ -359,7 +365,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "Schedule"
       summary: "Room schedule"
       description: "Get room schedule"
       operationId: "getRoomSch"
@@ -375,14 +381,12 @@ paths:
         200:
           description: "successful operation"
 
-
-
   /search/group:
     get:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "Search"
       summary: "Search groups"
       description: "Search groups"
       operationId: "sGroup"
@@ -403,7 +407,7 @@ paths:
       security:
         - Bearer: []
       tags:
-      - "user"
+      - "Search"
       summary: "Search user schedule"
       description: "Search user schedule"
       operationId: "tGroup"

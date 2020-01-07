@@ -1,0 +1,66 @@
+@startuml
+
+
+' hide the spot
+hide circle
+
+
+entity "User" as user {
+  *_id : String
+  --
+  name: String
+  mail: String
+  password: String
+  group: String(_id)
+}
+
+entity "Group" as group {
+  *_id : String
+  --
+  field: String
+  semester: Number
+  mode: String
+}
+
+entity "Grade" as grade {
+  *_id : String
+  --
+  semester: Number
+  value: Number
+  subject: String
+  ects: Number
+  user: String(_id)
+}
+
+entity "Timetable" as ttable {
+  *_id : String
+  --
+  group: String(_id)
+  day: String
+  hour: Number
+  length: Number
+  subject: String
+  type: String
+  classroom: String
+  lecturer: String
+}
+
+entity "ExtraLesson" as extra {
+  *_id : String
+  --
+  day: String
+  hour: Number
+  length: Number
+  subject: String
+  type: String,
+  classroom: String
+  lecturer: String
+  user: String(_id)
+}
+
+user }o..|| group
+user ||..o{ grade
+ttable }o--|| group
+extra }o--|| user
+
+@enduml

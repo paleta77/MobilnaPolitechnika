@@ -3,7 +3,7 @@
     <Loading v-if="isLoading" />
     <LoginForm v-if="!isLogged" @logged="logged" />
     <div v-show="isLogged">
-      <Navbar @select="changePage"/>
+      <Navbar @select="changePage" @logout="logout"/>
       <HomePage v-show="currentPage=='home'" />
       <GradesPage ref="gradesRef" v-show="currentPage=='grades'"  />
       <TimetablePage ref="tableRef" v-show="currentPage=='table'"  />
@@ -44,6 +44,10 @@ export default {
       this.isLogged = true;
       this.$refs.gradesRef.loadGrades();
       this.$refs.tableRef.loadTable();
+    },
+    logout: async function() {
+      this.isLogged = false;
+      await API.logout();
     }
   },
   data: function() {

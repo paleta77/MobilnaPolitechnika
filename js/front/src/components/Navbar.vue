@@ -43,8 +43,7 @@ export default {
       this.$emit('select', page);
     },
     logout: function() {
-      console.log("logout pressed!");
-      // TODO: Implement!
+      this.$emit('logout', page);
     }
   }
 };

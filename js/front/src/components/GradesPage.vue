@@ -173,7 +173,7 @@ export default {
       this.loadGrades();
     },
     loadGrades: async function() {
-      let grades = await API.getGrades(); //lista z obiektami
+      let grades = await API.getGrades();
 
       this.grades = grades.filter(v => v.semester == parseInt(this.semester));
 
@@ -184,7 +184,6 @@ export default {
         number += parseFloat(grade.ects);
       }
       this.average = sum / number;
-      console.log("Load grade");
     },
 
     openChangeGrade: function(grade) {
@@ -199,7 +198,6 @@ export default {
     deleteGrade: async function(grade) {
       await API.deleteGrade(User.name, this.semester, grade.subject);
       this.loadGrades();
-      console.log("Delete grade");
     },
 
     changeGrade: async function() {
@@ -211,7 +209,6 @@ export default {
         this.changeValue
       );
       this.loadGrades();
-      console.log("Change grade");
     },
 
     addGrade: async function() {
@@ -226,65 +223,6 @@ export default {
     }
   }
 };
-
-/*
-async function loadGrades() {
-    let grades = await API.getGrades(username);
-
-    $('#gradesTable tbody').empty();
-
-    let sum = 0;
-    let i = 1;
-    for (let grade of grades) {
-        $('#gradesTable tbody').append(`
-        <tr>
-            <td>${i}</td>
-            <td>${grade.subject}</td>
-            <td>${grade.value}</td>
-            <td>
-                <button class="btn btn-primary" onclick="openChangeGrade('${grade.subject}', ${grade.value});">✎</button>
-                <button class="btn btn-primary" onclick="deleteGrade('${grade.subject}');">🗑</button>
-            </td>
-        </tr>`);
-        i++;
-        sum += grade.value;
-    }
-
-    if (i == 1) {
-        $('#gradesTable tbody').append(`<tr><td colspan="4">None</td></tr>`);
-    } else {
-        let average = sum / (i - 1);
-        $('#gradesTable tbody').append(`<tr><td colspan="4">average: ${average}</td></tr>`);
-    }
-}
-
-async function deleteGrade(subject) {
-    await API.deleteGrade(username, subject);
-    loadGrades();
-}
-window.deleteGrade = deleteGrade;
-
-async function addGrade() {
-    let subject = $('#subjectInput').val();
-    let value = parseFloat($('#valueInput').val());
-    await API.addGrade(username, subject, value);
-    loadGrades();
-}
-window.addGrade = addGrade;
-
-function openChangeGrade(subject, value) {
-    $('#changeGradeModal').modal('show');
-    $('#subjectInputChange').val(subject);
-    $('#valueInputChange').val(value);
-}
-window.openChangeGrade = openChangeGrade;
-
-async function changeGrade() {
-    await API.changeGrade(username, $('#subjectInputChange').val(), $('#valueInputChange').val());
-    $('#changeGradeModal').modal('hide');
-    loadGrades();
-}
-window.changeGrade = changeGrade;*/
 </script>
 
 <style scoped>

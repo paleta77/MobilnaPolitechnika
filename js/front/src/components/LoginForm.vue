@@ -60,37 +60,6 @@ export default {
 };
 </script>
 
-
-/*async function login() {
-    $("#loading").show();
-
-    username = $("#username").val();
-
-    if (await api.login(username, $("#password").val())) {
-        localStorage.setItem('username', username);
-        showHide();
-    }
-    else {
-        alert(api.msg);
-    }
-
-    $("#loading").hide();
-};
-window.login = login;
-
-async function logout() {
-    $("#loading").show();
-
-    await api.logout();
-    localStorage.removeItem('username');
-    username = null;
-    showHide();
-
-    $("#loading").hide();
-};
-window.logout = logout;*/
-
-
 <style scoped>
 .login-form {
   width: 340px;

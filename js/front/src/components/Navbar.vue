@@ -29,8 +29,6 @@
         </li>
       </ul>
       <form class="form-inline my-2 my-lg-0">
-        <!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
         <button class="btn btn-primary ml-5 my-2 my-sm-0" @click="logout">Logout</button>
       </form>
     </div>
@@ -42,11 +40,11 @@ export default {
   name: "Navbar",
   methods: {
     click: function(page) {
-      console.log("click pressed! " +page);
       this.$emit('select', page);
     },
     logout: function() {
       console.log("logout pressed!");
+      // TODO: Implement!
     }
   }
 };

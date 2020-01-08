@@ -39,6 +39,7 @@ export default {
   methods: {
     register: function() {
       console.log("Please register!");
+      // TODO: Implement!
     }
   }
 };

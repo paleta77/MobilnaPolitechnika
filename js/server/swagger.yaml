@@ -182,8 +182,17 @@ paths:
       produces:
       - "application/json"
       responses:
-        default:
-          description: "Successful operation"
+        200:
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+            example:
+                msg: "OK"
+            #TODO: missing data
     put:
       security:
         - Bearer: []
@@ -224,9 +233,16 @@ paths:
             classroom: "CTI 201/B19"
             lecturer: "Somebody"
       responses:
-        default:
-          description: "Successful operation"
-          #TODO!
+        200:
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+            example:
+                msg: "OK"
 
     delete:
       security:
@@ -256,9 +272,16 @@ paths:
             day: 1
             hour: 8.15
       responses:
-        default:
-          description: "Successful operation"
-          #TODO!
+        200:
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+            example:
+                msg: "OK"
 
   /grades:
     get:
@@ -484,7 +507,9 @@ paths:
       - "application/json"
       responses:
         200:
-          description: "successful operation"
+          description: "Operation handled"
+          schema:
+            $ref: "#/definitions/TimetableMessage"
   
   /lecturer/{lecturerName}/timetable:
     get:
@@ -505,7 +530,9 @@ paths:
         type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "Operation handled"
+          schema:
+            $ref: "#/definitions/TimetableMessage"
 
 
   /room/{roomName}/timetable:
@@ -527,7 +554,9 @@ paths:
         type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "Operation handled"
+          schema:
+            $ref: "#/definitions/TimetableMessage"
 
   /search/group:
     get:
@@ -548,7 +577,20 @@ paths:
         type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+              group:
+                type: array
+                items:
+                  $ref: "#/definitions/Group"
+            example:
+                msg: "OK"
+                group: [{_id : 1324, field: Informatyka, semester: 3, mode: niestacjonarne}]
 
   /search/timetable:
     get:
@@ -569,7 +611,9 @@ paths:
         type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "Operation handled"
+          schema:
+            $ref: "#/definitions/TimetableMessage"
 
 definitions:
   User:
@@ -620,6 +664,25 @@ definitions:
         type: "number"
       mode:
         type: "string"
+  Timetable:
+    type: "object"
+    properties:
+      group:
+        $ref: "#/definitions/Group/properties/_id"
+      day:
+        type: "string"
+      hour:
+        type: "number"
+      length:
+        type: "number"
+      subject:
+        type: "string"
+      type:
+        type: "string"
+      classroom:
+        type: "string"
+      lecturer:
+        type: "string"
   Extralesson:
     type: "object"
     properties:
@@ -639,3 +702,27 @@ definitions:
         type: "string"
       user:
         $ref: "#/definitions/User/properties/name"
+  TimetableMessage:  
+    type: "object"
+    properties:
+      msg:
+        type: "string"
+        description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+      timetable:
+        type: array
+        items:
+          $ref: "#/definitions/Timetable"
+    example:
+        msg: "OK"
+        timetable: [{
+          _id: 5dceecce75f9530343aadf59,
+          group: 5dbea6aff0df470180cb9f29,
+          day: Sobota,
+          hour: 8.15,
+          length: 90,
+          subject: Angielski,
+          type: Lektorat,
+          classroom: SPNJO,
+          lecturer: Somebody
+          }]
+                    

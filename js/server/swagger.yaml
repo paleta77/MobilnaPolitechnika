@@ -48,8 +48,20 @@ paths:
               username: "admin"
               password: "1234"
       responses:
-        default:
-          description: "Successful operation"
+        200:
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+              token:
+                type: "string"
+                description: "Contains login token, may be equal to null."
+            example:
+                msg: "OK"
+                token: "12345678"
   /register:
     post:
       tags:
@@ -77,8 +89,16 @@ paths:
               email: "name@name.name"
               password: "strong_password"
       responses:
-        default:
-          description: "Successful operation"
+        200:
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+            example:
+                msg: "OK"
   /logged:
     get:
       security:
@@ -93,6 +113,14 @@ paths:
       responses:
         default:
           description: "Successful operation"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'YES' when logged and 'NO' if not"
+            example:
+                msg: "YES"
   /logout:
     get:
       security:
@@ -103,12 +131,19 @@ paths:
       description: ""
       operationId: "logoutUser"
       produces:
-      - "application/xml"
       - "application/json"
       parameters: []
       responses:
-        default:
-          description: "successful operation"
+        200:
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+            example:
+                msg: "OK"
   /user:
     get:
       security:
@@ -121,8 +156,19 @@ paths:
       produces:
       - "application/json"
       responses:
-        default:
-          description: "Successful operation"
+        200:
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+              user:
+                $ref: "#/definitions/UserInfo"
+            example:
+                msg: "OK"
+                user: {_id : 1324, name: user123, mail: user@user.com}
 
   /user/extralessons:
     get:
@@ -180,6 +226,7 @@ paths:
       responses:
         default:
           description: "Successful operation"
+          #TODO!
 
     delete:
       security:
@@ -211,6 +258,7 @@ paths:
       responses:
         default:
           description: "Successful operation"
+          #TODO!
 
   /grades:
     get:
@@ -224,8 +272,21 @@ paths:
       produces:
       - "application/json"
       responses:
-        default:
-          description: "Successful operation"
+        200:
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+              grades:
+                type: array
+                items:
+                  $ref: "#/definitions/Grade"
+            example:
+                msg: "OK"
+                grades: [{_id: 5dbda8ae6d25340046995b4c, user: "admin", semester: 1, subject: "Fizyka", value: 3, ects: 3}]  
     put:
       security:
         - Bearer: []
@@ -257,8 +318,16 @@ paths:
             ects: 6
             value: 4
       responses:
-        default:
-          description: "Successful operation"    
+        200:
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+            example:
+                msg: "OK"
     post:
       security:
         - Bearer: []
@@ -290,8 +359,16 @@ paths:
             ects: 6
             value: 4
       responses:
-        default:
-          description: "Successful operation"
+        200:
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+            example:
+                msg: "OK"
 
     delete:
       security:
@@ -324,8 +401,16 @@ paths:
             ects: 6
             value: 4
       responses:
-        default:
-          description: "Successful operation"
+        200:
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+            example:
+                msg: "OK"
   /group:
     get:
       security:
@@ -338,8 +423,19 @@ paths:
       produces:
       - "application/json"
       responses:
-        default:
-          description: "Successful operation"
+        200:
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+              group:
+                $ref: "#/definitions/Group"
+            example:
+                msg: "OK"
+                group: {_id : 1324, field: Informatyka, semester: 3, mode: niestacjonarne}
 
     put:
       security:
@@ -361,8 +457,19 @@ paths:
             groupid:
               $ref: "#/definitions/Group/properties/_id"
       responses:
-        default:
-          description: "Successful operation"
+        200:
+          description: "Operation handled"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+              group:
+                $ref: "#/definitions/Group"
+            example:
+                msg: "OK"
+                group: {_id : 1324, field: Informatyka, semester: 3, mode: niestacjonarne}
 
   /group/timetable:
     get:
@@ -478,6 +585,15 @@ definitions:
         type: "string"
       group:
         $ref: "#/definitions/Group/properties/_id"
+  UserInfo:
+    type: "object"
+    properties:
+      _id:
+        type: "string"
+      name:
+        type: "string"
+      mail:
+        type: "string"
   Grade:
     type: "object"
     properties:
@@ -508,18 +624,18 @@ definitions:
     type: "object"
     properties:
       day:
-        type: "String"
+        type: "string"
       hour:
-        type: "Number"
+        type: "number"
       length:
-        type: "Number"
+        type: "number"
       subject:
-        type: "String"
+        type: "string"
       type:
-        type: "String"
+        type: "string"
       classroom:
-        type: "String"
+        type: "string"
       lecturer:
-        type: "String"
+        type: "string"
       user:
         $ref: "#/definitions/User/properties/name"

@@ -43,7 +43,7 @@ export default {
       this.$emit('select', page);
     },
     logout: function() {
-      this.$emit('logout', page);
+      this.$emit('logout');
     }
   }
 };

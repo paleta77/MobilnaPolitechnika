@@ -190,9 +190,12 @@ paths:
               msg:
                 type: "string"
                 description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+              extralesson:
+                $ref: "#/definitions/Extralesson"
             example:
                 msg: "OK"
-            #TODO: missing data
+                extralesson: [{ _id: 5dceecce75f9530343aadf59, user: admin, day: Sobota, hour: 8.15, length: 90, subject: Angielski, type: Lektorat, classroom: SPNJO, lecturer: Somebody }]
+                    
     put:
       security:
         - Bearer: []
@@ -584,13 +587,13 @@ paths:
               msg:
                 type: "string"
                 description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
-              group:
+              groups:
                 type: array
                 items:
                   $ref: "#/definitions/Group"
             example:
                 msg: "OK"
-                group: [{_id : 1324, field: Informatyka, semester: 3, mode: niestacjonarne}]
+                groups: [{_id : 1324, field: Informatyka, semester: 3, mode: niestacjonarne}]
 
   /search/timetable:
     get:

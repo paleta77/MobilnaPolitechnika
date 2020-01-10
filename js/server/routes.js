@@ -152,7 +152,7 @@ exports = module.exports = function (app) {
             .limit(50)
             .exec((err, docs) => {
                 if (err) return res.json({ msg: err });
-                res.json({ msg: "OK", result: docs });
+                res.json({ msg: "OK", groups: docs });
             });
     });
 
@@ -162,7 +162,7 @@ exports = module.exports = function (app) {
             .limit(50)
             .exec((err, docs) => {
                 if (err) return res.json({ msg: err });
-                res.json({ msg: "OK", result: docs });
+                res.json({ msg: "OK", timetable: docs });
             });
     });
 }

@@ -2,7 +2,7 @@
   <div id="app">
     <Loading v-if="isLoading" />
     <LoginForm v-if="!isLogged" @logged="logged" />
-    <div v-show="isLogged">
+    <div class="container" v-show="isLogged">
       <Navbar @select="changePage" @logout="logout"/>
       <HomePage v-show="currentPage=='home'" />
       <GradesPage ref="gradesRef" v-show="currentPage=='grades'"  />
@@ -38,7 +38,6 @@ export default {
   methods: {
     changePage(page) {
       this.currentPage = page;
-
     },
     logged: async function() {
       this.isLogged = true;

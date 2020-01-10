@@ -6,7 +6,7 @@
           v-for="(el, index) in table"
           v-bind:key="el.el.subject"
           class="card"
-          :style="{ top:el.y +'px',left:el.x +'px', 'min-height':el.height +'px'}"
+          :style="{ top:el.y +'px', left:el.x +'px', 'min-height':el.height +'px'}"
         >
           <div class="header">{{el.start}} - {{el.end}}</div>
             {{el.el.subject}}

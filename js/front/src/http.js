@@ -1,5 +1,5 @@
 
-let base = "http://77.55.208.10:8079/";
+let base = "http://localhost:8080/";
 
 export async function post(url, data = {}, headers = {}) {
     const response = await fetch(base + url, {

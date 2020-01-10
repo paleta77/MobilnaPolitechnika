@@ -714,15 +714,5 @@ definitions:
           $ref: "#/definitions/Timetable"
     example:
         msg: "OK"
-        timetable: [{
-          _id: 5dceecce75f9530343aadf59,
-          group: 5dbea6aff0df470180cb9f29,
-          day: Sobota,
-          hour: 8.15,
-          length: 90,
-          subject: Angielski,
-          type: Lektorat,
-          classroom: SPNJO,
-          lecturer: Somebody
-          }]
+        timetable: [{ _id: 5dceecce75f9530343aadf59, group: 5dbea6aff0df470180cb9f29, day: Sobota, hour: 8.15, length: 90, subject: Angielski, type: Lektorat, classroom: SPNJO, lecturer: Somebody }]
                     

@@ -34,7 +34,8 @@ export default {
     RegisterForm,
     HomePage,
     GradesPage,
-    TimetablePage
+    TimetablePage,
+    MapPage
   },
   methods: {
     changePage(page) {

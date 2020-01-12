@@ -1,6 +1,8 @@
 swagger: "2.0"
 info:
-  description: "Mobilna Politechnika to aplikacja ..."
+  description: "Mobilna Politechnika is an app for students and staff of Lodz University of Technology.
+  It also can be used by unregistered users for navigation. This app helps to manage your timetable or grades and also find a way
+  to your classroom."
   version: "0.0.0"
   title: "Mobilna Politechnika"
 basePath: "/"
@@ -55,7 +57,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
               token:
                 type: "string"
                 description: "Contains login token, may be equal to null."
@@ -96,7 +98,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
             example:
                 msg: "OK"
   /logged:
@@ -141,7 +143,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
             example:
                 msg: "OK"
   /user:
@@ -163,7 +165,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
               user:
                 $ref: "#/definitions/UserInfo"
             example:
@@ -189,7 +191,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
               extralesson:
                 $ref: "#/definitions/Extralesson"
             example:
@@ -243,7 +245,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
             example:
                 msg: "OK"
 
@@ -282,7 +284,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
             example:
                 msg: "OK"
 
@@ -305,7 +307,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
               grades:
                 type: array
                 items:
@@ -351,7 +353,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
             example:
                 msg: "OK"
     post:
@@ -392,7 +394,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
             example:
                 msg: "OK"
 
@@ -434,7 +436,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
             example:
                 msg: "OK"
   /group:
@@ -456,7 +458,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
               group:
                 $ref: "#/definitions/Group"
             example:
@@ -490,7 +492,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
               group:
                 $ref: "#/definitions/Group"
             example:
@@ -586,7 +588,7 @@ paths:
             properties:
               msg:
                 type: "string"
-                description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+                description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
               groups:
                 type: array
                 items:
@@ -710,7 +712,7 @@ definitions:
     properties:
       msg:
         type: "string"
-        description: "Equal to 'OK' if operation sucessed, otherwise containt error message."
+        description: "Equal to 'OK' if operation succeeded, otherwise contains error message."
       timetable:
         type: array
         items:

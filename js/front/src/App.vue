@@ -7,7 +7,7 @@
       <HomePage v-show="currentPage=='home'" />
       <GradesPage ref="gradesRef" v-show="currentPage=='grades'"  />
       <TimetablePage ref="tableRef" v-show="currentPage=='table'"  />
-      <MapPage v-show="currentPage=='map'">
+      <MapPage v-show="currentPage=='map'"/>
     </div>
   </div>
 </template>

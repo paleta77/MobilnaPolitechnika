@@ -212,13 +212,16 @@ export default {
     },
 
     addGrade: async function() {
-      await API.addGrade(
+    let bool = await API.addGrade(
         User.name,
         this.semester,
         this.newSubject,
         this.newEcts,
         this.newValue
       );
+      if (bool == false) {
+        alert(API.msg);
+      }
       this.loadGrades();
     }
   }
